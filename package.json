@@ -41,7 +41,7 @@
     "sinon": "^1.17.3"
   },
   "scripts": {
-    "build": "babel src --out-dir lib",
+    "build": "babel src --out-dir lib --source-maps",
     "prepublish": "npm run build",
     "test": "karma start"
   },
