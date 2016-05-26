@@ -8,7 +8,7 @@ import { mapProps } from './utils';
 export const addReduxUIState = (
   config, uiBranchAccessor = defaultUiBranchAccessor
 ) => WrappedComponent => {
-  console.log('wtf');
+
   function mapDispatchToProps(dispatch) {
     return {
       setUIState: (state, shouldDeepMerge) => dispatch(setUIState({
@@ -20,8 +20,6 @@ export const addReduxUIState = (
   }
 
   function mapStateToProps(state) {
-    console.log('state: ', state);
-    console.log('state: ', uiBranchAccessor(state));
     return {
       uiState: uiBranchAccessor(state)[config.id],
     };
@@ -36,7 +34,6 @@ export const addReduxUIState = (
     };
 
     componentDidMount() {
-      console.log('calling setUIState');
       this.props.setUIState(config.getInitialState(this.props));
     }
 
