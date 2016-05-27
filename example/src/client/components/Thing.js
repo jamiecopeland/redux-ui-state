@@ -32,3 +32,21 @@ export default addReduxUIState({
     isToggled: false,
   }),
 })(Thing);
+
+
+import { connect } from 'react-redux';
+
+const StateWrappedComponent = addReduxUIState({
+  id: 'thing',
+  getInitialState: () => ({
+    message: 'hello from getInitialState',
+    isToggled: false,
+  }),
+})(Thing);
+
+
+function mapStateToProps(state) {
+  return { state };
+}
+
+export default connect(mapStateToProps)(StateWrappedComponent);

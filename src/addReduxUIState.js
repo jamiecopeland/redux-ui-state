@@ -1,27 +1,16 @@
 import React from 'react';
-import { connect } from 'react-redux';
 
 import { defaultUiBranchAccessor } from './utils';
 import { setUIState } from './actions';
-import { mapProps } from './utils';
 
+// TODO Make sure to push props down to child, omitting uiState and dispatch
 export const addReduxUIState = (
   config, uiBranchAccessor = defaultUiBranchAccessor
 ) => WrappedComponent => {
-
-  function mapDispatchToProps(dispatch) {
-    return {
-      setUIState: (state, shouldDeepMerge) => dispatch(setUIState({
-        id: config.id,
-        shouldDeepMerge,
-        state,
-      })),
-    };
-  }
-
-  function mapStateToProps(state) {
+  function mapPropsToProps({ state, dispatch }) {
     return {
       uiState: uiBranchAccessor(state)[config.id],
+      dispatch,
     };
   }
 
@@ -29,23 +18,35 @@ export const addReduxUIState = (
 
     static propTypes = {
       uiState: React.PropTypes.object,
-      setUIState: React.PropTypes.func.isRequired,
-      // resetUIState: React.PropTypes.func.isRequired,
+      dispatch: React.PropTypes.func.isRequired,
     };
 
     componentDidMount() {
-      this.props.setUIState(config.getInitialState(this.props));
+      this.setUIState(config.getInitialState(this.props));
+    }
+
+    setUIState = (newState, shouldDeepMerge) => {
+      this.props.dispatch(
+        setUIState({
+          id: config.id,
+          shouldDeepMerge,
+          state: newState,
+        })
+      );
     }
 
     render() {
       return (
         this.props.uiState
-        ? <WrappedComponent {...mapProps(this.props)} />
+        ? <WrappedComponent
+          {...this.props}
+          setUIState={this.setUIState}
+        />
         : null
       );
     }
 
   }
 
-  return connect(mapStateToProps, mapDispatchToProps)(ExportedComponent);
+  return (state) => (<ExportedComponent {...mapPropsToProps(state)} />);
 };

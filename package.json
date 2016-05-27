@@ -11,8 +11,6 @@
     "lodash.merge": "^4.4.0",
     "react": "^15.0.1",
     "react-dom": "^15.0.1",
-    "react-redux": "^4.2.1",
-    "redux": "^3.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.3.15",
