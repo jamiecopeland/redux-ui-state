@@ -1,6 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { addReduxUIState } from 'redux-ui-state';
+import { addReduxUIState, decorateMapStateToProps, defaultMapStateToProps } from 'redux-ui-state';
 
 const Thing = ({ uiState, setUIState }) => {
   return (
@@ -25,17 +26,6 @@ Thing.propTypes = {
   setUIState: React.PropTypes.func,
 };
 
-export default addReduxUIState({
-  id: 'thing',
-  getInitialState: () => ({
-    message: 'hello from getInitialState',
-    isToggled: false,
-  }),
-})(Thing);
-
-
-import { connect } from 'react-redux';
-
 const StateWrappedComponent = addReduxUIState({
   id: 'thing',
   getInitialState: () => ({
@@ -44,9 +34,10 @@ const StateWrappedComponent = addReduxUIState({
   }),
 })(Thing);
 
-
 function mapStateToProps(state) {
-  return { state };
+  return decorateMapStateToProps(state, {
+    something: 'extra stuff from the state tree',
+  });
 }
 
-export default connect(mapStateToProps)(StateWrappedComponent);
+export default connect(defaultMapStateToProps)(StateWrappedComponent);

@@ -1,5 +1,11 @@
 export { DEFAULT_BRANCH_NAME } from './constants';
-export { defaultUiBranchAccessor } from './utils';
+export {
+  defaultUiBranchAccessor,
+  decorateMapStateToProps,
+  decorateMapDispatchToProps,
+  defaultMapStateToProps,
+  defaultMapDispatchToProps,
+} from './utils';
 
 export {
   SET_UI_STATE,
