@@ -1,0 +1,38 @@
+.Accordion {
+
+  &_Title {
+    font-size: 2rem;
+    font-weight: bold;
+  }
+
+  &_TogglesContainer {
+    display: inline-block;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  &_List {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  &_Segment {
+    margin-bottom: 1rem;
+  }
+
+  &_SegmentTitle {
+    color: #000000;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 1.3rem;
+    font-weight: bold;
+    padding-bottom: 0.5rem;
+    text-decoration: none;
+    user-select: none;
+  }
+
+  &_SegmentContent {
+    font-size: 1rem;
+    line-height: 1.4rem;
+  }
+}

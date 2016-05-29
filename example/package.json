@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "babel-polyfill": "^6.3.14",
+    "classnames": "^2.2.5",
     "cors": "^2.7.1",
     "gulp-bg": "0.0.8",
     "gulp-shell": "^0.5.2",
@@ -72,7 +73,11 @@
     "test": "karma start"
   },
   "keywords": [
-    "react", "redux", "ui", "component", "state"
+    "react",
+    "redux",
+    "ui",
+    "component",
+    "state"
   ],
   "author": "Jamie Copeland",
   "license": "MIT",

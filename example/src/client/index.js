@@ -37,9 +37,7 @@ if (module.hot) {
     }
   };
 
-  module.hot.accept('./components/App', () => {
-    setTimeout(rerender);
-  });
+  module.hot.accept('./components/App', () => setTimeout(rerender));
 }
 
 render();

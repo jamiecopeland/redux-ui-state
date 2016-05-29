@@ -1,5 +1,5 @@
 import merge from 'lodash.merge';
-import { SET_UI_STATE } from './actions';
+import { SET_UI_STATE, REPLACE_UI_STATE } from './actions';
 
 export const reduxUIStateReducer = (state = {}, action) => {
   switch (action.type) {
@@ -9,6 +9,13 @@ export const reduxUIStateReducer = (state = {}, action) => {
         [action.payload.id]: action.payload.shouldDeepMerge
           ? merge({}, state[action.payload.id], action.payload.state)
           : { ...state[action.payload.id], ...action.payload.state },
+      };
+    }
+
+    case REPLACE_UI_STATE: {
+      return {
+        ...state,
+        [action.payload.id]: action.payload.state,
       };
     }
 

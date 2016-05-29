@@ -1,9 +1,8 @@
 import React from 'react';
 
 import { defaultUiBranchAccessor, omit } from './utils';
-import { setUIState } from './actions';
+import { setUIState, replaceUIState } from './actions';
 
-// TODO Make sure to push props down to child, omitting uiState and dispatch
 export const addReduxUIState = (
   config, uiBranchAccessor = defaultUiBranchAccessor
 ) => WrappedComponent => {
@@ -19,8 +18,18 @@ export const addReduxUIState = (
           state: newState,
         }));
       },
-
-
+      replaceUIState: (newState) => {
+        dispatch(replaceUIState({
+          id: config.id,
+          state: newState,
+        }));
+      },
+      resetUIState: () => {
+        dispatch(replaceUIState({
+          id: config.id,
+          state: config.getInitialState(props),
+        }));
+      },
       dispatch,
     };
   }
@@ -30,6 +39,8 @@ export const addReduxUIState = (
     static propTypes = {
       uiState: React.PropTypes.object,
       setUIState: React.PropTypes.func.isRequired,
+      replaceUIState: React.PropTypes.func.isRequired,
+      resetUIState: React.PropTypes.func.isRequired,
     };
 
     componentDidMount() {
@@ -39,17 +50,12 @@ export const addReduxUIState = (
     render() {
       return (
         this.props.uiState
-        ? <WrappedComponent
-          {...this.props}
-        />
+        ? <WrappedComponent {...this.props} />
         : null
       );
     }
 
   }
 
-  return props => {
-    console.log('props: ', props);
-    return (<ExportedComponent {...mapPropsToProps(props)} />)
-  };
+  return props => (<ExportedComponent {...mapPropsToProps(props)} />);
 };

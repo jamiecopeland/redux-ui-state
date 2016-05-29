@@ -11,6 +11,7 @@ export {
   SET_UI_STATE,
   RESET_STATE,
   setUIState,
+  resetUIState,
 } from './actions';
 
 export { reduxUIStateReducer } from './reducer';
