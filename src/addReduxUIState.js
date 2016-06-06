@@ -10,7 +10,7 @@ export const addReduxUIState = (
     const { state, dispatch } = props;
     return {
       ...omit(props, ['state', 'dispatch']),
-      uiState: uiBranchAccessor(state)[config.id],
+      uiState: uiBranchAccessor(state).components[config.id],
       setUIState: (newState, shouldDeepMerge) => {
         dispatch(setUIState({
           id: config.id,
