@@ -4,8 +4,7 @@ import karmaMochaReporter from 'karma-mocha-reporter';
 import karmaPhantomJSLauncher from 'karma-phantomjs-launcher';
 import karmaSourcemapLoader from 'karma-sourcemap-loader';
 
-import { createWebpackConfig } from '../webpack/webpackUtils';
-import { TEST } from '../src/shared/constants/buildMode';
+import webpackConfig from './webpack.config.js';
 
 module.exports = config => {
   config.set({
@@ -27,7 +26,7 @@ module.exports = config => {
       karmaPhantomJSLauncher,
       karmaSourcemapLoader,
     ],
-    webpack: createWebpackConfig(TEST),
+    webpack: webpackConfig,
     webpackServer: {
       noInfo: true,
     },
