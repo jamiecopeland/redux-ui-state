@@ -1,9 +1,9 @@
 import React from 'react';
 
 import Accordion from './elements/accordion/Accordion';
+
 import '../styles/reset.css';
 import '../styles/global.css';
-
 import './App.css';
 
 const segments = [

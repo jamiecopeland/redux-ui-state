@@ -12,9 +12,7 @@ function setIsOpenAtIndex(segmentStates, index, isOpen) {
 }
 
 const Accordion = (
-{
-  title, segments, showToggles, uiState: { segmentStates }, setUIState, resetUIState,
-}
+  { title, segments, showToggles, uiState: { segmentStates }, setUIState, resetUIState }
 ) => (
   <div className="Accordion">
     {
@@ -78,6 +76,7 @@ Accordion.propTypes = {
 
 const StateWrappedComponent = addReduxUIState({
   id: 'newsAccordion',
+  destroyOnUnmount: true,
   getInitialState: ({ segments }) => ({
     segmentStates: segments.map(({ isOpen }) => ({ isOpen })),
   }),

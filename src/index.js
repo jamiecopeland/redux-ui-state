@@ -14,5 +14,5 @@ export {
   resetUIState,
 } from './actions';
 
-export { reduxUIStateReducer } from './reducer';
+export { reduxUIStateReducer } from './pojoReducer';
 export { addReduxUIState } from './addReduxUIState';

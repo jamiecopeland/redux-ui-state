@@ -47,6 +47,12 @@ export const addReduxUIState = (
       this.props.setUIState(config.getInitialState(this.props));
     }
 
+    componentWillUnmount() {
+      if (config.destroyOnUnmount) {
+        this.props.resetUIState();
+      }
+    }
+
     render() {
       return (
         this.props.uiState
