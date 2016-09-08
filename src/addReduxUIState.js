@@ -5,12 +5,12 @@ import { defaultUiBranchSelector } from './utils';
 import { setUIState, replaceUIState } from './actions';
 
 export const addReduxUIState = (
-  config,
+  { id, getInitialState, useConnect, destroyOnUnmount },
   uiBranchSelector = defaultUiBranchSelector,
 ) => WrappedComponent => {
   function mapStateToProps(state) {
     return {
-      uiState: uiBranchSelector(state).components[config.id],
+      uiState: uiBranchSelector(state).components[id],
     };
   }
 
@@ -18,21 +18,21 @@ export const addReduxUIState = (
     return {
       setUIState: (newState, shouldDeepMerge) => {
         dispatch(setUIState({
-          id: config.id,
+          id,
           shouldDeepMerge,
           state: newState,
         }));
       },
       replaceUIState: (newState) => {
         dispatch(replaceUIState({
-          id: config.id,
+          id,
           state: newState,
         }));
       },
       resetUIState: () => {
         dispatch(replaceUIState({
-          id: config.id,
-          state: config.getInitialState(props),
+          id,
+          state: getInitialState(props),
         }));
       },
     };
@@ -47,11 +47,11 @@ export const addReduxUIState = (
     };
 
     componentDidMount() {
-      this.props.setUIState(config.getInitialState(this.props));
+      this.props.setUIState(getInitialState(this.props));
     }
 
     componentWillUnmount() {
-      if (config.destroyOnUnmount) {
+      if (destroyOnUnmount) {
         this.props.resetUIState();
       }
     }
@@ -67,11 +67,11 @@ export const addReduxUIState = (
 
   let output;
 
-  if (config.useConnect) {
+  if (useConnect) {
     output = connect(mapStateToProps, mapDispatchToProps)(ExportedComponent);
   } else {
     const ProxyComponent = (props) => {
-      if (!config.useConnect && (!props.state || !props.dispatch)) {
+      if (!useConnect && (!props.state || !props.dispatch)) {
         throw new Error(
           'Cannot find state and dispatch in props. This probably means you\'re using ' +
           'addReduxUIState with useConnect set to false but havent passed state and dispatch ' +
