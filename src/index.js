@@ -1,4 +1,4 @@
-export { DEFAULT_BRANCH_NAME } from './constants';
+export { UI_STATE_BRANCH_NAME } from './constants';
 export {
   defaultUiBranchAccessor,
   decorateMapStateToProps,

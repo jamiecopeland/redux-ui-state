@@ -1,1 +1,1 @@
-export const DEFAULT_BRANCH_NAME = 'reduxComponentState';
+export const UI_STATE_BRANCH_NAME = 'reduxComponentState';

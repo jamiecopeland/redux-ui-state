@@ -1,7 +1,7 @@
-import { DEFAULT_BRANCH_NAME } from './constants';
+import { UI_STATE_BRANCH_NAME } from './constants';
 
 export function defaultUiBranchSelector(state) {
-  return state[DEFAULT_BRANCH_NAME];
+  return state[UI_STATE_BRANCH_NAME];
 }
 
 export function defaultMapStateToProps(state) {
