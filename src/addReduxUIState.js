@@ -1,16 +1,21 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
-import { defaultUiBranchAccessor, omit } from './utils';
+import { defaultUiBranchSelector } from './utils';
 import { setUIState, replaceUIState } from './actions';
 
 export const addReduxUIState = (
-  config, uiBranchAccessor = defaultUiBranchAccessor
+  config,
+  uiBranchSelector = defaultUiBranchSelector,
 ) => WrappedComponent => {
-  function mapPropsToProps(props) {
-    const { state, dispatch } = props;
+  function mapStateToProps(state) {
     return {
-      ...omit(props, ['state', 'dispatch']),
-      uiState: uiBranchAccessor(state).components[config.id],
+      uiState: uiBranchSelector(state).components[config.id],
+    };
+  }
+
+  function mapDispatchToProps(dispatch, props) {
+    return {
       setUIState: (newState, shouldDeepMerge) => {
         dispatch(setUIState({
           id: config.id,
@@ -30,17 +35,15 @@ export const addReduxUIState = (
           state: config.getInitialState(props),
         }));
       },
-      dispatch,
     };
   }
 
   class ExportedComponent extends React.Component {
-
     static propTypes = {
       uiState: React.PropTypes.object,
-      setUIState: React.PropTypes.func.isRequired,
-      replaceUIState: React.PropTypes.func.isRequired,
-      resetUIState: React.PropTypes.func.isRequired,
+      setUIState: React.PropTypes.func,
+      replaceUIState: React.PropTypes.func,
+      resetUIState: React.PropTypes.func,
     };
 
     componentDidMount() {
@@ -60,8 +63,36 @@ export const addReduxUIState = (
         : null
       );
     }
-
   }
 
-  return props => (<ExportedComponent {...mapPropsToProps(props)} />);
+  let output;
+
+  if (config.useConnect) {
+    output = connect(mapStateToProps, mapDispatchToProps)(ExportedComponent);
+  } else {
+    const ProxyComponent = (props) => {
+      if (!config.useConnect && (!props.state || !props.dispatch)) {
+        throw new Error(
+          'Cannot find state and dispatch in props. This probably means you\'re using ' +
+          'addReduxUIState with useConnect set to false but havent passed state and dispatch ' +
+          'in your component\'s mapStateToProps and mapDispatchToProps functions.'
+        );
+      }
+      return (
+        <ExportedComponent {...{
+          ...mapStateToProps(props.state),
+          ...mapDispatchToProps(props.dispatch),
+        }}
+        />
+      );
+    };
+    ProxyComponent.propTypes = {
+      state: React.PropTypes.object.isRequired,
+      dispatch: React.PropTypes.func.isRequired,
+    };
+    output = ProxyComponent;
+  }
+
+  return output;
 };
+
