@@ -1,10 +1,11 @@
 export { UI_STATE_BRANCH_NAME } from './constants';
 export {
-  defaultUiBranchAccessor,
+  defaultUiBranchSelector,
   decorateMapStateToProps,
   decorateMapDispatchToProps,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
+  createConnectWrapper,
 } from './utils';
 
 export {

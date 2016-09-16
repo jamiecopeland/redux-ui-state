@@ -1,3 +1,5 @@
+import { connect } from 'react-redux';
+
 import { UI_STATE_BRANCH_NAME } from './constants';
 
 export function defaultUiBranchSelector(state) {
@@ -44,3 +46,9 @@ export function omit(obj, keys) {
   keys.forEach(key => delete output[key]);
   return output;
 }
+
+export const createConnectWrapper = (
+  mapStateToProps = defaultMapStateToProps,
+  mapDispatchToProps = defaultMapDispatchToProps
+) => component =>
+  connect(mapStateToProps, mapDispatchToProps)(component);
