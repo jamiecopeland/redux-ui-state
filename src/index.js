@@ -16,4 +16,6 @@ export {
 } from './actions';
 
 export { default as reduxUIStateReducer } from './pojoReducer';
-export { addReduxUIState } from './addReduxUIState';
+export addReduxUIState from './addReduxUIState';
+export addReduxUIStateWithConnect from './addReduxUIStateWithConnect';
+

@@ -1,15 +1,13 @@
 import React from 'react';
 
-import { defaultUiBranchSelector } from './utils';
 import { setUIState, replaceUIState } from './actions';
 
-export const addReduxUIState = (
-  { id, getInitialState, useConnect, destroyOnUnmount },
-  uiBranchSelector = defaultUiBranchSelector,
+const addReduxUIState = (
+  { id, getInitialState, destroyOnUnmount }
 ) => WrappedComponent => {
   function mapStateToProps(state) {
     return {
-      uiState: uiBranchSelector(state).components[id],
+      uiState: state.components[id],
     };
   }
 
@@ -65,7 +63,7 @@ export const addReduxUIState = (
   }
 
   const ProxyComponent = (props) => {
-    if (!useConnect && (!props.state || !props.dispatch)) {
+    if (!props.uiStateBranch || !props.dispatch) {
       throw new Error(
         'Cannot find state and dispatch in props. This probably means you\'re using ' +
         'addReduxUIState with useConnect set to false but havent passed state and dispatch ' +
@@ -74,17 +72,19 @@ export const addReduxUIState = (
     }
     return (
       <ExportedComponent {...{
-        ...mapStateToProps(props.state),
+        ...mapStateToProps(props.uiStateBranch),
         ...mapDispatchToProps(props.dispatch),
       }}
       />
     );
   };
   ProxyComponent.propTypes = {
-    state: React.PropTypes.object.isRequired,
+    uiStateBranch: React.PropTypes.object.isRequired,
     dispatch: React.PropTypes.func.isRequired,
   };
 
   return ProxyComponent;
 };
+
+export default addReduxUIState;
 

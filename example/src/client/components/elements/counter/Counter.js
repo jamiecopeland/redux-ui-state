@@ -1,9 +1,9 @@
 import React from 'react';
 import { compose } from 'redux';
-import { defaultUiBranchSelector } from 'redux-ui-state';
 
 import {
   addReduxUIState,
+  addReduxUIStateWithConnect,
   createConnectWrapper,
 } from 'redux-ui-state';
 
@@ -24,10 +24,15 @@ Counter.propTypes = {
   setUIState: React.PropTypes.func.isRequired,
 };
 
-export default compose(
-  createConnectWrapper(),
-  addReduxUIState({
-    id: 'counter',
-    getInitialState: () => ({ index: 0 }),
-  })
-)(Counter);
+// export default compose(
+//   createConnectWrapper(),
+//   addReduxUIState({
+//     id: 'counter',
+//     getInitialState: () => ({ index: 0 }),
+//   })
+// )(Counter);
+
+export default addReduxUIStateWithConnect({
+  id: 'counter',
+  getInitialState: () => ({ index: 0 }),
+})(Counter);
