@@ -11,6 +11,7 @@ export default (state = initialState, action) => {
       return {
         ...state,
         components: {
+          ...state.components,
           [action.payload.id]: action.payload.shouldDeepMerge
             ? merge({}, state.components[action.payload.id], action.payload.state)
             : { ...state.components[action.payload.id], ...action.payload.state },

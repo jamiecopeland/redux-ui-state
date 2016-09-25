@@ -11,5 +11,4 @@ export const defaultMapStateToProps = state => ({ uiStateBranch: defaultUiBranch
 export const createConnectWrapper = (
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps
-) => component =>
-  connect(mapStateToProps, mapDispatchToProps)(component);
+) => component => connect(mapStateToProps, mapDispatchToProps)(component);
