@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { UI_STATE_BRANCH_NAME, addReduxUIState } from 'redux-ui-state';
+import { DEFAULT_BRANCH_NAME, addReduxUIState } from 'redux-ui-state';
 
 const Counter = ({ uiState, setUIState }) => (
   <div>
@@ -20,7 +20,7 @@ Counter.propTypes = {
   setUIState: React.PropTypes.func.isRequired,
 };
 
-export const uiBranchSelector = state => state[UI_STATE_BRANCH_NAME];
+export const uiBranchSelector = state => state[DEFAULT_BRANCH_NAME];
 export const mapDispatchToProps = dispatch => ({ dispatch });
 export const mapStateToProps = state => ({ uiStateBranch: uiBranchSelector(state) });
 

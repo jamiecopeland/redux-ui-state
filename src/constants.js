@@ -1,1 +1,1 @@
-export const UI_STATE_BRANCH_NAME = 'uiState';
+export const DEFAULT_BRANCH_NAME = 'uiState';
