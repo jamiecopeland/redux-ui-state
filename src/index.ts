@@ -1,8 +1,6 @@
 export { DEFAULT_BRANCH_NAME } from './constants';
 export {
   defaultUiBranchSelector,
-  decorateMapStateToProps,
-  decorateMapDispatchToProps,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
   createConnectWrapper,
@@ -10,12 +8,11 @@ export {
 
 export {
   SET_UI_STATE,
-  RESET_STATE,
+  REPLACE_UI_STATE,
   setUIState,
-  resetUIState,
+  replaceUIState,
 } from './actions';
 
 export { default as reduxUIStateReducer } from './pojoReducer';
-export addReduxUIState from './addReduxUIState';
-export addReduxUIStateWithConnect from './addReduxUIStateWithConnect';
-
+export  { default as addReduxUIState } from './addReduxUIState';
+export { default as addReduxUIStateWithConnect } from './addReduxUIStateWithConnect';

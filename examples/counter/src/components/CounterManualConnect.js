@@ -15,10 +15,10 @@ const Counter = ({ uiState, setUIState }) => (
   </div>
 );
 
-Counter.propTypes = {
-  uiState: React.PropTypes.object.isRequired,
-  setUIState: React.PropTypes.func.isRequired,
-};
+// Counter.propTypes = {
+//   uiState: React.PropTypes.object.isRequired,
+//   setUIState: React.PropTypes.func.isRequired,
+// };
 
 export const uiBranchSelector = state => state[DEFAULT_BRANCH_NAME];
 export const mapDispatchToProps = dispatch => ({ dispatch });

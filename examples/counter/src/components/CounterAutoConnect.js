@@ -14,10 +14,10 @@ const Counter = ({ uiState, setUIState }) => (
   </div>
 );
 
-Counter.propTypes = {
-  uiState: React.PropTypes.object.isRequired,
-  setUIState: React.PropTypes.func.isRequired,
-};
+// Counter.propTypes = {
+//   uiState: React.PropTypes.object.isRequired,
+//   setUIState: React.PropTypes.func.isRequired,
+// };
 
 const config = {
   id: 'counter',
