@@ -6,7 +6,7 @@ import { merge } from './utils';
 
 export interface AddReduxUIStateConfig<P, S> {
   id: string;
-  getInitialState: (props: P) => S;
+  getInitialState: (props?: P) => S;
   destroyOnUnmount?: boolean;
 }
 
@@ -57,7 +57,7 @@ interface ExportedComponentProps {
 const addReduxUIState = <S, P>(
   { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<P, S>
 ) => (WrappedComponent: React.StatelessComponent<P>): React.ComponentClass<P> =>
-class ExportedComponent extends React.Component<ExportedComponentProps & P, {}> {
+class ExportedComponent extends React.Component<ExportedComponentProps & P & S, {}> {
   mappedDispatchProps: DispatchProps<S>;
 
   constructor(props) {

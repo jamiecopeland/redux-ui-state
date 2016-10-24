@@ -6,6 +6,7 @@
   "directories": {
     "test": "test"
   },
+  "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
     "build-watch": "tsc -w",
@@ -26,8 +27,6 @@
   },
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
   "dependencies": {
-    "@types/react": "^0.14.41",
-    "@types/react-redux": "^4.4.32",
     "babel-polyfill": "^6.3.14",
     "lodash.merge": "^4.4.0",
     "react": "^15.0.1",

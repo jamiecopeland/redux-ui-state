@@ -3,19 +3,9 @@
   "version": "0.0.0",
   "description": "Redux counter example",
   "scripts": {
-    "start": "node src/server.js",
-    "test": "cross-env NODE_ENV=test mocha --recursive --compilers js:babel-register",
-    "test:watch": "npm test -- --watch"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/reactjs/redux.git"
+    "start": "node src/server.js"
   },
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/reactjs/redux/issues"
-  },
-  "homepage": "http://redux.js.org",
   "dependencies": {
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
