@@ -1,11 +1,17 @@
 {
   "compilerOptions": {
+    "target": "es5",
     "module": "commonjs",
-    "target": "ES5",
-    "sourceMap": true,
+    "declaration": false,
+    "noImplicitAny": false,
+    "removeComments": true,
+    "experimentalDecorators": true,
+    "noLib": false,
     "jsx": "react",
-    "allowJs": true,
-    "moduleResolution": "node",
-    "rootDir": "src"
-  }
+    "outDir": "dist"
+  },
+  "exclude": [
+    "node_modules",
+    "static"
+  ]
 }

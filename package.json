@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "UI state storage for redux",
   "main": "lib/index.js",
   "directories": {
@@ -9,7 +9,7 @@
   "typings": "lib/index.d.ts",
   "scripts": {
     "build": "tsc",
-    "build-watch": "tsc -w",
+    "build:watch": "tsc -w",
     "prepublish": "npm run build",
     "test": "karma start"
   },
@@ -28,8 +28,7 @@
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
   "dependencies": {
     "babel-polyfill": "^6.3.14",
-    "lodash.merge": "^4.4.0",
-    "react": "^15.0.1",
+    "react": "^15.3.2",
     "react-dom": "^15.0.1",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0"

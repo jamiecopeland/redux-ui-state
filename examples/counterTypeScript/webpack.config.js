@@ -1,32 +1,27 @@
 const path = require('path');
 const webpack = require('webpack');
 
+const { PROTOCOL, HOST, PORT, } = require('./serverConfig');
+
 module.exports = {
-  devtool: 'cheap-module-eval-source-map',
+  devtool: 'eval',
   entry: [
-    'webpack-hot-middleware/client',
-    './src/index.tsx',
+    `webpack-dev-server/client?${PROTOCOL}://${HOST}:${PORT}`,
+    './src/index'
   ],
   output: {
     path: path.join(__dirname, 'dist'),
     filename: 'bundle.js',
-    publicPath: '/static/',
+    publicPath: '/static/'
   },
   resolve: {
-    extensions: ['', '.ts', '.tsx', '.js'],
+    extensions: ['', '.js', '.ts', '.tsx']
   },
-  plugins: [
-    new webpack.optimize.OccurrenceOrderPlugin(),
-    new webpack.HotModuleReplacementPlugin(),
-  ],
   module: {
-    loaders: [
-      {
-        test: /\.tsx?$/,
-        loaders: ['ts-loader'],
-        exclude: /node_modules/,
-        include: __dirname,
-      },
-    ],
-  },
+    loaders: [{
+      test: /\.tsx?$/,
+      loaders: ['ts-loader'],
+      include: path.join(__dirname, 'src')
+    }]
+  }
 };

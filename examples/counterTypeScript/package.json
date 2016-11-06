@@ -1,37 +1,29 @@
 {
-  "name": "redux-counter-example",
-  "version": "0.0.0",
-  "description": "Redux counter example",
+  "name": "redux-ui-state-typescript-example",
+  "version": "0.1.0",
+  "description": "",
   "scripts": {
-    "start": "node src/server.js"
+    "start": "node server.js"
   },
+  "keywords": [
+    "react",
+    "reactjs",
+    "redux",
+    "state"
+  ],
+  "author": "Jamie Copeland",
   "license": "MIT",
+  "devDependencies": {
+    "ts-loader": "^0.9.5",
+    "typescript": "^2.0.6",
+    "webpack": "^1.9.6",
+    "webpack-dev-server": "^1.8.2"
+  },
   "dependencies": {
-    "react": "^0.14.7",
-    "react-dom": "^0.14.7",
+    "react": "^15.3.1",
+    "react-dom": "^15.3.1",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
-    "redux-logger": "^2.6.1",
-    "redux-ui-state": "^0.1.2"
-  },
-  "devDependencies": {
-    "babel-core": "^6.3.15",
-    "babel-loader": "^6.2.0",
-    "babel-preset-es2015": "^6.3.13",
-    "babel-preset-react": "^6.3.13",
-    "babel-preset-react-hmre": "^1.1.1",
-    "babel-register": "^6.3.13",
-    "cross-env": "^1.0.7",
-    "enzyme": "^2.0.0",
-    "expect": "^1.6.0",
-    "express": "^4.13.3",
-    "mocha": "^2.2.5",
-    "node-libs-browser": "^0.5.2",
-    "react-addons-test-utils": "^0.14.7",
-    "ts-loader": "^0.9.3",
-    "typescript": "^2.0.3",
-    "webpack": "^1.9.11",
-    "webpack-dev-middleware": "^1.2.0",
-    "webpack-hot-middleware": "^2.13.0"
+    "redux-logger": "^2.7.4"
   }
 }

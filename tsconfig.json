@@ -2,18 +2,17 @@
   "compilerOptions": {
     "outDir": "lib",
     "module": "commonjs",
-    "target": "ES6",
+    "target": "es5",
     "sourceMap": true,
     "jsx": "react",
     "moduleResolution": "node",
-    "rootDirs": ["src"],
+    "rootDir": "src",
     "declaration": true
   },
-  "include": [
-    "src/**/*",
-    "typings/**/*"
-  ],
   "exclude": [
-    "src/__tests"
+    "src/__tests",
+    "examples",
+    "node_modules",
+    "lib"
   ]
 }

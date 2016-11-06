@@ -4,35 +4,38 @@ import { Dispatch } from 'redux';
 import { setUIState, replaceUIState } from './actions';
 import { merge } from './utils';
 
-export interface AddReduxUIStateConfig<P, S> {
-  id: string;
-  getInitialState: (props?: P) => S;
-  destroyOnUnmount?: boolean;
-}
-
+// The branch of the Redux store governed by reduxUIState's reducer
 export interface UIStateBranch {
   components: {
     [key: string]: any;
   }
 }
 
-interface StateProps<S> {
+export interface AddReduxUIStateConfig<S, P> {
+  id: string;
+  getInitialState: (props?: P) => S;
+  destroyOnUnmount?: boolean;
+}
+
+export interface StateProps<S> {
   uiState: S;
 }
 
-interface DispatchProps<S> {
+export interface DispatchProps<S> {
   setUIState: (state: S) => void;
   replaceUIState: (state: S) => void;
   resetUIState: () => void;
 }
 
-function mapStateToProps<S>(state: UIStateBranch, id: string): StateProps<S> {
+export type Props<S> = StateProps<S> & DispatchProps<S>;
+
+export function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string): StateProps<S> {
   return {
     uiState: state.components[id],
   };
 }
 
-function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchProps<S> {
+export function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchProps<S> {
   return {
     setUIState: (state: S): void => dispatch(setUIState({
       id,
@@ -49,19 +52,27 @@ function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchPr
   };
 }
 
-interface ExportedComponentProps {
-  uiStateBranch: UIStateBranch,
-  dispatch: Function,
+// addReduxUIState
+
+export interface ExportedComponentStateProps {
+  uiStateBranch: UIStateBranch;
 }
 
-const addReduxUIState = <S, P>(
-  { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<P, S>
-) => (WrappedComponent: React.StatelessComponent<P>): React.ComponentClass<P> =>
-class ExportedComponent extends React.Component<ExportedComponentProps & P & S, {}> {
+export interface ExportedComponentDispatchProps {
+  dispatch: Function;
+}
+
+export type ExportedComponentProps = ExportedComponentStateProps & ExportedComponentDispatchProps;
+
+export const addReduxUIState = <S, P>(
+  { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<any, any>
+) => (WrappedComponent: React.StatelessComponent<P & Props<S>>): React.ComponentClass<ExportedComponentProps & P> =>
+class ExportedComponent extends React.Component<ExportedComponentProps & P, any> {
   mappedDispatchProps: DispatchProps<S>;
 
   constructor(props) {
     super(props);
+
     if (!props.uiStateBranch || !props.dispatch) {
       throw new Error(
         'Cannot find uiStateBranch and dispatch in props. This probably means you\'re using ' +
@@ -83,7 +94,7 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P & S, 
   }
 
   render() {
-    const mappedStateProps = mapStateToProps(this.props.uiStateBranch, id);
+    const mappedStateProps = getComponentStateFromUIStateBranch(this.props.uiStateBranch, id);
     return mappedStateProps.uiState
       ? <WrappedComponent {...merge(mappedStateProps, this.mappedDispatchProps)} />
       : null;
