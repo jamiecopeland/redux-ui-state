@@ -59,7 +59,9 @@
     "react-addons-test-utils": "^15.0.1",
     "sinon": "2.0.0-pre",
     "tslint": "^3.15.1",
-    "tslint-eslint-rules": "^2.1.0",
-    "tslint-microsoft-contrib": "^2.0.12"
+    "tslint-eslint-rules": "^2.2.1",
+    "tslint-microsoft-contrib": "^2.0.14",
+    "tslint-react": "^2.2.0",
+    "typescript": "^2.1.4"
   }
 }
