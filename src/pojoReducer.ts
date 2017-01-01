@@ -1,10 +1,11 @@
 import { SET_UI_STATE, REPLACE_UI_STATE } from './actions';
 import { merge } from './utils'
+
 export const initialState = {
   components: {},
 };
 
-export default (state = initialState, action) => {
+export const reducer = (state = initialState, action) => {
   switch (action.type) {
     case SET_UI_STATE: {
       return merge(

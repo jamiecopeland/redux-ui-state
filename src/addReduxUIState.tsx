@@ -29,13 +29,13 @@ export interface DispatchProps<S> {
 
 export type Props<S> = StateProps<S> & DispatchProps<S>;
 
-export function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string): StateProps<S> {
+function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string): StateProps<S> {
   return {
     uiState: state.components[id],
   };
 }
 
-export function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchProps<S> {
+function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchProps<S> {
   return {
     setUIState: (state: S): void => dispatch(setUIState({
       id,
@@ -101,4 +101,4 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P, any>
   }
 };
 
-export default addReduxUIState
+// export default addReduxUIState

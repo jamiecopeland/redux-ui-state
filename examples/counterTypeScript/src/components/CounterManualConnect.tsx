@@ -1,11 +1,9 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 
-import { DEFAULT_BRANCH_NAME } from 'redux-ui-state';
-
 import {
-  Props, UIStateBranch, AddReduxUIStateConfig, addReduxUIState
-} from 'redux-ui-state/lib/addReduxUIState';
+  DEFAULT_BRANCH_NAME, Props, UIStateBranch, AddReduxUIStateConfig, addReduxUIState
+} from 'redux-ui-state';
 
 interface UIState {
   index: number;
@@ -23,8 +21,7 @@ const Counter:React.StatelessComponent<Props<UIState>> = ({ uiState, setUIState 
   </div>
 );
 
-export const uiBranchSelector = state => state[DEFAULT_BRANCH_NAME];
-export const mapDispatchToProps = (dispatch): any => ({ dispatch });
+export const uiBranchSelector = (state): any => state[DEFAULT_BRANCH_NAME];
 export const mapStateToProps = (state): any => ({ uiStateBranch: uiBranchSelector(state) });
 
 const config: AddReduxUIStateConfig<UIState, {}> = {

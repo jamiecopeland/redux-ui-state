@@ -1,12 +1,12 @@
 export const SET_UI_STATE = 'reduxUIState.SET_UI_STATE';
 export const REPLACE_UI_STATE = 'reduxUIState.REPLACE_UI_STATE';
 
-export const setUIState = ({ state, id }) => ({
+export const setUIState = ({ id, state }) => ({
   type: SET_UI_STATE,
-  payload: { state, id },
+  payload: { id, state },
 });
 
-export const replaceUIState = ({ state, id }) => ({
+export const replaceUIState = ({ id, state }) => ({
   type: REPLACE_UI_STATE,
-  payload: { state, id },
+  payload: { id, state },
 });

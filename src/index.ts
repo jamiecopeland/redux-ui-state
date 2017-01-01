@@ -1,3 +1,4 @@
+import { StateProps } from '../lib/addReduxUIState';
 export { DEFAULT_BRANCH_NAME } from './constants';
 export {
   defaultUiBranchSelector,
@@ -13,6 +14,9 @@ export {
   replaceUIState,
 } from './actions';
 
-export { default as reduxUIStateReducer } from './pojoReducer';
-export  { default as addReduxUIState } from './addReduxUIState';
-export { default as addReduxUIStateWithConnect } from './addReduxUIStateWithConnect';
+export { reducer as pojoReducer } from './pojoReducer';
+export {
+  addReduxUIState, AddReduxUIStateConfig, UIStateBranch,
+  StateProps, DispatchProps, Props,
+} from './addReduxUIState';
+export { addReduxUIStateWithConnect } from './addReduxUIStateWithConnect';
