@@ -1,13 +1,11 @@
-import { compose } from 'redux';
-import { ComponentClass } from 'react';
+import { ComponentClass, StatelessComponent } from 'react';
 
 import { createConnectWrapper } from './utils';
-import { StateProps, DispatchProps, addReduxUIState } from './addReduxUIState';
-import { AddReduxUIStateConfig } from './addReduxUIState';
+import { addReduxUIState } from './addReduxUIState';
+import { AddReduxUIStateConfig, StateProps, DispatchProps } from './addReduxUIState';
+
 
 export const addReduxUIStateWithConnect = <S, P>
   ({ id, getInitialState }: AddReduxUIStateConfig<S, P>) =>
-  (Component): ComponentClass<P> =>
+  (Component: StatelessComponent<StateProps<S> & DispatchProps<S> & P>): ComponentClass<P> =>
   createConnectWrapper<P>()(addReduxUIState<S, P>({ id, getInitialState })(Component));
-
-// export default addReduxUIStateWithConnect;

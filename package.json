@@ -11,6 +11,7 @@
     "build": "tsc",
     "build:watch": "tsc -w",
     "prepublish": "npm run build",
+    "lint": "tslint 'src/**/*.{ts,tsx}'",
     "test": "karma start"
   },
   "repository": {

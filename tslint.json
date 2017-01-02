@@ -8,7 +8,6 @@
     "align": [
       true,
       "parameters",
-      "arguments",
       "statements"
     ],
     "ban": false,
@@ -23,8 +22,9 @@
     "indent": [ true, "spaces" ],
     "interface-name": [true, "never-prefix"],
     "jsdoc-format": true,
+    "jsx-no-lambda": false,
+    "jsx-no-multiline-js": false,
     "label-position": true,
-    "label-undefined": true,
     "max-line-length": [ true, 120 ],
     "member-ordering": [
       true,
@@ -32,7 +32,7 @@
       "static-before-instance",
       "variables-before-functions"
     ],
-    "no-any": false,
+    "no-any": true,
     "no-arg": true,
     "no-bitwise": true,
     "no-console": [
@@ -45,11 +45,9 @@
       "timeEnd",
       "trace"
     ],
-    "no-consecutive-blank-lines": true,
+    "no-consecutive-blank-lines": [true, 1],
     "no-construct": true,
-    "no-constructor-vars": false,
     "no-debugger": true,
-    "no-duplicate-key": true,
     "no-duplicate-variable": true,
     "no-empty": true,
     "no-eval": true,
@@ -57,9 +55,8 @@
     "no-string-literal": true,
     "no-switch-case-fall-through": true,
     "no-trailing-whitespace": false,
-    "no-unreachable": true,
     "no-unused-expression": true,
-    "no-unused-variable": [true, "react"],
+
     "no-use-before-declare": true,
     "one-line": [
       true,
@@ -72,17 +69,15 @@
     "radix": true,
     "semicolon": [true, "always"],
     "switch-default": true,
-    "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+
+    // NOTE: This rule now affects arguments as well, which we do not want
+    // "trailing-comma": [true, {"multiline": "always", "singleline": "never"}],
+
     "triple-equals": [ true, "allow-null-check" ],
     "typedef": [
       true,
-      // "arrow-call-signature",
-      // "arrow-parameter",
-      // "call-signature",
       "parameter",
       "property-declaration"
-      // "variable-declaration",
-      // "member-variable-declaration"
     ],
     "typedef-whitespace": [
       true,
@@ -93,11 +88,6 @@
         "property-declaration": "nospace",
         "variable-declaration": "nospace"
       }
-    ],
-    "use-strict": [
-      false,
-      "check-module",
-      "check-function"
     ],
     "variable-name": [true, "ban-keywords", "check-format", "allow-leading-underscore", "allow-pascal-case"],
     "whitespace": [

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Dispatch } from 'redux';
+import { Dispatch, Action } from 'redux';
 
 import { setUIState, replaceUIState } from './actions';
 
@@ -34,17 +34,22 @@ function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string)
   };
 }
 
-function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchProps<S> {
+function mapDispatchToProps<S>(
+  dispatch: Dispatch<any>,
+  props: any,
+  id: string,
+  getInitialState: (props: any) => S
+): DispatchProps<S> {
   return {
-    setUIState: (state: S): void => dispatch(setUIState({
+    setUIState: (state: S): Action => dispatch(setUIState({
       id,
       state: state,
     })),
-    replaceUIState: (state: S): void => dispatch(replaceUIState({
+    replaceUIState: (state: S): Action => dispatch(replaceUIState({
       id,
       state: state,
     })),
-    resetUIState: (): void => dispatch(replaceUIState({
+    resetUIState: (): Action => dispatch(replaceUIState({
       id,
       state: getInitialState(props),
     })),
@@ -59,7 +64,7 @@ export interface ExportedComponentStateProps {
 }
 
 export interface ExportedComponentDispatchProps {
-  dispatch: Function;
+  dispatch: Dispatch<any>;
 }
 
 export type ExportedComponentProps = ExportedComponentStateProps & ExportedComponentDispatchProps;
@@ -70,7 +75,7 @@ export const addReduxUIState = <S, P>(
 class ExportedComponent extends React.Component<ExportedComponentProps & P, any> {
   mappedDispatchProps: DispatchProps<S>;
 
-  constructor(props) {
+  constructor(props: ExportedComponentProps & P) {
     super(props);
 
     if (!props.uiStateBranch || !props.dispatch) {
