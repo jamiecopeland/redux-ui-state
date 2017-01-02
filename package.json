@@ -59,10 +59,11 @@
     "phantomjs-prebuilt": "^2.1.7",
     "react-addons-test-utils": "^15.0.1",
     "sinon": "2.0.0-pre",
-    "tslint": "^3.15.1",
+    "tslint": "^4.2.0",
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
     "tslint-react": "^2.2.0",
-    "typescript": "^2.1.4"
+    "typescript": "^2.1.4",
+    "webpack": "^1.14.0"
   }
 }

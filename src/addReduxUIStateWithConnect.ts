@@ -4,7 +4,6 @@ import { createConnectWrapper } from './utils';
 import { addReduxUIState } from './addReduxUIState';
 import { AddReduxUIStateConfig, StateProps, DispatchProps } from './addReduxUIState';
 
-
 export const addReduxUIStateWithConnect = <S, P>
   ({ id, getInitialState }: AddReduxUIStateConfig<S, P>) =>
   (Component: StatelessComponent<StateProps<S> & DispatchProps<S> & P>): ComponentClass<P> =>
