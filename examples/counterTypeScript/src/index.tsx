@@ -17,14 +17,18 @@
       <Provider store={store}>
         <div>
 
+          {/*
+
+          */}
+
           <h1>Connect automatically</h1>
-          <CounterAutoConnect />
+          <CounterAutoConnect initialValue={1} />
 
           <h1>Connect using utility</h1>
-          <CounterUtilConnect />
+          <CounterUtilConnect initialValue={2} />
 
           <h1>Connect manually</h1>
-          <CounterManualConnect />
+          <CounterManualConnect initialValue={3} />
 
         </div>
       </Provider>,

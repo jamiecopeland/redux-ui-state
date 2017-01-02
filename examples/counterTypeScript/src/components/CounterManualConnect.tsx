@@ -2,14 +2,27 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 
 import {
-  DEFAULT_BRANCH_NAME, Props, UIStateBranch, AddReduxUIStateConfig, addReduxUIState
+  addReduxUIState,
+  AddReduxUIStateConfig,
+  DEFAULT_BRANCH_NAME,
+  DispatchProps,
+  ExportedComponentDispatchProps,
+  ExportedComponentStateProps,
+  Props as ReduxUIStateProps,
+  UIStateBranch,
 } from 'redux-ui-state';
+
+interface Props {
+  initialValue: number;
+}
 
 interface UIState {
   index: number;
 }
 
-const Counter:React.StatelessComponent<Props<UIState>> = ({ uiState, setUIState }) => (
+const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
+  uiState, setUIState
+}) => (
   <div>
     <div>
       {uiState.index}
@@ -21,13 +34,20 @@ const Counter:React.StatelessComponent<Props<UIState>> = ({ uiState, setUIState 
   </div>
 );
 
+// NOTE: The mapStateToProps and uiBranchSelector functions are included here to be completely
+// explicit about what's going on, but in most applications they should be be swapped out for the
+// defaultMapStateToProps utility function provided by the library.
 export const uiBranchSelector = (state): any => state[DEFAULT_BRANCH_NAME];
-export const mapStateToProps = (state): any => ({ uiStateBranch: uiBranchSelector(state) });
+export const mapStateToProps = (state): any => (state, ownProps) => ({
+  uiStateBranch: uiBranchSelector(state),
+  ownProps
+});
 
-const config: AddReduxUIStateConfig<UIState, {}> = {
-  id: 'counter',
-  getInitialState: () => ({ index: 0 }),
-  destroyOnUnmount: false,
+const config: AddReduxUIStateConfig<UIState, Props> = {
+  id: 'counterManual',
+  getInitialState: ({ initialValue = 0 }) => ({ index: initialValue }),
 };
 
-export default connect(mapStateToProps)(addReduxUIState<UIState, {}>(config)(Counter));
+export default connect<
+  ExportedComponentStateProps, ExportedComponentDispatchProps, Props
+>(mapStateToProps)(addReduxUIState<UIState, Props>(config)(Counter));

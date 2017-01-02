@@ -1,14 +1,24 @@
 import * as React from 'react';
 import { compose } from 'redux';
 
-import { createConnectWrapper } from 'redux-ui-state';
-import { Props, AddReduxUIStateConfig, addReduxUIState } from 'redux-ui-state/lib/addReduxUIState';
+import {
+  addReduxUIState,
+  AddReduxUIStateConfig,
+  createConnectWrapper,
+  Props as ReduxUIStateProps,
+} from 'redux-ui-state';
+
+interface Props {
+  initialValue: number;
+}
 
 interface UIState {
   index: number;
 }
 
-const Counter: React.StatelessComponent<Props<UIState>> = ({ uiState, setUIState }) => (
+const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
+  uiState, setUIState
+}) => (
   <div>
     <div>
       {uiState.index}
@@ -20,13 +30,12 @@ const Counter: React.StatelessComponent<Props<UIState>> = ({ uiState, setUIState
   </div>
 );
 
-const config: AddReduxUIStateConfig<UIState, {}> = {
-  id: 'counter',
-  getInitialState: () => ({ index: 0 }),
-  destroyOnUnmount: false,
+const config: AddReduxUIStateConfig<UIState, Props> = {
+  id: 'counterUtil',
+  getInitialState: ({ initialValue = 0 }) => ({ index: initialValue }),
 };
 
 export default compose(
-  createConnectWrapper(),
-  addReduxUIState<any, any>(config)
+  createConnectWrapper<Props>(),
+  addReduxUIState<UIState, Props>(config)
 )(Counter);

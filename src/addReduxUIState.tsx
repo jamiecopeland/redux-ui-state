@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Dispatch } from 'redux';
 
 import { setUIState, replaceUIState } from './actions';
-import { merge } from './utils';
 
 // The branch of the Redux store governed by reduxUIState's reducer
 export interface UIStateBranch {
@@ -56,6 +55,7 @@ function mapDispatchToProps<S>(dispatch, props, id, getInitialState): DispatchPr
 
 export interface ExportedComponentStateProps {
   uiStateBranch: UIStateBranch;
+  ownProps: Object;
 }
 
 export interface ExportedComponentDispatchProps {
@@ -96,9 +96,9 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P, any>
   render() {
     const mappedStateProps = getComponentStateFromUIStateBranch(this.props.uiStateBranch, id);
     return mappedStateProps.uiState
-      ? <WrappedComponent {...merge(mappedStateProps, this.mappedDispatchProps)} />
+      ? <WrappedComponent
+          {...Object.assign(mappedStateProps, this.mappedDispatchProps, this.props.ownProps)}
+        />
       : null;
-  }
+  };
 };
-
-// export default addReduxUIState
