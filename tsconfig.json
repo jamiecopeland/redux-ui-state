@@ -14,10 +14,11 @@
     "rootDir": "src",
     "sourceMap": true,
     "suppressImplicitAnyIndexErrors": true,
-    "target": "es5"
+    "target": "es5",
+    "types": ["jest"]
   },
   "exclude": [
-    "src/__tests",
+    "src/__tests__",
     "examples",
     "node_modules",
     "lib"
