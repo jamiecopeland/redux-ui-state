@@ -18,7 +18,6 @@
     "types": ["jest"]
   },
   "exclude": [
-    "src/__tests__",
     "examples",
     "node_modules",
     "lib"
