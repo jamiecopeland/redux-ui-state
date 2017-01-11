@@ -5,14 +5,22 @@ import { UIStateBranch } from '../addReduxUIState';
 const COMPONENT_ID = 'thing';
 
 interface ComponentUIState {
-  readonly firstName?: string;
-  readonly lastName?: string;
+  readonly isOpen?: boolean;
+  readonly selectedIndex?: number;
 }
 
 const getUser = (): ComponentUIState => ({
-  firstName: 'Darth',
-  lastName: 'Vader',
+  isOpen: true,
+  selectedIndex: 0,
 });
+
+const createState = (
+  state: ComponentUIState, componentId: string = COMPONENT_ID
+): UIStateBranch => ({
+    components: {
+      [componentId]: state,
+    },
+  });
 
 describe('pojoReducer', () => {
 
@@ -20,59 +28,60 @@ describe('pojoReducer', () => {
     it('set a new primitive value in empty initial state', () => {
       const action = setUIState<ComponentUIState>({
         state: {
-          firstName: getUser().firstName,
+          isOpen: getUser().isOpen,
         },
         id: COMPONENT_ID,
       });
       const newState = reducer(defaultInitialState, action);
 
-      expect(newState).toEqual({
-        components: {
-          [COMPONENT_ID]: {
-            firstName: getUser().firstName,
-          },
-        },
-      });
+      expect(newState).toEqual(createState({
+        isOpen: getUser().isOpen,
+      }));
     });
 
     it('set a new primitive value in populated initial state', () => {
-      const initialState: UIStateBranch = {
-        components: {
-          [COMPONENT_ID]: {
-            lastName: getUser().lastName,
-          },
-        },
-      };
+      const initialState: UIStateBranch = createState({
+        selectedIndex: getUser().selectedIndex,
+      });
       const action = setUIState<ComponentUIState>({
         state: {
-          firstName: getUser().firstName,
+          isOpen: getUser().isOpen,
         },
         id: COMPONENT_ID,
       });
       const newState = reducer(initialState, action);
-      expect(newState).toEqual({
-        components: {
-          [COMPONENT_ID]: {
-            firstName: getUser().firstName,
-            lastName: getUser().lastName,
-          },
-        },
+      expect(newState).toEqual(createState({
+        isOpen: getUser().isOpen,
+        selectedIndex: getUser().selectedIndex,
+      }));
+    });
+
+    it('set the value of a pre-existing property', () => {
+      const initialIndex = 0;
+      const newIndex = 1;
+
+      const initialState: UIStateBranch = createState({
+        selectedIndex: initialIndex,
       });
+      const action = setUIState<ComponentUIState>({
+        state: {
+          selectedIndex: newIndex,
+        },
+        id: COMPONENT_ID,
+      });
+      const newState = reducer(initialState, action);
+      expect(newState).toEqual(createState({
+        selectedIndex: newIndex,
+      }));
     });
   });
 
   describe('REPLACE_UI_STATE', () => {
     it('should replace ui state with empty state', () => {
-      const initialState: UIStateBranch = {
-        components: {
-          [COMPONENT_ID]: {
-            firstName: getUser().firstName,
-          },
-        },
-      };
+      const initialState: UIStateBranch = createState({});
 
       const replacementState: ComponentUIState = {
-        lastName: getUser().lastName,
+        selectedIndex: getUser().selectedIndex,
       };
 
       const action = replaceUIState({
@@ -81,24 +90,16 @@ describe('pojoReducer', () => {
       });
 
       const newState = reducer(initialState, action);
-      expect(newState).toEqual({
-        components: {
-          [COMPONENT_ID]: replacementState,
-        },
-      });
+      expect(newState).toEqual(createState(replacementState));
     });
 
     it('should replace ui state with populated state', () => {
-      const initialState: UIStateBranch = {
-        components: {
-          [COMPONENT_ID]: {
-            firstName: getUser().firstName,
-          },
-        },
-      };
+      const initialState: UIStateBranch = createState({
+        isOpen: getUser().isOpen,
+      });
 
       const replacementState: ComponentUIState = {
-        lastName: getUser().lastName,
+        selectedIndex: getUser().selectedIndex,
       };
 
       const action = replaceUIState<ComponentUIState>({
@@ -107,11 +108,7 @@ describe('pojoReducer', () => {
       });
 
       const newState = reducer(initialState, action);
-      expect(newState).toEqual({
-        components: {
-          [COMPONENT_ID]: replacementState,
-        },
-      });
+      expect(newState).toEqual(createState(replacementState));
     });
   });
 });
