@@ -3,19 +3,28 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import { DEFAULT_BRANCH_NAME } from './constants';
+import { UIStateBranch, DefaultStateShape, ExportedComponentStateProps, ExportedComponentDispatchProps, ExportedComponentProps } from './addReduxUIState';
 
-export const defaultUiBranchSelector = (state: any) => state[DEFAULT_BRANCH_NAME];
+export const defaultUiBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
-export const defaultMapStateToProps = (state: any, ownProps: Object) => ({
+export const defaultMapStateToProps = (state: DefaultStateShape, ownProps: Object): ExportedComponentStateProps => ({
   uiStateBranch: defaultUiBranchSelector(state),
   ownProps
 });
 
-export const defaultMapDispatchToProps = (dispatch: Dispatch<any>) => ({ dispatch });
+export const defaultMapDispatchToProps = (dispatch: Dispatch<DefaultStateShape>) => ({ dispatch });
+
+export type asdf = <P>(state: any, ownProps?: P) => ExportedComponentStateProps;
+
 
 export const createConnectWrapper = <P>(
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps
-) => (component: React.ComponentClass<any>) => connect<any, any, P>(mapStateToProps, mapDispatchToProps)(component);
+) => (component: React.ComponentClass<ExportedComponentProps & P>) =>
+  connect<
+    ExportedComponentStateProps,
+    ExportedComponentDispatchProps,
+    P
+  >(mapStateToProps, mapDispatchToProps)(component);
 
 export const merge = (obj1: Object, obj2: Object) => Object.assign({}, obj1, obj2);

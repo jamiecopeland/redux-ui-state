@@ -1,11 +1,12 @@
-import { SET_UI_STATE, REPLACE_UI_STATE } from './actions';
-import { merge } from './utils'
+import { SET_UI_STATE, REPLACE_UI_STATE, ReduxUIAction } from './actions';
+import { merge } from './utils';
+import { UIStateBranch } from './addReduxUIState';
 
-export const initialState = {
+export const initialState: UIStateBranch = {
   components: {},
 };
 
-export const reducer = (state = initialState, action) => {
+export const reducer = (state = initialState, action: ReduxUIAction<Object>) => {
   switch (action.type) {
     case SET_UI_STATE: {
       return merge(

@@ -13,7 +13,7 @@ interface Props {
 }
 
 interface UIState {
-  index: number
+  index: number;
 }
 
 const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({

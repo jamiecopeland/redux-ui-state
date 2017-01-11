@@ -37,8 +37,8 @@ const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
 // NOTE: The mapStateToProps and uiBranchSelector functions are included here to be completely
 // explicit about what's going on, but in most applications they should be be swapped out for the
 // defaultMapStateToProps utility function provided by the library.
-export const uiBranchSelector = (state): any => state[DEFAULT_BRANCH_NAME];
-export const mapStateToProps = (state): any => (state, ownProps) => ({
+export const uiBranchSelector = (state): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+export const mapStateToProps = (state, ownProps) => ({
   uiStateBranch: uiBranchSelector(state),
   ownProps
 });
