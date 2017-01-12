@@ -45,15 +45,15 @@ function mapDispatchToProps<S, P>(
   getInitialState: (props: P) => S
 ): DispatchProps<S> {
   return {
-    setUIState: (state: S): Action => dispatch(setUIState({
+    setUIState: (state: S): Action => dispatch(setUIState<S>({
       id,
       state: state,
     })),
-    replaceUIState: (state: S): Action => dispatch(replaceUIState({
+    replaceUIState: (state: S): Action => dispatch(replaceUIState<S>({
       id,
       state: state,
     })),
-    resetUIState: (): Action => dispatch(replaceUIState({
+    resetUIState: (): Action => dispatch(replaceUIState<S>({
       id,
       state: getInitialState(props),
     })),

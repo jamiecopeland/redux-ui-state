@@ -14,9 +14,6 @@ export const defaultMapStateToProps = (state: DefaultStateShape, ownProps: Objec
 
 export const defaultMapDispatchToProps = (dispatch: Dispatch<DefaultStateShape>) => ({ dispatch });
 
-export type asdf = <P>(state: any, ownProps?: P) => ExportedComponentStateProps;
-
-
 export const createConnectWrapper = <P>(
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps

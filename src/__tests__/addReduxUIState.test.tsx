@@ -2,21 +2,16 @@ import * as React from 'react';
 import { mount } from 'enzyme';
 
 import { StatelessComponent } from 'react';
-import { Props as ReduxUIStateProps, addReduxUIState, ExportedComponentDispatchProps, ExportedComponentStateProps, AddReduxUIStateConfig, UIStateBranch } from '../addReduxUIState';
-import { setUIState } from '../actions';
+import {
+  Props as ReduxUIStateProps,
+  addReduxUIState,
+  ExportedComponentDispatchProps,
+  ExportedComponentStateProps,
+  AddReduxUIStateConfig,
+  UIStateBranch
+} from '../addReduxUIState';
+import { setUIState, replaceUIState } from '../actions';
 import { Action } from 'redux';
-
-// Component fixture
-
-const TestComponent: StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({ uiState, setUIState }) => (
-  <div>
-    <span id="indexLabel">{uiState.index}</span>
-    <button id="setUIStateButton" onClick={() => setUIState({ index: uiState.index + 1 })}>
-      increment
-    </button>
-
-  </div>
-);
 
 // Data fixture
 
@@ -36,7 +31,7 @@ const componentPropsFixture: Props = {
 
 const uiStateFixture: UIState = {
   index: 666,
-}
+};
 
 const reduxStateBranchFixture: UIStateBranch = {
   components: {
@@ -66,6 +61,25 @@ const getWrapper = () => {
   };
 }
 
+// Component fixture
+
+const TestComponent: StatelessComponent<Props & ReduxUIStateProps<UIState>> = (
+  { uiState, setUIState, replaceUIState, resetUIState }
+) => (
+  <div>
+    <span id="indexLabel">{uiState.index}</span>
+    <button id="setUIStateButton" onClick={() => setUIState({ index: uiState.index + 1 })}>
+      setState
+    </button>
+    <button id="replaceUIStateButton" onClick={() => replaceUIState({ index: uiState.index + 1 })}>
+      replaceState
+    </button>
+    <button id="resetUIStateButton" onClick={() => resetUIState()}>
+      replaceState
+    </button>
+  </div>
+);
+
 describe('addReduxUIState', () => {
 
   it('should recieve proxied props', () => {
@@ -85,7 +99,7 @@ describe('addReduxUIState', () => {
     expect(typeof wrapper.props().dispatch).toEqual('function');
   });
 
-  it('should dispatch setUIState on mount', () => {
+  it('should dispatch setUIState action on mount', () => {
     const { dispatch } = getWrapper();
 
     expect(dispatch).toHaveBeenCalledTimes(1);
@@ -98,7 +112,7 @@ describe('addReduxUIState', () => {
     expect(dispatch).toHaveBeenCalledWith(action);
   });
 
-  it('should dispatch setUIState on mount', () => {
+  it('should dispatch setUIState action when setUIState prop is called', () => {
     const { wrapper, dispatch } = getWrapper();
 
     wrapper.find('#setUIStateButton').simulate('click');
@@ -111,6 +125,55 @@ describe('addReduxUIState', () => {
         index: uiStateFixture.index + 1,
       }
     });
+    expect(dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should dispatch replaceUIState action when replaceUIState prop is called', () => {
+    const { wrapper, dispatch } = getWrapper();
+
+    wrapper.find('#replaceUIStateButton').simulate('click');
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+
+    const action: Action = replaceUIState({
+      id: componentId,
+      state: {
+        index: uiStateFixture.index + 1,
+      }
+    });
+    expect(dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should dispatch setUIState when replaceUIState prop is called', () => {
+    const { wrapper, dispatch } = getWrapper();
+
+    wrapper.find('#replaceUIStateButton').simulate('click');
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+
+    const action: Action = replaceUIState({
+      id: componentId,
+      state: {
+        index: uiStateFixture.index + 1,
+      }
+    });
+    expect(dispatch).toHaveBeenCalledWith(action);
+  });
+
+  it('should dispatch setUIState when replaceUIState prop is called', () => {
+    const { wrapper, dispatch } = getWrapper();
+
+    wrapper.find('#resetUIStateButton').simulate('click');
+
+    expect(dispatch).toHaveBeenCalledTimes(2);
+
+    const action: Action = replaceUIState({
+      id: componentId,
+      state: {
+        index: componentPropsFixture.initialIndex,
+      }
+    });
+
     expect(dispatch).toHaveBeenCalledWith(action);
   });
 
