@@ -1,7 +1,7 @@
 # Redux UI State
 Component state for Redux applications
 
-***[Note: This is currently a pre-alpha experiment]***
+
 
 ## Installation
 ```
