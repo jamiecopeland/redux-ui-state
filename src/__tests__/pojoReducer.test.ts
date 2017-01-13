@@ -1,5 +1,5 @@
 import { reducer, initialState as defaultInitialState } from '../pojoReducer';
-import { setUIState, replaceUIState } from '../actions';
+import { setUIState, replaceUIState, destroyUIState } from '../actions';
 import { UIStateBranch } from '../addReduxUIState';
 
 const COMPONENT_ID = 'thing';
@@ -109,6 +109,24 @@ describe('pojoReducer', () => {
 
       const newState = reducer(initialState, action);
       expect(newState).toEqual(createState(replacementState));
+    });
+  });
+
+  describe('DESTROY_UI_STATE', () => {
+    it('should destroy ui state', () => {
+      const initialState: UIStateBranch = createState({
+        isOpen: getUser().isOpen,
+      });
+
+      const action = destroyUIState({
+        id: COMPONENT_ID,
+      });
+
+      const newState = reducer(initialState, action);
+
+      expect(newState).toEqual({
+        components: {}
+      });
     });
   });
 });

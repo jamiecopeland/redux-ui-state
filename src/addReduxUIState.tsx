@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 
-import { setUIState, replaceUIState } from './actions';
+import { setUIState, replaceUIState, destroyUIState } from './actions';
 
 export interface DefaultStateShape {
   // This is slightly gross and involves repetition of the value in DEFAULT_BRANCH_NAME, but
@@ -28,6 +28,7 @@ export interface DispatchProps<S> {
   setUIState: (state: S) => void;
   replaceUIState: (state: S) => void;
   resetUIState: () => void;
+  destroyUIState: () => void;
 }
 
 export type Props<S> = StateProps<S> & DispatchProps<S>;
@@ -56,6 +57,9 @@ function mapDispatchToProps<S, P>(
     resetUIState: (): Action => dispatch(replaceUIState<S>({
       id,
       state: getInitialState(props),
+    })),
+    destroyUIState: (): Action => dispatch(destroyUIState({
+      id,
     })),
   };
 }
@@ -98,7 +102,7 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P, {}> 
 
   componentWillUnmount() {
     if (destroyOnUnmount) {
-      this.mappedDispatchProps.resetUIState();
+      this.mappedDispatchProps.destroyUIState();
     }
   }
 

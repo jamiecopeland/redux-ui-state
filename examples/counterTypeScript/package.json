@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state-typescript-example",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "",
   "scripts": {
     "start": "node server.js"
