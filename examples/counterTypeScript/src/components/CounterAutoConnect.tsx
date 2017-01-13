@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { addReduxUIStateWithConnect } from 'redux-ui-state/lib/addReduxUIStateWithConnect';
+import { connectReduxUIState } from 'redux-ui-state/lib/connectReduxUIState';
 
 import {
   addReduxUIState,
@@ -35,4 +35,4 @@ const config: AddReduxUIStateConfig<UIState, Props> = {
   getInitialState: ({ initialValue }) => ({ index: initialValue }),
 };
 
-export default addReduxUIStateWithConnect(config)(Counter);
+export default connectReduxUIState(config)(Counter);

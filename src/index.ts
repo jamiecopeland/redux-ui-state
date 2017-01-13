@@ -19,4 +19,4 @@ export {
   StateProps, DispatchProps, Props,
   ExportedComponentDispatchProps, ExportedComponentStateProps,
 } from './addReduxUIState';
-export { addReduxUIStateWithConnect } from './addReduxUIStateWithConnect';
+export { connectReduxUIState } from './connectReduxUIState';

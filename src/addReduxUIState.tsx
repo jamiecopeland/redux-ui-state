@@ -85,8 +85,8 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P, {}> 
     if (!props.uiStateBranch || !props.dispatch) {
       throw new Error(
         'Cannot find uiStateBranch and dispatch in props. This probably means you\'re using ' +
-        'addReduxUIState rather than addReduxUISTateWithConnect and havent passed the required ' +
-        'props through in your component\'s mapStateToProps and mapDispatchToProps functions.'
+        'addReduxUIState rather than connectReduxUIState and havent passed the required props' +
+        'through in your component\'s mapStateToProps and mapDispatchToProps functions.'
       );
     }
     this.mappedDispatchProps = mapDispatchToProps<S, P>(this.props.dispatch, props, id, getInitialState);

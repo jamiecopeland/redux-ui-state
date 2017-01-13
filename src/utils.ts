@@ -3,7 +3,13 @@ import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
 import { DEFAULT_BRANCH_NAME } from './constants';
-import { UIStateBranch, DefaultStateShape, ExportedComponentStateProps, ExportedComponentDispatchProps, ExportedComponentProps } from './addReduxUIState';
+import {
+  UIStateBranch,
+  DefaultStateShape,
+  ExportedComponentStateProps,
+  ExportedComponentDispatchProps,
+  ExportedComponentProps
+} from './addReduxUIState';
 
 export const defaultUiBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
