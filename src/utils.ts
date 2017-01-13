@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { createSelector } from 'reselect';
 
 import { DEFAULT_BRANCH_NAME } from './constants';
 import {
@@ -12,6 +13,24 @@ import {
 } from './addReduxUIState';
 
 export const defaultUiBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+
+export interface SelectIdProps {
+  id: string;
+}
+export const idSelector = (_: Object, { id }: SelectIdProps) => id;
+
+export interface SelectUIStateBranchSelectorProps {
+  branchSelector: (state: Object) => UIStateBranch;
+}
+export const uiStateBranchSelectorSelector = (_: Object, { branchSelector }: SelectUIStateBranchSelectorProps) =>
+  branchSelector;
+
+export const uiStateSelector = createSelector(
+  state => state,
+  idSelector,
+  uiStateBranchSelectorSelector,
+  (state, id, branchSelector = defaultUiBranchSelector) => branchSelector(state).components[id],
+);
 
 export const defaultMapStateToProps = (state: DefaultStateShape, ownProps: Object): ExportedComponentStateProps => ({
   uiStateBranch: defaultUiBranchSelector(state),
