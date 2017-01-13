@@ -1,7 +1,7 @@
 {
   "name": "redux-ui-state",
-  "version": "1.0.0",
-  "description": "UI state storage for redux",
+  "version": "1.0.1",
+  "description": "UI state management for Redux applications",
   "main": "lib/index.js",
   "directories": {
     "test": "test"

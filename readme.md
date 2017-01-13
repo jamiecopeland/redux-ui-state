@@ -1,5 +1,5 @@
 # Redux UI State
-Component state for Redux applications
+UI state management for Redux applications
 
 
 
