@@ -19,14 +19,22 @@ interface UIState {
   index: number;
 }
 
-interface Props {
+interface StateProps {
   initialIndex: number;
+}
+
+interface DispatchProps {
+  onSomething: Function;
 }
 
 const componentId = 'thing';
 
-const componentPropsFixture: Props = {
-  initialIndex: 1
+const componentStatePropsFixture: StateProps = {
+  initialIndex: 1,
+};
+
+const componentDispatchPropsFixture: DispatchProps = {
+  onSomething: () => '',
 };
 
 const uiStateFixture: UIState = {
@@ -37,33 +45,20 @@ const reduxStateBranchFixture: UIStateBranch = {
   components: {
     [componentId]: uiStateFixture
   }
-}
+};
 
-type AllProps = ExportedComponentStateProps & ExportedComponentDispatchProps & Props;
+type AllProps = ExportedComponentStateProps & ExportedComponentDispatchProps & StateProps & DispatchProps;
 
 const getPropsFixture = (dispatch = jest.fn()): AllProps => ({
-  ...componentPropsFixture,
+  ...componentStatePropsFixture,
+  ...componentDispatchPropsFixture,
   uiStateBranch: reduxStateBranchFixture,
-  ownProps: componentPropsFixture,
   dispatch: jest.fn(),
 });
 
-const getWrapper = () => {
-  const config: AddReduxUIStateConfig<UIState, Props> = {
-    id: componentId,
-    getInitialState: ({ initialIndex = 0 }) => ({ index: initialIndex }),
-  };
-  const Component = addReduxUIState<UIState, Props>(config)(TestComponent);
-  const props = getPropsFixture();
-  return {
-    wrapper: mount(<Component {...props} />),
-    dispatch: props.dispatch,
-  };
-}
-
 // Component fixture
 
-const TestComponent: StatelessComponent<Props & ReduxUIStateProps<UIState>> = (
+const TestComponent: StatelessComponent<StateProps & DispatchProps & ReduxUIStateProps<UIState>> = (
   { uiState, setUIState, replaceUIState, resetUIState }
 ) => (
   <div>
@@ -80,23 +75,51 @@ const TestComponent: StatelessComponent<Props & ReduxUIStateProps<UIState>> = (
   </div>
 );
 
+const getWrapper = () => {
+  const config: AddReduxUIStateConfig<UIState, StateProps> = {
+    id: componentId,
+    getInitialState: ({ initialIndex = 0 }) => ({ index: initialIndex }),
+  };
+  const Component = addReduxUIState<UIState, StateProps>(config)(TestComponent);
+  const props = getPropsFixture();
+  return {
+    wrapper: mount(<Component {...props} />),
+    dispatch: props.dispatch,
+  };
+};
+
 describe('addReduxUIState', () => {
 
-  it('should recieve proxied props', () => {
+  it.only('should recieve proxied props', () => {
     const { wrapper } = getWrapper();
-
-    expect((wrapper.props() as AllProps).initialIndex).toEqual(componentPropsFixture.initialIndex);
+    expect((wrapper.find(TestComponent).props()).initialIndex).toEqual(componentStatePropsFixture.initialIndex);
+    expect((wrapper.find(TestComponent).props()).onSomething).toEqual(componentDispatchPropsFixture.onSomething);
   });
 
   it('should recieve correct uiState prop', () => {
     const { wrapper } = getWrapper();
 
-    expect((wrapper.props() as AllProps).uiStateBranch).toEqual(reduxStateBranchFixture);
+    expect(((wrapper.find(TestComponent).props())).uiState).toEqual(uiStateFixture);
   });
 
-  it('should recieve dispatch function', () => {
+  it('should recieve setUIState function', () => {
     const { wrapper } = getWrapper();
-    expect(typeof wrapper.props().dispatch).toEqual('function');
+    expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
+  });
+
+  it('should recieve replaceUIState function', () => {
+    const { wrapper } = getWrapper();
+    expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
+  });
+
+  it('should recieve resetUIState function', () => {
+    const { wrapper } = getWrapper();
+    expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
+  });
+
+  it('should recieve destroyUIState function', () => {
+    const { wrapper } = getWrapper();
+    expect(typeof wrapper.find(TestComponent).props().destroyUIState).toEqual('function');
   });
 
   it('should dispatch setUIState action on mount', () => {
@@ -106,7 +129,7 @@ describe('addReduxUIState', () => {
     const action: Action = setUIState({
       id: componentId,
       state: {
-        index: componentPropsFixture.initialIndex,
+        index: componentStatePropsFixture.initialIndex,
       }
     });
     expect(dispatch).toHaveBeenCalledWith(action);
@@ -170,7 +193,7 @@ describe('addReduxUIState', () => {
     const action: Action = replaceUIState({
       id: componentId,
       state: {
-        index: componentPropsFixture.initialIndex,
+        index: componentStatePropsFixture.initialIndex,
       }
     });
 

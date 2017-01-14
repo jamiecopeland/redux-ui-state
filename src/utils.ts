@@ -34,10 +34,12 @@ export const uiStateSelector = createSelector(
 
 export const defaultMapStateToProps = (state: DefaultStateShape, ownProps: Object): ExportedComponentStateProps => ({
   uiStateBranch: defaultUiBranchSelector(state),
-  ownProps
 });
 
-export const defaultMapDispatchToProps = (dispatch: Dispatch<DefaultStateShape>) => ({ dispatch });
+export const defaultMapDispatchToProps = (dispatch: Dispatch<DefaultStateShape>, ownProps: Object) => ({
+  dispatch,
+  ownDispatchProps: ownProps
+});
 
 export const createConnectWrapper = <P>(
   mapStateToProps = defaultMapStateToProps,
