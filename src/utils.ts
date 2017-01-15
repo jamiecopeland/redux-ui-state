@@ -73,14 +73,12 @@ export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
  * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
  * defaults will be used.
  */
-export const createConnectWrapper = <P>(
+export const createConnectWrapper = <TProps>(
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps
-) => (component: React.ComponentClass<ExportedComponentProps & P>) =>
+) => (component: React.ComponentClass<ExportedComponentProps & TProps>) =>
   connect<
     ExportedComponentStateProps,
     ExportedComponentDispatchProps,
-    P
+    TProps
   >(mapStateToProps, mapDispatchToProps)(component);
-
-export const merge = (obj1: Object, obj2: Object) => Object.assign({}, obj1, obj2);

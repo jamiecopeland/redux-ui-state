@@ -104,7 +104,7 @@ export const omitReduxUIProps = (props: ExportedComponentProps) => {
   delete cleanedProps.uiStateBranch;
   delete cleanedProps.dispatch;
   return cleanedProps;
-}
+};
 
 export const addReduxUIState = <S, P>(
   { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<S, P>
