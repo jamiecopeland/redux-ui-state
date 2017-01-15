@@ -5,6 +5,9 @@ export const initialState: UIStateBranch = {
   components: {},
 };
 
+/**
+ * Makes all your dreams (or at least actions) come true.
+ */
 export const reducer = (
   state = initialState,
   action: ModifyUIStateAction<Object> | DestroyUIStateAction
