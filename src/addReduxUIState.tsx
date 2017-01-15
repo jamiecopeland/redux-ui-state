@@ -22,25 +22,25 @@ export interface UIStateBranch {
 /**
  * The shape of the config object to be passed to addReduxUIState
  */
-export interface AddReduxUIStateConfig<S, P> {
+export interface AddReduxUIStateConfig<TState, TProps> {
   id: string;
-  getInitialState: (props?: P) => S;
+  getInitialState: (props?: TProps) => TState;
   destroyOnUnmount?: boolean;
 }
 
 /**
  * The state props passed into a component wrapped by addReduxUIState
  */
-export interface StateProps<S> {
-  uiState: S;
+export interface StateProps<TUIState> {
+  uiState: TUIState;
 }
 
 /**
  * The dispatch props passed into a component wrapped by addReduxUIState
  */
-export interface DispatchProps<S> {
-  setUIState: (state: S) => void;
-  replaceUIState: (state: S) => void;
+export interface DispatchProps<TUIState> {
+  setUIState: (state: TUIState) => void;
+  replaceUIState: (state: TUIState) => void;
   resetUIState: () => void;
   destroyUIState: () => void;
 }
@@ -48,7 +48,7 @@ export interface DispatchProps<S> {
 /**
  * All the props props passed into a component wrapped by addReduxUIState
  */
-export type Props<S> = StateProps<S> & DispatchProps<S>;
+export type Props<TUIState> = StateProps<TUIState> & DispatchProps<TUIState>;
 
 /**
  * Extracts the state for a particutlar component from the UIStateBranch of the state tree
@@ -62,22 +62,22 @@ function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string)
 /**
  * Creates the dispatch props for the wrapped component
  */
-function mapDispatchToProps<S, P>(
+function mapDispatchToProps<TUIState, TProps>(
   dispatch: Dispatch<DefaultStateShape>,
-  props: P,
+  props: TProps,
   id: string,
-  getInitialState: (props: P) => S
-): DispatchProps<S> {
+  getInitialState: (props: TProps) => TUIState
+): DispatchProps<TUIState> {
   return {
-    setUIState: (state: S): Action => dispatch(setUIState<S>({
+    setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
       id,
       state: state,
     })),
-    replaceUIState: (state: S): Action => dispatch(replaceUIState<S>({
+    replaceUIState: (state: TUIState): Action => dispatch(replaceUIState<TUIState>({
       id,
       state: state,
     })),
-    resetUIState: (): Action => dispatch(replaceUIState<S>({
+    resetUIState: (): Action => dispatch(replaceUIState<TUIState>({
       id,
       state: getInitialState(props),
     })),
@@ -106,15 +106,15 @@ export const omitReduxUIProps = (props: ExportedComponentProps) => {
   return cleanedProps;
 };
 
-export const addReduxUIState = <S, P>(
-  { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<S, P>
-) => (WrappedComponent: React.StatelessComponent<P & Props<S>>): React.ComponentClass<ExportedComponentProps & P> =>
-class ExportedComponent extends React.Component<ExportedComponentProps & P, {}> {
+export const addReduxUIState = <TUIState, TProps>(
+  { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<TUIState, TProps>
+) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
+class ExportedComponent extends React.Component<ExportedComponentProps & TProps, {}> {
   static displayName = 'ReduxUIStateHOC';
 
-  mappedDispatchProps: DispatchProps<S>;
+  mappedDispatchProps: DispatchProps<TUIState>;
 
-  constructor(props: ExportedComponentProps & P) {
+  constructor(props: ExportedComponentProps & TProps) {
     super(props);
 
     if (!props.uiStateBranch || !props.dispatch) {
@@ -124,7 +124,7 @@ class ExportedComponent extends React.Component<ExportedComponentProps & P, {}> 
         'through in your component\'s mapStateToProps and mapDispatchToProps functions.'
       );
     }
-    this.mappedDispatchProps = mapDispatchToProps<S, P>(this.props.dispatch, props, id, getInitialState);
+    this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(this.props.dispatch, props, id, getInitialState);
   }
 
   componentDidMount() {
