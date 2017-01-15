@@ -12,34 +12,67 @@ import {
   ExportedComponentProps
 } from './addReduxUIState';
 
-export const defaultUiBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+/**
+ * Selects the default from the Redux store
+ */
+export const defaultBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
-export interface SelectIdProps {
+/**
+ * The shape of props passed into the idSelector
+ */
+export interface IdSelectorProps {
   id: string;
 }
-export const idSelector = (_: Object, { id }: SelectIdProps) => id;
 
-export interface SelectUIStateBranchSelectorProps {
+/**
+ * Selects the id passed in by the props
+ */
+export const idSelector = (_: Object, { id }: IdSelectorProps) => id;
+
+/**
+ * The shape of the props passed into branchSelectorSelector
+ */
+export interface BranchSelectorSelectorProps {
   branchSelector: (state: Object) => UIStateBranch;
 }
-export const uiStateBranchSelectorSelector = (_: Object, { branchSelector }: SelectUIStateBranchSelectorProps) =>
+
+/**
+ * Selects the uiStateBranchSelector from the props
+ */
+export const branchSelectorSelector = (
+  _: Object, { branchSelector }: BranchSelectorSelectorProps
+) =>
   branchSelector;
 
+/**
+ * Selects uiState of a component
+ */
 export const uiStateSelector = createSelector(
   state => state,
   idSelector,
-  uiStateBranchSelectorSelector,
-  (state, id, branchSelector = defaultUiBranchSelector) => branchSelector(state).components[id],
+  branchSelectorSelector,
+  (state, id, branchSelector = defaultBranchSelector) => branchSelector(state).components[id],
 );
 
+/**
+ * Maps uiStateBranch to props if the default state shape for the Redux store has been used
+ */
 export const defaultMapStateToProps = (state: DefaultStateShape): ExportedComponentStateProps => ({
-  uiStateBranch: defaultUiBranchSelector(state),
+  uiStateBranch: defaultBranchSelector(state),
 });
 
-export const defaultMapDispatchToProps = (dispatch: Dispatch<DefaultStateShape>) => ({
+/**
+ * Maps dispatch to props.
+ * NOTE: This will not vary based on state shape
+ */
+export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
   dispatch,
 });
 
+/**
+ * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
+ * defaults will be used.
+ */
 export const createConnectWrapper = <P>(
   mapStateToProps = defaultMapStateToProps,
   mapDispatchToProps = defaultMapDispatchToProps

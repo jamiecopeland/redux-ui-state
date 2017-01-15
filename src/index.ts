@@ -1,6 +1,6 @@
 export { DEFAULT_BRANCH_NAME } from './constants';
 export {
-  defaultUiBranchSelector,
+  defaultBranchSelector,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
   createConnectWrapper,
