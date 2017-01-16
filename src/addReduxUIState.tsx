@@ -22,9 +22,9 @@ export interface UIStateBranch {
 /**
  * The shape of the config object to be passed to addReduxUIState
  */
-export interface AddReduxUIStateConfig<TState, TProps> {
+export interface AddReduxUIStateConfig<TUIState, TProps> {
   id: string;
-  getInitialState: (props?: TProps) => TState;
+  getInitialState: (props?: TProps, existingState?: TUIState) => TUIState;
   destroyOnUnmount?: boolean;
 }
 
@@ -53,10 +53,8 @@ export type Props<TUIState> = StateProps<TUIState> & DispatchProps<TUIState>;
 /**
  * Extracts the state for a particutlar component from the UIStateBranch of the state tree
  */
-function getComponentStateFromUIStateBranch<S>(state: UIStateBranch, id: string): StateProps<S> {
-  return {
-    uiState: state.components[id],
-  };
+function getComponentStateFromUIStateBranch<TUIState>(state: UIStateBranch, id: string): TUIState {
+  return state.components[id];
 }
 
 /**
@@ -66,7 +64,7 @@ function mapDispatchToProps<TUIState, TProps>(
   dispatch: Dispatch<DefaultStateShape>,
   props: TProps,
   id: string,
-  getInitialState: (props: TProps) => TUIState
+  getInitialState: (props: TProps, existingState?: TUIState) => TUIState
 ): DispatchProps<TUIState> {
   return {
     setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
@@ -128,7 +126,9 @@ class ExportedComponent extends React.Component<ExportedComponentProps & TProps,
   }
 
   componentDidMount() {
-    this.mappedDispatchProps.setUIState(getInitialState(this.props));
+    this.mappedDispatchProps.setUIState(
+      getInitialState(this.props, getComponentStateFromUIStateBranch<TUIState>(this.props.uiStateBranch, id))
+    );
   }
 
   componentWillUnmount() {
@@ -138,11 +138,11 @@ class ExportedComponent extends React.Component<ExportedComponentProps & TProps,
   }
 
   render() {
-    const mappedStateProps = getComponentStateFromUIStateBranch(this.props.uiStateBranch, id);
-    return mappedStateProps.uiState
+    const uiState = getComponentStateFromUIStateBranch(this.props.uiStateBranch, id);
+    return uiState
       ? <WrappedComponent
           {...Object.assign(
-              mappedStateProps, this.mappedDispatchProps, omitReduxUIProps(this.props)
+              { uiState }, this.mappedDispatchProps, omitReduxUIProps(this.props)
           )}
       />
       : null;

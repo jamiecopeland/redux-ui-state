@@ -90,7 +90,7 @@ const getWrapper = () => {
 
 describe('addReduxUIState', () => {
 
-  it.only('should recieve proxied props', () => {
+  it('should recieve proxied props', () => {
     const { wrapper } = getWrapper();
     expect((wrapper.find(TestComponent).props()).initialIndex).toEqual(componentStatePropsFixture.initialIndex);
     expect((wrapper.find(TestComponent).props()).onSomething).toEqual(componentDispatchPropsFixture.onSomething);
@@ -120,6 +120,18 @@ describe('addReduxUIState', () => {
   it('should recieve destroyUIState function', () => {
     const { wrapper } = getWrapper();
     expect(typeof wrapper.find(TestComponent).props().destroyUIState).toEqual('function');
+  });
+
+  it('should pass existingState argument to getInitialState', () => {
+    const config: AddReduxUIStateConfig<UIState, StateProps> = {
+      id: componentId,
+      getInitialState: jest.fn(),
+    };
+    const Component = addReduxUIState<UIState, StateProps>(config)(TestComponent);
+    mount(<Component {...getPropsFixture()} />);
+
+    expect(config.getInitialState)
+      .toBeCalledWith((expect as any).anything(), uiStateFixture); // tslint:disable-line:no-any
   });
 
   it('should dispatch setUIState action on mount', () => {
