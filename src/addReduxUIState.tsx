@@ -105,7 +105,7 @@ export const omitReduxUIProps = (props: ExportedComponentProps) => {
 };
 
 export const addReduxUIState = <TUIState, TProps>(
-  { id, getInitialState, destroyOnUnmount }: AddReduxUIStateConfig<TUIState, TProps>
+  { id, getInitialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
 ) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
 class ExportedComponent extends React.Component<ExportedComponentProps & TProps, {}> {
   static displayName = 'ReduxUIStateHOC';
@@ -114,14 +114,24 @@ class ExportedComponent extends React.Component<ExportedComponentProps & TProps,
 
   constructor(props: ExportedComponentProps & TProps) {
     super(props);
+    const missingReduxPropsMessage = 'This probably means you\'re using addReduxUIState rather than ' +
+      'connectReduxUIState and havent passed the required props through in your component\'s mapStateToProps and' +
+      'mapDispatchToProps functions.';
 
-    if (!props.uiStateBranch || !props.dispatch) {
+    if (!props.uiStateBranch) {
+      throw new Error(`Cannot find uiStateBranch in props. ${missingReduxPropsMessage}`);
+    }
+
+    if (!props.dispatch) {
+      throw new Error(`Cannot find dispatch in props. ${missingReduxPropsMessage}`);
+    }
+
+    if (!id) {
       throw new Error(
-        'Cannot find uiStateBranch and dispatch in props. This probably means you\'re using ' +
-        'addReduxUIState rather than connectReduxUIState and havent passed the required props' +
-        'through in your component\'s mapStateToProps and mapDispatchToProps functions.'
+        `Cannot find id in config. An id must be specified in order to uniquely identify a particular piece of ui state`
       );
     }
+
     this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(this.props.dispatch, props, id, getInitialState);
   }
 
