@@ -1,6 +1,6 @@
-export const SET_UI_STATE = 'reduxUIState.SET_UI_STATE';
-export const REPLACE_UI_STATE = 'reduxUIState.REPLACE_UI_STATE';
-export const DESTROY_UI_STATE = 'reduxUIState.DESTROY_UI_STATE';
+export const SET_UI_STATE = '@@redux-ui-state/SET_UI_STATE';
+export const REPLACE_UI_STATE = '@@redux-ui-state/REPLACE_UI_STATE';
+export const DESTROY_UI_STATE = '@@redux-ui-state/DESTROY_UI_STATE';
 
 export interface ModifyUIStateActionPayload<TUIState> {
   id: string;
