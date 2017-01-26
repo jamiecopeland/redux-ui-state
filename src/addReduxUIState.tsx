@@ -106,7 +106,7 @@ export const omitReduxUIProps = (props: ExportedComponentProps) => {
 
 export const addReduxUIState = <TUIState, TProps>(
   { id, getInitialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
-) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
+) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>> | React.ComponentClass<TProps & Props<TUIState>>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
 class ExportedComponent extends React.Component<ExportedComponentProps & TProps, {}> {
   static displayName = 'ReduxUIStateHOC';
 
