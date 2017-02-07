@@ -6,5 +6,9 @@ import { AddReduxUIStateConfig, StateProps, DispatchProps } from './addReduxUISt
 
 export const connectReduxUIState = <TUIState, TProps>
   ({ id, getInitialState }: AddReduxUIStateConfig<TUIState, TProps>) =>
-  (Component: StatelessComponent<StateProps<TUIState> & DispatchProps<TUIState> & TProps>): ComponentClass<TProps> =>
+  (
+    Component:
+      StatelessComponent<StateProps<TUIState> & DispatchProps<TUIState> & TProps> |
+      ComponentClass<StateProps<TUIState> & DispatchProps<TUIState> & TProps>
+  ): ComponentClass<TProps> =>
   createConnectWrapper<TProps>()(addReduxUIState<TUIState, TProps>({ id, getInitialState })(Component));
