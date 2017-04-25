@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 
 import { setUIState, replaceUIState, destroyUIState } from './actions';
+import { contextTypes, Context } from './utils';
 
 /**
  * The default shape of a store containing the uiState reducer
@@ -66,6 +67,7 @@ function mapDispatchToProps<TUIState, TProps>(
   id: string,
   getInitialState: (props: TProps, existingState?: TUIState) => TUIState
 ): DispatchProps<TUIState> {
+  // dispatch({type: 'hello'})
   return {
     setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
       id,
@@ -85,76 +87,62 @@ function mapDispatchToProps<TUIState, TProps>(
   };
 }
 
-// addReduxUIState
-
-export interface ExportedComponentStateProps {
-  uiStateBranch: UIStateBranch;
-}
-
-export interface ExportedComponentDispatchProps {
-  dispatch: Dispatch<DefaultStateShape>;
-}
-
-export type ExportedComponentProps = ExportedComponentStateProps & ExportedComponentDispatchProps;
-
-export const omitReduxUIProps = (props: ExportedComponentProps) => {
-  let cleanedProps = {...props};
-  delete cleanedProps.uiStateBranch;
-  delete cleanedProps.dispatch;
-  return cleanedProps;
-};
-
 export const addReduxUIState = <TUIState, TProps>(
   { id, getInitialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
-) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>> | React.ComponentClass<TProps & Props<TUIState>>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
-class ExportedComponent extends React.Component<ExportedComponentProps & TProps, {}> {
-  static displayName = 'ReduxUIStateHOC';
+) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>> | React.ComponentClass<TProps & Props<TUIState>>): React.ComponentClass<TProps> => // tslint:disable-line:max-line-length
+  class ExportedComponent extends React.PureComponent<TProps, {uiState: TUIState}> {
+    static contextTypes = contextTypes;
+    static displayName = 'ReduxUIStateHOC';
 
-  mappedDispatchProps: DispatchProps<TUIState>;
+    mappedDispatchProps: DispatchProps<TUIState>;
+    unsubscribeFromStore: () => void;
 
-  constructor(props: ExportedComponentProps & TProps) {
-    super(props);
-    const missingReduxPropsMessage = 'This probably means you\'re using addReduxUIState rather than ' +
-      'connectReduxUIState and havent passed the required props through in your component\'s mapStateToProps and' +
-      'mapDispatchToProps functions.';
+    constructor(props: TProps, context: Context) {
+      super(props);
 
-    if (!props.uiStateBranch) {
-      throw new Error(`Cannot find uiStateBranch in props. ${missingReduxPropsMessage}`);
-    }
+      this.state = {
+        uiState: undefined,
+      };
 
-    if (!props.dispatch) {
-      throw new Error(`Cannot find dispatch in props. ${missingReduxPropsMessage}`);
-    }
+      if (!id) {
+        throw new Error(
+          `
+          Cannot find id in config.
+          An id must be specified in order to uniquely identify a particular piece of ui state
+          `
+        );
+      }
 
-    if (!id) {
-      throw new Error(
-        `Cannot find id in config. An id must be specified in order to uniquely identify a particular piece of ui state`
+      this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(
+        context.reduxUIState.store.dispatch, props, id, getInitialState
       );
     }
 
-    this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(this.props.dispatch, props, id, getInitialState);
-  }
-
-  componentDidMount() {
-    this.mappedDispatchProps.setUIState(
-      getInitialState(this.props, getComponentStateFromUIStateBranch<TUIState>(this.props.uiStateBranch, id))
-    );
-  }
-
-  componentWillUnmount() {
-    if (destroyOnUnmount) {
-      this.mappedDispatchProps.destroyUIState();
+    getComponentState() {
+      const { store, branchSelector } = this.context.reduxUIState;
+      return getComponentStateFromUIStateBranch<TUIState>(branchSelector(store.getState()), id);
     }
-  }
 
-  render() {
-    const uiState = getComponentStateFromUIStateBranch(this.props.uiStateBranch, id);
-    return uiState
-      ? <WrappedComponent
-          {...Object.assign(
-              { uiState }, this.mappedDispatchProps, omitReduxUIProps(this.props)
-          )}
-      />
-      : null;
+    componentWillMount() {
+      this.unsubscribeFromStore = this.context.reduxUIState.store.subscribe(
+        () => this.setState({uiState: this.getComponentState()})
+      );
+    }
+
+    componentDidMount() {
+      this.mappedDispatchProps.setUIState(
+        getInitialState(this.props, this.getComponentState())
+      );
+    }
+
+    componentWillUnmount() {
+      this.unsubscribeFromStore();
+    }
+
+    render() {
+      const uiState = this.getComponentState();
+      return uiState
+        ? <WrappedComponent {...Object.assign({ uiState: this.state.uiState }, this.mappedDispatchProps, this.props)} />
+        : null;
+    }
   };
-};

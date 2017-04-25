@@ -5,12 +5,14 @@ export const initialState: UIStateBranch = {
   components: {},
 };
 
+export type ActionUnion = ModifyUIStateAction<object> | DestroyUIStateAction;
+
 /**
  * Makes all your dreams (or at least actions) come true.
  */
 export const reducer = (
   state = initialState,
-  action: ModifyUIStateAction<Object> | DestroyUIStateAction
+  action: ActionUnion
 ) => {
   switch (action.type) {
     case SET_UI_STATE: {
@@ -20,7 +22,7 @@ export const reducer = (
           ...state.components,
           [action.payload.id]: {
             ...state.components[action.payload.id],
-            ...(action as ModifyUIStateAction<Object>).payload.state
+            ...(action as ModifyUIStateAction<object>).payload.state
           },
         }
       });
@@ -31,7 +33,7 @@ export const reducer = (
         ...state,
         components: {
           ...state.components,
-          [action.payload.id]: (action as ModifyUIStateAction<Object>).payload.state,
+          [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
         }
       };
     }

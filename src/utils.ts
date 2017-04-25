@@ -1,15 +1,11 @@
-import * as React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
+import * as propTypes from 'prop-types';
 import { createSelector } from 'reselect';
 
 import { DEFAULT_BRANCH_NAME } from './constants';
+import { Store } from 'redux';
 import {
   UIStateBranch,
   DefaultStateShape,
-  ExportedComponentStateProps,
-  ExportedComponentDispatchProps,
-  ExportedComponentProps
 } from './addReduxUIState';
 
 /**
@@ -54,31 +50,21 @@ export const uiStateSelector = createSelector(
   (state, id, branchSelector = defaultBranchSelector) => branchSelector(state).components[id],
 );
 
-/**
- * Maps uiStateBranch to props if the default state shape for the Redux store has been used
- */
-export const defaultMapStateToProps = (state: DefaultStateShape): ExportedComponentStateProps => ({
-  uiStateBranch: defaultBranchSelector(state),
-});
+export interface Context {
+  reduxUIState: {
+    store: Store<any>;
+    branchSelector: (state: any) => UIStateBranch;
+  };
+}
 
-/**
- * Maps dispatch to props.
- * NOTE: This will not vary based on state shape
- */
-export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
-  dispatch,
-});
+export const contextTypes = {
+  reduxUIState: propTypes.shape({
+    store: propTypes.object,
+    branchSelector: propTypes.func,
+  }),
+  // reduxUIState: React.PropTypes.object
+};
 
-/**
- * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
- * defaults will be used.
- */
-export const createConnectWrapper = <TProps>(
-  mapStateToProps = defaultMapStateToProps,
-  mapDispatchToProps = defaultMapDispatchToProps
-) => (component: React.ComponentClass<ExportedComponentProps & TProps>) =>
-  connect<
-    ExportedComponentStateProps,
-    ExportedComponentDispatchProps,
-    TProps
-  >(mapStateToProps, mapDispatchToProps)(component);
+export type AnyComponent<TProps, TState> = React.StatelessComponent<TProps>
+  | (new() => React.Component<TProps, TState>)
+  | (new() => React.PureComponent<TProps, TState>);
