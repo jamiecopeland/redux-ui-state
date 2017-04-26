@@ -97,7 +97,7 @@ export const addReduxUIState = <TUIState, TProps>(
     mappedDispatchProps: DispatchProps<TUIState>;
     unsubscribeFromStore: () => void;
 
-    constructor(props: TProps, context: Context) {
+    constructor(props: TProps, context: Context<any>) { // tslint:disable-line:no-any
       super(props);
 
       this.state = {
@@ -105,12 +105,10 @@ export const addReduxUIState = <TUIState, TProps>(
       };
 
       if (!id) {
-        throw new Error(
-          `
-          Cannot find id in config.
+        throw new Error(`
+          Cannot find id in the addReduxUISTate config.
           An id must be specified in order to uniquely identify a particular piece of ui state
-          `
-        );
+        `);
       }
 
       this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(

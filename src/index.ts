@@ -11,7 +11,7 @@ export {
   replaceUIState,
 } from './actions';
 
-export { reducer as pojoReducer, ActionUnion } from './pojoReducer';
+export { reducer, ActionUnion } from './reducer';
 
 export {
   addReduxUIState, AddReduxUIStateConfig, UIStateBranch,

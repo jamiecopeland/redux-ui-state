@@ -28,4 +28,4 @@ export function createProvider<TState>(): React.ComponentClass<ProviderProps<TSt
   };
 }
 
-export const Provider = createProvider<any>(); // tslint:disable-line:no-any
+export const Provider = createProvider<object>();
