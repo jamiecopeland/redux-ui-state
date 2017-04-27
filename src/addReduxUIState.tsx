@@ -20,11 +20,34 @@ export interface UIStateBranch {
   components: Record<string, any>; // tslint:disable-line:no-any
 }
 
+// TODO write documentation
+export type Id<TProps> = string | ((props: TProps) => string);
+
+export function idIsString<TProps>(id: Id<TProps>): id is string {
+  return typeof id === 'string';
+}
+
+export function idIsFunction<TProps>(id: Id<TProps>): id is (props: TProps) => string {
+  return typeof id === 'function';
+}
+
+export function getStringFromId<TProps>(id: Id<TProps>, props: TProps): string | undefined {
+  if (idIsString(id)) {
+    return id;
+  }
+
+  if (idIsFunction(id)) {
+    return id(props);
+  }
+
+  return undefined;
+}
+
 /**
  * The shape of the config object to be passed to addReduxUIState
  */
 export interface AddReduxUIStateConfig<TUIState, TProps> {
-  id: string;
+  id: Id<TProps>;
   getInitialState: (props?: TProps, existingState?: TUIState) => TUIState;
   destroyOnUnmount?: boolean;
 }
@@ -67,7 +90,6 @@ function mapDispatchToProps<TUIState, TProps>(
   id: string,
   getInitialState: (props: TProps, existingState?: TUIState) => TUIState
 ): DispatchProps<TUIState> {
-  // dispatch({type: 'hello'})
   return {
     setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
       id,
@@ -104,7 +126,9 @@ export const addReduxUIState = <TUIState, TProps>(
         uiState: undefined,
       };
 
-      if (!id) {
+      const idString = getStringFromId(id, this.props);
+
+      if (!idString) {
         throw new Error(`
           Cannot find id in the addReduxUISTate config.
           An id must be specified in order to uniquely identify a particular piece of ui state
@@ -112,13 +136,15 @@ export const addReduxUIState = <TUIState, TProps>(
       }
 
       this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(
-        context.reduxUIState.store.dispatch, props, id, getInitialState
+        context.reduxUIState.store.dispatch, props, idString, getInitialState
       );
     }
 
     getComponentState() {
       const { store, branchSelector } = this.context.reduxUIState;
-      return getComponentStateFromUIStateBranch<TUIState>(branchSelector(store.getState()), id);
+      return getComponentStateFromUIStateBranch<TUIState>(
+        branchSelector(store.getState()), getStringFromId(id, this.props)
+      );
     }
 
     componentWillMount() {
