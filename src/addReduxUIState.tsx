@@ -20,17 +20,30 @@ export interface UIStateBranch {
   components: Record<string, any>; // tslint:disable-line:no-any
 }
 
-// TODO write documentation
+// Initial State
+
+/**
+ * A string or a function accepting the props as an argument and returning a string
+ */
 export type Id<TProps> = string | ((props: TProps) => string);
 
+/**
+ * A type guard guaranteeing id is a string;
+ */
 export function idIsString<TProps>(id: Id<TProps>): id is string {
   return typeof id === 'string';
 }
 
+/**
+ * A type guard guaranteeing id is a function that accepts props and returns a string
+ */
 export function idIsFunction<TProps>(id: Id<TProps>): id is (props: TProps) => string {
   return typeof id === 'function';
 }
 
+/**
+ * Returns a string or undefined from the union type of (string | function that returns string)
+ */
 export function getStringFromId<TProps>(id: Id<TProps>, props: TProps): string | undefined {
   if (idIsString(id)) {
     return id;
@@ -43,12 +56,42 @@ export function getStringFromId<TProps>(id: Id<TProps>, props: TProps): string |
   return undefined;
 }
 
+// Initial State
+export type InitialStateFunction<TUIState, TProps> = ((props: TProps, existingState?: TUIState) => TUIState);
+export type InitialState<TUIState, TProps> = TUIState | InitialStateFunction<TUIState, TProps>;
+
+export function initialStateIsString<TUIState, TProps>(
+  initialState: InitialState<TUIState, TProps>
+): initialState is TUIState {
+  return typeof initialState === 'string';
+}
+
+export function initialStateIsFunction<TUIState, TProps>(
+  initialState: InitialState<TUIState, TProps>
+): initialState is (props: TProps) => TUIState {
+  return typeof initialState === 'function';
+}
+
+export function getInitialStateValue<TUIState, TProps>(
+  initialState: InitialState<TUIState, TProps>, props: TProps, existingState?: TUIState
+): TUIState {
+  if (typeof initialState === 'object') {
+    return initialState as TUIState;
+  }
+
+  if (typeof initialState === 'function') {
+    return (initialState as InitialStateFunction<TUIState, TProps>)(props, existingState);
+  }
+
+  return undefined;
+}
+
 /**
  * The shape of the config object to be passed to addReduxUIState
  */
 export interface AddReduxUIStateConfig<TUIState, TProps> {
   id: Id<TProps>;
-  getInitialState: (props?: TProps, existingState?: TUIState) => TUIState;
+  initialState: InitialState<TUIState, TProps>;
   destroyOnUnmount?: boolean;
 }
 
@@ -88,7 +131,7 @@ function mapDispatchToProps<TUIState, TProps>(
   dispatch: Dispatch<DefaultStateShape>,
   props: TProps,
   id: string,
-  getInitialState: (props: TProps, existingState?: TUIState) => TUIState
+  initialState: InitialState<TUIState, TProps>
 ): DispatchProps<TUIState> {
   return {
     setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
@@ -101,7 +144,7 @@ function mapDispatchToProps<TUIState, TProps>(
     })),
     resetUIState: (): Action => dispatch(replaceUIState<TUIState>({
       id,
-      state: getInitialState(props),
+      state: getInitialStateValue(initialState, props),
     })),
     destroyUIState: (): Action => dispatch(destroyUIState({
       id,
@@ -110,7 +153,7 @@ function mapDispatchToProps<TUIState, TProps>(
 }
 
 export const addReduxUIState = <TUIState, TProps>(
-  { id, getInitialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
+  { id, initialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
 ) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>> | React.ComponentClass<TProps & Props<TUIState>>): React.ComponentClass<TProps> => // tslint:disable-line:max-line-length
   class ExportedComponent extends React.PureComponent<TProps, {uiState: TUIState}> {
     static contextTypes = contextTypes;
@@ -136,7 +179,7 @@ export const addReduxUIState = <TUIState, TProps>(
       }
 
       this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(
-        context.reduxUIState.store.dispatch, props, idString, getInitialState
+        context.reduxUIState.store.dispatch, props, idString, initialState
       );
     }
 
@@ -155,7 +198,7 @@ export const addReduxUIState = <TUIState, TProps>(
 
     componentDidMount() {
       this.mappedDispatchProps.setUIState(
-        getInitialState(this.props, this.getComponentState())
+        getInitialStateValue(initialState, this.props, this.getComponentState())
       );
     }
 
