@@ -1,52 +1,81 @@
 # Redux UI State
 
-## What?
+UI state management for Redux applications - move component state into the store.
 
-UI state management for Redux applications – moving component state out into the store.
+## What
 
-## Why?
-Redux is a predictable state container primarly because it has a single state object. This allows developers to inspect
-the entire state of an application at any given time and to do magical things like time travel debugging. Keeping
-everything in one place is what meant that Redux won out over the traditional multi store Flux architecture(s) yet most
-React applications let multiple data stores in through the back door by using `this.setState` in components. As soon as
-this happens the Redux single state atom principle breaks down - the entire application state cannot be inspected and
-full time travel debugging becomes impossible.
+* Cleanly and transparently share UI state between React components
+* Inspect your entire application state (and allow full time travel debugging)
 
-Redux UI State aims to make storing what would traditionally be considered component state in a Redux store simple and
-transparent.
+## Why
 
-## Installation
+### Specifically
+
+Most applications have user interface state - component visibility toggles and mode settings etc - that need to be shared
+between siblings or up and down a hierarchy.
+
+This can be achieved by having a parent that passes its locally stored component state, along with a change handler function, down through intermediate hierarchies, to children that are interested. This works but has several downsides:
+
+* Increased complexity
+* Repeated manual work
+* Requires intermediate components in a hierarchy to have knowledge of data that isn't their concern
+* Hard to debug
+
+Redux UI State aims to transparently provide named containers for user interface data at any level of a hierarchy through the use of a higher order component.
+
+
+### Generally
+
+A long time ago in a galaxy far far away there was a pattern called Flux - revolutionary in Javascriptland it employed
+a uni-directional data flow that hugely simplified state management from what had come before it. Shortly after that
+Redux appeared, simplifying the model again by swapping out Flux's multi-store model for a single state atom.
+
+This second iteration presented a simpler state model that was much easier to debug, allowing the entire application
+state to be inspected, serialized and modified with minimum effort via sophisticated dev tools.
+
+Keeping state in a component is equivalent to having multiple stores, increasing complexity and making debugging harder. Redux UI state aims to prevent this complexity from slipping in through the back door by providing an API identical to React's state management functionality but doing it via the Redux single-state-atom architecture.
+
+## How
+
 ```
-npm install redux-ui-state
+npm install redux-ui-state -s
 ```
 
 ## Getting started
 
-NOTE: This is the most simple, default implementation. The reducer can be moved to a custom location within your store and
-the props passed directly into the HOC rather using the connect utility. Custom implementations are shown in the
-counter example.
-
 ### 1. Create the reducer:
+
+_NOTE: This is the most simple, default implementation. In a more complex application, the reducer can be moved to a custom location within your store._
 
 Your root reducer should look this:
 
-```
-import { pojoReducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
+```javascript
+// rootReducer.js
 
-export default (state = {}, action) => ({
-  [DEFAULT_BRANCH_NAME]: pojoReducer(state[DEFAULT_BRANCH_NAME], action),
+import { combineReducers } from 'redux';
+import { reducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
+
+export default combineReducers({
+  [DEFAULT_BRANCH_NAME]: reducer
 });
-```
-
-### 2. Connect a component using the auto connect utility:
-
-Use the `connectReduxUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
-`setUIState` (to be used in place of `this.setState`) into your component.
 
 ```
-const Counter = ({
-  uiState, setUIState
-}) => (
+
+### 2. Connect one or more components:
+
+Use the `addReduxUIState` higher order component to inject state props:
+* `uiState` prop should be used in place of `this.state`
+* `setUIState` prop should be used in place of `this.setState`
+
+#### Static Config
+
+```javascript
+// Counter.js
+
+import React from 'react';
+import { addReduxUIState } from 'redux-ui-state';
+
+const Counter = ({ uiState, setUIState }) => (
   <div>
     <div>
       {uiState.index}
@@ -58,15 +87,111 @@ const Counter = ({
   </div>
 );
 
-const config: AddReduxUIStateConfig = {
+const config = {
   id: 'counter',
-  getInitialState: ({ initialValue }) => ({ index: initialValue }),
+  initialState: { index: 0 },
 };
 
 export default connectReduxUIState(config)(Counter);
 ```
 
-## Roadmap
-* Add existing state argument to getInitialState
-* Add documentation for manual implementations
-* Add plain JavaScript examples
+```javascript
+// App.js
+
+import React from 'react';
+import Counter from './Counter';
+
+// Both instances of Counter will share the same state
+const App = () => (
+  <div>
+    <Counter />
+    <div>
+      <Counter />
+    <div>
+  </div>
+);
+
+export default App;
+```
+
+#### Dynamic Config
+
+```javascript
+// Counter.js
+
+import React from 'react';
+
+const Counter = ({ uiState, setUIState }) => (
+  <div>
+    <div>
+      {uiState.index}
+    </div>
+    <div>
+      <button onClick={() => setUIState({ index: uiState.index - 1 })}>-</button>
+      <button onClick={() => setUIState({ index: uiState.index + 1 })}>+</button>
+    </div>
+  </div>
+);
+
+// The first argument passed to id and initialState is the component props
+const config = {
+  id: ({ uiStateId }) => uiStateId,
+  initialState: ({ initialValue }) => ({ index: initialValue }),
+};
+
+export default connectReduxUIState(config)(Counter);
+```
+
+```javascript
+// App.js
+
+import React from 'react';
+
+// Both instances of Counter with an id of counter1 will share the same state.
+// Correspondinly, only one of the instances needs to be initialized.
+// If both are initialized with different values, the final value will be that of the last one to be created - the one furthest down the JSX.
+const App = () => (
+  <div>
+    <Counter uiStateId="counter1" initialValue={42} />
+    <div>
+      <Counter uiStateId="counter1" />
+      <Counter uiStateId="counter2" initialValue={666} />
+    <div>
+  <div>
+)
+```
+
+### Bootstrap the application
+
+Ensure your application sits below the Redux UI state provider in the component hierarchy.
+
+```javascript
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import { Provider } from 'react-redux';
+import { createLogger } from 'redux-logger';
+import { Provider as ReduxUIStateProvider, defaultBranchSelector } from 'redux-ui-state';
+
+import App from './components/App';
+import rootReducer from './reducers/index';
+
+const store = createStore(rootReducer);
+const rootEl = document.getElementById('root');
+
+function render() {
+  ReactDOM.render(
+    <Provider store={store}>
+      <ReduxUIStateProvider
+        store={store}
+        branchSelector={defaultBranchSelector}
+      >
+        <App />
+      </ReduxUIStateProvider>
+    </Provider>,
+    rootEl
+  );
+}
+
+render();
+```
