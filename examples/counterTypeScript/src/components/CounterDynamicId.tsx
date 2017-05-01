@@ -8,6 +8,7 @@ import {
 
 interface Props {
   initialValue: number;
+  reduxUIStateId: string;
 }
 
 interface UIState {
@@ -29,8 +30,8 @@ const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
 );
 
 const config: AddReduxUIStateConfig<UIState, Props> = {
-  id: 'counter',
-  getInitialState: ({ initialValue }) => ({ index: initialValue }),
+  id: ({ reduxUIStateId }) => reduxUIStateId,
+  initialState: ({ initialValue }) => ({ index: initialValue }),
 };
 
 export default addReduxUIState(config)(Counter);

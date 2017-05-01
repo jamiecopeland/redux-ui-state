@@ -1,6 +1,7 @@
-import { reducer, DEFAULT_BRANCH_NAME, DefaultStateShape, ActionUnion } from 'redux-ui-state';
+import { combineReducers } from 'redux';
+import { reducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
+import { AppState } from '../state/index';
 
-export default (state?: DefaultStateShape, action?: ActionUnion): DefaultStateShape => ({
-  // TODO Look into making uiState key a variable and not anger tsc
-  uiState: reducer(state ? state[DEFAULT_BRANCH_NAME] : undefined, action),
+export default combineReducers<AppState>({
+  [DEFAULT_BRANCH_NAME]: reducer
 });

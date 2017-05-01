@@ -15,10 +15,10 @@ export const defaultBranchSelector = (state: DefaultStateShape): UIStateBranch =
 /**
  * The shape of the context supplied by the Provider
  */
-export interface Context<TState> {
+export interface Context<TApplicationState> {
   reduxUIState: {
-    store: Store<TState>;
-    branchSelector: (state: TState) => UIStateBranch;
+    store: Store<TApplicationState>;
+    branchSelector: (state: TApplicationState) => UIStateBranch;
   };
 }
 
