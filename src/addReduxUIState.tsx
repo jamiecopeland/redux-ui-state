@@ -24,7 +24,7 @@ export interface UIStateBranch {
  */
 export interface AddReduxUIStateConfig<TUIState, TProps> {
   id: string;
-  getInitialState: (props?: TProps, existingState?: TUIState) => TUIState;
+  getInitialState: (props?: Readonly<TProps>, existingState?: TUIState) => TUIState;
   destroyOnUnmount?: boolean;
 }
 
