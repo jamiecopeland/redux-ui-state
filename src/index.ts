@@ -9,8 +9,10 @@ export {
 export {
   SET_UI_STATE,
   REPLACE_UI_STATE,
+  DESTROY_UI_STATE,
   setUIState,
   replaceUIState,
+  destroyUIState,
 } from './actions';
 
 export { reducer as pojoReducer } from './pojoReducer';
