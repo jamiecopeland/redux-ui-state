@@ -1,4 +1,4 @@
-import { reducer, initialState as defaultInitialState } from '../pojoReducer';
+import { reducer, initialState as defaultInitialState } from '../reducer';
 import { setUIState, replaceUIState, destroyUIState } from '../actions';
 import { UIStateBranch } from '../addReduxUIState';
 
@@ -22,7 +22,7 @@ const createState = (
     },
   });
 
-describe('pojoReducer', () => {
+describe('reducer', () => {
 
   describe('SET_UI_STATE', () => {
     it('set a new primitive value in empty initial state', () => {
