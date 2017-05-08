@@ -6,13 +6,13 @@ import {
 } from 'redux-ui-state/lib/addReduxUIState';
 
 // -------------------------------------------------------------------------------------------------
-// Raw component
+// Component acccepting raw props
 
 interface UIState {
   index: number;
 }
 
-const Counter: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
+const CounterRawProps: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
   uiState, setUIState
 }) => (
   <div>
@@ -26,15 +26,15 @@ const Counter: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
   </div>
 );
 
-// -------------------------------------------------------------------------------------------------
+
 // Counter static
 
 export const CounterStatic = addReduxUIState<UIState, {}>({
   id: 'counterStatic',
   initialState: { index: 0 },
-})(Counter);
+})(CounterRawProps);
 
-// -------------------------------------------------------------------------------------------------
+
 // Counter dynamic initial state
 
 interface DynamicInitialStateProps {
@@ -44,9 +44,9 @@ interface DynamicInitialStateProps {
 export const CounterDynamicInitialState =  addReduxUIState<UIState, DynamicInitialStateProps>({
   id: 'counterDynamicInitialState',
   initialState: ({ initialValue }) => ({ index: initialValue }),
-})(Counter);
+})(CounterRawProps);
 
-// -------------------------------------------------------------------------------------------------
+
 // Counter dynamic id
 
 interface DynamicIdProps {
@@ -56,5 +56,55 @@ interface DynamicIdProps {
 export const CounterDynamicId = addReduxUIState<UIState, DynamicIdProps>({
   id: ({ uiStateId }) => uiStateId,
   initialState: () => ({ index: 0 }),
-})(Counter);
+})(CounterRawProps);
 
+// -------------------------------------------------------------------------------------------------
+// Component acccepting nice props
+
+interface TransformedProps {
+  message: string;
+  increment: () => void;
+  decrement: () => void;
+}
+
+const CounterNiceProps: React.StatelessComponent<TransformedProps> = ({
+  message, increment, decrement
+}) => (
+  <div>
+    <div>
+      {message}
+    </div>
+    <div>
+      <button onClick={decrement}>-</button>
+      <button onClick={increment}>+</button>
+    </div>
+  </div>
+);
+
+export const CounterTransformed = addReduxUIState<UIState, {}, TransformedProps>({
+  id: 'counterTransformed',
+  initialState: () => ({ index: 0 }),
+  transformProps: ({ index }, ownProps, { setUIState }) => ({
+    message: `Index: ${index}`,
+    increment: () => setUIState({ index: index + 1 }),
+    decrement: () => setUIState({ index: index - 1 }),
+  })
+})(CounterNiceProps);
+
+// Counter with transform
+
+interface EverythingProps {
+  initialValue: number;
+  uiStateId: string;
+  messagePrefix: string;
+}
+
+export const CounterEverything = addReduxUIState<UIState, EverythingProps, TransformedProps>({
+  id: ({ uiStateId }) => uiStateId,
+  initialState: ({ initialValue }) => ({ index: initialValue }),
+  transformProps: ({ index }, { messagePrefix }, { setUIState }) => ({
+    message: `${messagePrefix} ${index}`,
+    increment: () => setUIState({ index: index + 1 }),
+    decrement: () => setUIState({ index: index - 1 }),
+  })
+})(CounterNiceProps);

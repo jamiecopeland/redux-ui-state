@@ -95,6 +95,10 @@ export interface AddReduxUIStateConfig<TUIState, TProps> {
   destroyOnUnmount?: boolean;
 }
 
+export interface AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps> extends AddReduxUIStateConfig<TUIState, TProps> {
+  transformProps: (uiState: TUIState, ownProps: TProps, dispatchProps: DispatchProps<TUIState>) => TTransformedProps;
+}
+
 /**
  * The state props passed into a component wrapped by addReduxUIState
  */
@@ -152,64 +156,88 @@ function mapDispatchToProps<TUIState, TProps>(
   };
 }
 
-export const addReduxUIState = <TUIState, TProps>(
-  { id, initialState, destroyOnUnmount = true }: AddReduxUIStateConfig<TUIState, TProps>
-) => (WrappedComponent: React.StatelessComponent<TProps & Props<TUIState>> | React.ComponentClass<TProps & Props<TUIState>>): React.ComponentClass<TProps> => // tslint:disable-line:max-line-length
-  class ExportedComponent extends React.PureComponent<TProps, {uiState: TUIState}> {
-    static contextTypes = contextTypes;
-    static displayName = 'ReduxUIStateHOC';
+export type RawInputComponent<Props> = React.StatelessComponent<Props> | React.ComponentClass<Props>;
 
-    mappedDispatchProps: DispatchProps<TUIState>;
-    unsubscribeFromStore: () => void;
+export type InputComponent<TUIState, TProps> = RawInputComponent<TProps & Props<TUIState>>;
+export type InputComponentWithTransform<TUIState, TProps, TTransformedProps> = RawInputComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
 
-    constructor(props: TProps, context: Context<any>) { // tslint:disable-line:no-any
-      super(props);
+export function addReduxUIState<TUIState, TProps>(
+  config: AddReduxUIStateConfig<TUIState, TProps>
+): (WrappedComponent: InputComponent<TUIState, TProps>) => React.ComponentClass<TProps>;
 
-      this.state = {
-        uiState: undefined,
-      };
+export function addReduxUIState<TUIState, TProps, TTransformedProps>(
+  config: AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps>
+): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
 
-      const idString = getStringFromId(id, this.props);
+export function addReduxUIState<TUIState, TProps, TTransformedProps>(
+  config: AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps>
+) {
+  const { id, initialState } = config;
+  return (WrappedComponent: InputComponent<TUIState, TProps>): React.ComponentClass<TProps> =>
+    class ExportedComponent extends React.PureComponent<TProps, {uiState: TUIState}> {
+      static contextTypes = contextTypes;
+      static displayName = 'ReduxUIStateHOC';
 
-      if (!idString) {
-        throw new Error(`
-          Cannot find id in the addReduxUISTate config.
-          An id must be specified in order to uniquely identify a particular piece of ui state
-        `);
+      mappedDispatchProps: DispatchProps<TUIState>;
+      unsubscribeFromStore: () => void;
+
+      constructor(props: TProps, context: Context<any>) { // tslint:disable-line:no-any
+        super(props);
+
+        this.state = {
+          uiState: undefined,
+        };
+
+        const idString = getStringFromId(id, this.props);
+
+        if (!idString) {
+          throw new Error(`
+            Cannot find id in the addReduxUISTate config.
+            An id must be specified in order to uniquely identify a particular piece of ui state
+          `);
+        }
+
+        this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(
+          context.reduxUIState.store.dispatch, props, idString, initialState
+        );
       }
 
-      this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(
-        context.reduxUIState.store.dispatch, props, idString, initialState
-      );
-    }
+      getComponentState() {
+        const { store, branchSelector } = this.context.reduxUIState;
+        return getComponentStateFromUIStateBranch<TUIState>(
+          branchSelector(store.getState()), getStringFromId(id, this.props)
+        );
+      }
 
-    getComponentState() {
-      const { store, branchSelector } = this.context.reduxUIState;
-      return getComponentStateFromUIStateBranch<TUIState>(
-        branchSelector(store.getState()), getStringFromId(id, this.props)
-      );
-    }
+      componentWillMount() {
+        this.unsubscribeFromStore = this.context.reduxUIState.store.subscribe(
+          () => this.setState({uiState: this.getComponentState()})
+        );
+      }
 
-    componentWillMount() {
-      this.unsubscribeFromStore = this.context.reduxUIState.store.subscribe(
-        () => this.setState({uiState: this.getComponentState()})
-      );
-    }
+      componentDidMount() {
+        this.mappedDispatchProps.setUIState(
+          getInitialStateValue(initialState, this.props, this.getComponentState())
+        );
+      }
 
-    componentDidMount() {
-      this.mappedDispatchProps.setUIState(
-        getInitialStateValue(initialState, this.props, this.getComponentState())
-      );
-    }
+      componentWillUnmount() {
+        this.unsubscribeFromStore();
+      }
 
-    componentWillUnmount() {
-      this.unsubscribeFromStore();
-    }
+      render() {
 
-    render() {
-      const uiState = this.getComponentState();
-      return uiState
-        ? <WrappedComponent {...Object.assign({ uiState: this.state.uiState }, this.mappedDispatchProps, this.props)} />
-        : null;
-    }
-  };
+        const uiState = this.getComponentState();
+
+        if (uiState) {
+          const props = config.transformProps
+            ? config.transformProps(this.state.uiState, this.props, this.mappedDispatchProps)
+            : Object.assign({ uiState: this.state.uiState }, this.mappedDispatchProps, this.props);
+
+          return <WrappedComponent {...props} />;
+        }
+
+        return null;
+      }
+    };
+}

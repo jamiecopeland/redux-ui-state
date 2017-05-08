@@ -18,10 +18,7 @@ const rootEl = document.getElementById('root');
 function render() {
   ReactDOM.render(
     <Provider store={store}>
-      <ReduxUIStateProvider
-        store={store}
-        branchSelector={defaultBranchSelector}
-      >
+      <ReduxUIStateProvider store={store} branchSelector={defaultBranchSelector}>
         <App />
       </ReduxUIStateProvider>
     </Provider>,
