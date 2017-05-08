@@ -10,7 +10,7 @@ import App from './components/App';
 import rootReducer from './reducers/index';
 
 const store = createStore<AppState>(
-  rootReducer, applyMiddleware(createLogger({ collapsed: true }))
+  rootReducer, applyMiddleware(createLogger({ collapsed: false }))
 );
 
 const rootEl = document.getElementById('root');
