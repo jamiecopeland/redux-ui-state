@@ -1,5 +1,9 @@
 export { DEFAULT_BRANCH_NAME } from './constants';
 export {
+  StateProps, DispatchProps, Props,
+  ExportedComponentDispatchProps, ExportedComponentStateProps,
+  UIStateBranch,
+  DefaultStateShape,
   defaultBranchSelector,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
@@ -16,9 +20,5 @@ export {
 } from './actions';
 
 export { reducer as pojoReducer } from './pojoReducer';
-export {
-  addReduxUIState, AddReduxUIStateConfig, UIStateBranch,
-  StateProps, DispatchProps, Props,
-  ExportedComponentDispatchProps, ExportedComponentStateProps,
-} from './addReduxUIState';
+export { AddReduxUIStateConfig, AddReduxUIStateConfigWithTransform, addReduxUIState } from './addReduxUIState';
 export { connectReduxUIState } from './connectReduxUIState';

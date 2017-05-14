@@ -8,9 +8,9 @@ import {
   ExportedComponentDispatchProps,
   ExportedComponentStateProps,
   AddReduxUIStateConfig,
-  UIStateBranch
-} from '../addReduxUIState';
-import { setUIState, replaceUIState } from '../actions';
+  UIStateBranch,
+  setUIState, replaceUIState
+} from '../index';
 import { Action } from 'redux';
 
 // Data fixture
@@ -78,9 +78,9 @@ const TestComponent: StatelessComponent<StateProps & DispatchProps & ReduxUIStat
 const getWrapper = () => {
   const config: AddReduxUIStateConfig<UIState, StateProps> = {
     id: componentId,
-    getInitialState: ({ initialIndex = 0 }) => ({ index: initialIndex }),
+    initialState: ({ initialIndex = 0 }) => ({ index: initialIndex }),
   };
-  const Component = addReduxUIState<UIState, StateProps>(config)(TestComponent);
+  const Component = addReduxUIState<UIState, StateProps & DispatchProps>(config)(TestComponent);
   const props = getPropsFixture();
   return {
     wrapper: mount(<Component {...props} />),
@@ -122,15 +122,15 @@ describe('addReduxUIState', () => {
     expect(typeof wrapper.find(TestComponent).props().destroyUIState).toEqual('function');
   });
 
-  it('should pass existingState argument to getInitialState', () => {
+  it('should pass existingState argument to initialState', () => {
     const config: AddReduxUIStateConfig<UIState, StateProps> = {
       id: componentId,
-      getInitialState: jest.fn(),
+      initialState: jest.fn(),
     };
-    const Component = addReduxUIState<UIState, StateProps>(config)(TestComponent);
+    const Component = addReduxUIState<UIState, StateProps & DispatchProps>(config)(TestComponent);
     mount(<Component {...getPropsFixture()} />);
 
-    expect(config.getInitialState)
+    expect(config.initialState)
       .toBeCalledWith((expect as any).anything(), uiStateFixture); // tslint:disable-line:no-any
   });
 

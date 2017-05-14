@@ -1,14 +1,30 @@
-import { ComponentClass, StatelessComponent } from 'react';
+import { ComponentClass } from 'react';
 
-import { createConnectWrapper } from './utils';
-import { addReduxUIState } from './addReduxUIState';
-import { AddReduxUIStateConfig, StateProps, DispatchProps } from './addReduxUIState';
+import {
+  InputComponent, InputComponentWithTransform,
+  createConnectWrapper, DefaultStateShape,
+} from './utils';
+import {
+  AddReduxUIStateConfig, AddReduxUIStateConfigWithTransform, addReduxUIState
+} from './addReduxUIState';
 
-export const connectReduxUIState = <TUIState, TProps>
-  ({ id, getInitialState }: AddReduxUIStateConfig<TUIState, TProps>) =>
-  (
-    Component:
-      StatelessComponent<StateProps<TUIState> & DispatchProps<TUIState> & TProps> |
-      ComponentClass<StateProps<TUIState> & DispatchProps<TUIState> & TProps>
-  ): ComponentClass<TProps> =>
-  createConnectWrapper<TProps>()(addReduxUIState<TUIState, TProps>({ id, getInitialState })(Component));
+export function connectReduxUIState<TUIState, TProps>(
+  config: AddReduxUIStateConfig<TUIState, TProps>
+): (WrappedComponent: InputComponent<TUIState, TProps>) => React.ComponentClass<TProps>;
+
+export function connectReduxUIState<TUIState, TProps, TTransformedProps>(
+  config: AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps>
+): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
+
+export function connectReduxUIState<TUIState, TProps, TTransformedProps>
+  ({ id, initialState, transformProps }: AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps>) {
+    return (
+      Component: InputComponent<TUIState, TProps> | InputComponentWithTransform<TUIState, TProps, TTransformedProps>
+    ): ComponentClass<TProps> => createConnectWrapper<TProps, DefaultStateShape>()(
+        transformProps
+          ? addReduxUIState<TUIState, TProps, TTransformedProps>({ id, initialState, transformProps })(
+              Component as InputComponentWithTransform<TUIState, TProps, TTransformedProps>
+            )
+          : addReduxUIState<TUIState, TProps>({ id, initialState })(Component as InputComponent<TUIState, TProps> )
+      );
+  }

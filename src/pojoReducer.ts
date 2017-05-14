@@ -1,5 +1,5 @@
-import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction, DestroyUIStateAction, DESTROY_UI_STATE } from './actions';
-import { UIStateBranch } from './addReduxUIState';
+import { SET_UI_STATE, REPLACE_UI_STATE, DESTROY_UI_STATE, ModifyUIStateAction, DestroyUIStateAction } from './actions';
+import { UIStateBranch } from './utils';
 
 export const initialState: UIStateBranch = {
   components: {},
@@ -10,7 +10,7 @@ export const initialState: UIStateBranch = {
  */
 export const reducer = (
   state = initialState,
-  action: ModifyUIStateAction<Object> | DestroyUIStateAction
+  action: ModifyUIStateAction<object> | DestroyUIStateAction
 ) => {
   switch (action.type) {
     case SET_UI_STATE: {
@@ -20,7 +20,7 @@ export const reducer = (
           ...state.components,
           [action.payload.id]: {
             ...state.components[action.payload.id],
-            ...(action as ModifyUIStateAction<Object>).payload.state
+            ...(action as ModifyUIStateAction<object>).payload.state
           },
         }
       });
@@ -31,7 +31,7 @@ export const reducer = (
         ...state,
         components: {
           ...state.components,
-          [action.payload.id]: (action as ModifyUIStateAction<Object>).payload.state,
+          [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
         }
       };
     }

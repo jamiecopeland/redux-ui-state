@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "description": "UI state management for Redux applications",
   "main": "lib/index.js",
   "directories": {
@@ -12,8 +12,8 @@
     "build:watch": "tsc -w",
     "prepublish": "npm run build",
     "lint": "tslint 'src/**/*.{ts,tsx}'",
-    "test": "jest --config jest/test.config.json",
-    "test:watch": "jest --config jest/test.config.json --watch"
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -28,30 +28,42 @@
     "url": "https://github.com/jamiecopeland/redux-ui-state/issues"
   },
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
+  "jest": {
+    "transform": {
+      ".*": "<rootDir>/jest/preprocessor.js"
+    },
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "testRegex": "<rootDir>/src/.*\\.test\\.(ts|tsx|js)$"
+  },
   "dependencies": {
-    "babel-polyfill": "^6.3.14",
-    "react": "^15.3.2",
-    "react-dom": "^15.0.1",
-    "react-redux": "^4.4.5",
+
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
     "redux": "^3.6.0",
-    "reselect": "^2.5.4"
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
-    "@types/enzyme": "^2.7.1",
+    "@types/enzyme": "^2.8.0",
     "@types/jest": "^16.0.4",
-    "@types/react": "^15.0.0",
-    "@types/react-dom": "^0.14.20",
-    "@types/react-redux": "^4.4.35",
+    "@types/react": "^15.0.24",
+    "@types/react-dom": "^15.5.0",
+    "@types/react-redux": "^4.4.40",
     "@types/redux": "^3.6.0",
-    "@types/reselect": "^2.0.27",
-    "enzyme": "^2.7.0",
+    "@types/reselect": "^2.2.0",
+    "enzyme": "^2.8.2",
     "jest": "^18.1.0",
     "react-addons-test-utils": "^15.0.1",
+    "ts-jest": "^20.0.3",
     "tslint": "^4.2.0",
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
     "tslint-react": "^2.2.0",
-    "typescript": "^2.1.4",
+    "typescript": "^2.3.2",
     "webpack": "^1.14.0"
   }
 }
