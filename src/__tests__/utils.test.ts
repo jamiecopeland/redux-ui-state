@@ -1,5 +1,4 @@
-import { DefaultStateShape, UIStateBranch } from '../addReduxUIState';
-import { uiStateSelector } from '../utils';
+import { uiStateSelector, DefaultStateShape, UIStateBranch } from '../utils';
 
 describe('utils', () => {
 
@@ -31,10 +30,10 @@ describe('utils', () => {
     expect(uiStateSelector(defaultState, { id: componentId })).toEqual(componentState);
   });
 
-  it('should select correctly when store state is default shape', () => {
-    const selectUIStateCustom = ({ ui }: CustomState) => ui;
+  it('should select correctly when store state is Custom shape and using custom state selector', () => {
+    const customStateSelector = ({ ui }: CustomState) => ui;
 
-    expect(uiStateSelector(customState, { id: componentId, branchSelector: selectUIStateCustom }))
+    expect(uiStateSelector(customState, { id: componentId, branchSelector: customStateSelector }))
       .toEqual(componentState);
   });
 

@@ -3,9 +3,16 @@ import { Dispatch, Action } from 'redux';
 import { connect } from 'react-redux';
 import { createSelector } from 'reselect';
 
+// TODO Investigate typings weirdness
+// Importing the whole of reselect fixes a strange issue where the transpiler seems to swap out createSelector for
+// Reselect.OutputParametricSelector but doesn't import the Reselect namespage in the uiStateSelector definition
+import 'reselect';
+
 import { setUIState, replaceUIState, destroyUIState } from './actions';
 import { DEFAULT_BRANCH_NAME } from './constants';
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// Public Utils
 /**
  * The default shape of a store containing the uiState reducer
  */
@@ -33,7 +40,7 @@ export interface StateProps<TUIState> {
  * The dispatch props passed into a component wrapped by addReduxUIState
  */
 export interface DispatchProps<TUIState> {
-  setUIState: (state: TUIState) => void;
+  setUIState: (state: Partial<TUIState>) => void;
   replaceUIState: (state: TUIState) => void;
   resetUIState: () => void;
   destroyUIState: () => void;
@@ -90,20 +97,20 @@ export interface IdSelectorProps {
 /**
  * Selects the id passed in by the props
  */
-export const idSelector = (_: object, { id }: IdSelectorProps) => id;
+export const idSelector = (_: any, { id }: IdSelectorProps) => id; // tslint:disable-line:no-any
 
 /**
  * The shape of the props passed into branchSelectorSelector
  */
-export interface BranchSelectorSelectorProps<TAppState> {
-  branchSelector: (state: TAppState) => UIStateBranch;
+export interface BranchSelectorSelectorProps {
+  branchSelector: (state: object) => UIStateBranch;
 }
 
 /**
  * Selects the uiStateBranchSelector from the props
  */
-export const branchSelectorSelector = <TAppState>(
-  _: object, { branchSelector }: BranchSelectorSelectorProps<TAppState>
+export const branchSelectorSelector = (
+  _: object, { branchSelector }: BranchSelectorSelectorProps
 ) =>
   branchSelector;
 
@@ -111,8 +118,9 @@ export const branchSelectorSelector = <TAppState>(
  * Selects uiState of a component
  */
 export const uiStateSelector = createSelector(
-  state => state,
-  idSelector,
+  // TODO Improve typings? - any added here due to possible problem with reselect typings
+  (state: any, _: any) => state, // tslint:disable-line:no-any
+  idSelector, // tslint:disable-line:no-any
   branchSelectorSelector,
   (state, id, branchSelector = defaultBranchSelector) => branchSelector(state).components[id],
 );
@@ -131,6 +139,25 @@ export const defaultMapStateToProps = (state: DefaultStateShape): ExportedCompon
 export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
   dispatch,
 });
+
+/**
+ * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
+ * defaults will be used.
+ */
+export function createConnectWrapper<TProps, TAppState>(
+  mapStateToProps: (state: TAppState | DefaultStateShape) => ExportedComponentStateProps = defaultMapStateToProps,
+  mapDispatchToProps: (dispatch: Dispatch<TAppState>) => { dispatch: Dispatch<TAppState>; } = defaultMapDispatchToProps
+) {
+  return (component: React.ComponentClass<ExportedComponentProps & TProps> ) =>
+  connect<
+    ExportedComponentStateProps,
+    ExportedComponentDispatchProps,
+    TProps
+  >(mapStateToProps, mapDispatchToProps)(component);
+};
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
+// addReduxUIState function Utils
 
 /**
  * A string or a function accepting the props as an argument and returning a string
@@ -213,7 +240,7 @@ export function mapDispatchToProps<TUIState, TProps>(
   initialState: InitialState<TUIState, TProps>
 ): DispatchProps<TUIState> {
   return {
-    setUIState: (state: TUIState): Action => dispatch(setUIState<TUIState>({
+    setUIState: (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
       id,
       state: state,
     })),
@@ -231,25 +258,10 @@ export function mapDispatchToProps<TUIState, TProps>(
   };
 }
 
-export const omitReduxUIProps = (props: ExportedComponentProps) => {
-  let cleanedProps = {...props};
+export const omitReduxUIProps = <TProps extends object>(props: ExportedComponentProps & TProps) => {
+  // TODO Remove any once type checking regression is fixed in TypeScript 2.4
+  let cleanedProps = {...props as any}; // tslint:disable-line:no-any
   delete cleanedProps.uiStateBranch;
   delete cleanedProps.dispatch;
   return cleanedProps;
-};
-
-/**
- * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
- * defaults will be used.
- */
-export function createConnectWrapper<TProps, TAppState>(
-  mapStateToProps: (state: TAppState | DefaultStateShape) => ExportedComponentStateProps = defaultMapStateToProps,
-  mapDispatchToProps: (dispatch: Dispatch<TAppState>) => { dispatch: Dispatch<TAppState>; } = defaultMapDispatchToProps
-) {
-  return (component: React.ComponentClass<ExportedComponentProps & TProps> ) =>
-  connect<
-    ExportedComponentStateProps,
-    ExportedComponentDispatchProps,
-    TProps
-  >(mapStateToProps, mapDispatchToProps)(component);
 };

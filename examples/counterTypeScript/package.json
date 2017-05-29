@@ -18,9 +18,9 @@
     "@types/react-dom": "^0.14.20",
     "@types/react-redux": "^4.4.35",
     "@types/redux": "^3.6.0",
-    "@types/redux-logger": "^2.6.32",
+    "@types/redux-logger": "^3.0.0",
     "ts-loader": "^0.9.5",
-    "typescript": "^2.0.6",
+    "typescript": "^2.2.0",
     "webpack": "^1.9.6",
     "webpack-dev-server": "^1.8.2"
   },
@@ -29,7 +29,8 @@
     "react-dom": "^15.3.1",
     "react-redux": "^4.4.5",
     "redux": "^3.6.0",
-    "redux-logger": "^2.7.4",
-    "redux-ui-state": "^2.0.0"
+    "redux-logger": "^3.0.1",
+    "redux-ui-state": "^2.0.0",
+    "reselect": "^3.0.1"
   }
 }

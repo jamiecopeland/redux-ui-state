@@ -1,6 +1,6 @@
 import { reducer, initialState as defaultInitialState } from '../pojoReducer';
 import { setUIState, replaceUIState, destroyUIState } from '../actions';
-import { UIStateBranch } from '../addReduxUIState';
+import { UIStateBranch } from '../utils';
 
 const COMPONENT_ID = 'thing';
 

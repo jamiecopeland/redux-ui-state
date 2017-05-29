@@ -40,7 +40,6 @@
     "testRegex": "<rootDir>/src/.*\\.test\\.(ts|tsx|js)$"
   },
   "dependencies": {
-
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
     "react-redux": "^5.0.4",
@@ -49,12 +48,11 @@
   },
   "devDependencies": {
     "@types/enzyme": "^2.8.0",
-    "@types/jest": "^16.0.4",
+    "@types/jest": "^16.0.7",
     "@types/react": "^15.0.24",
     "@types/react-dom": "^15.5.0",
     "@types/react-redux": "^4.4.40",
     "@types/redux": "^3.6.0",
-    "@types/reselect": "^2.2.0",
     "enzyme": "^2.8.2",
     "jest": "^18.1.0",
     "react-addons-test-utils": "^15.0.1",
@@ -63,7 +61,7 @@
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
     "tslint-react": "^2.2.0",
-    "typescript": "^2.3.2",
+    "typescript": "^2.2.0",
     "webpack": "^1.14.0"
   }
 }

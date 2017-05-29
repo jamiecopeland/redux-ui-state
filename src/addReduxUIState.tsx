@@ -4,6 +4,7 @@ import {
   InputComponent,
   InputComponentWithTransform,
   ExportedComponentProps,
+
   Id,
   InitialState,
 
@@ -20,7 +21,7 @@ import {
 export interface AddReduxUIStateConfig<TUIState, TProps> {
   id: Id<TProps>;
   initialState: InitialState<TUIState, TProps>;
-  destroyOnUnmount?: boolean;
+  onUnmount?: (dispatchFunctions: DispatchProps<TUIState>, uiState: TUIState, props: Readonly<TProps>) => void;
 }
 
 export interface AddReduxUIStateConfigWithTransform<
@@ -44,7 +45,7 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
 export function addReduxUIState<TUIState, TProps, TTransformedProps>(
   config: AddReduxUIStateConfigWithTransform<TUIState, TProps, TTransformedProps>
 ) {
-  const { id, initialState, destroyOnUnmount } = config;
+  const { id, initialState, onUnmount } = config;
   return (WrappedComponent: InputComponent<TUIState, TProps>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
   class ExportedComponent extends React.Component<TProps & ExportedComponentProps, {}> {
     static displayName = 'ReduxUIStateHOC';
@@ -86,8 +87,8 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
     }
 
     componentWillUnmount() {
-      if (destroyOnUnmount) {
-        this.mappedDispatchProps.destroyUIState();
+      if (onUnmount) {
+        onUnmount(this.mappedDispatchProps, this.getComponentState(), omitReduxUIProps(this.props));
       }
     }
 
@@ -98,13 +99,11 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
     }
 
     render() {
-      const uiState = getComponentStateFromUIStateBranch(
-        this.props.uiStateBranch, getStringFromId<Readonly<TProps>>(id, this.props)
-      );
+      const uiState = this.getComponentState();
 
       if (uiState) {
         const props = config.transformProps
-          ? config.transformProps(uiState as TUIState, this.props as Readonly<TProps>, this.mappedDispatchProps)
+          ? config.transformProps(uiState, this.props as Readonly<TProps>, this.mappedDispatchProps)
           : { uiState, ...this.mappedDispatchProps, ...omitReduxUIProps(this.props) };
         // TODO Remove the any below once TypeScript 2.4 emerges
         // https://github.com/Microsoft/TypeScript/pull/13288

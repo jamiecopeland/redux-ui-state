@@ -21,7 +21,7 @@ export interface DestroyUIStateAction {
   payload: DestroyUIStateActionPayload;
 }
 
-export const setUIState = <TUIState>({ id, state }: ModifyUIStateActionPayload<TUIState>) => ({
+export const setUIState = <TUIState>({ id, state }: ModifyUIStateActionPayload<Partial<TUIState>>) => ({
   type: SET_UI_STATE,
   payload: { id, state },
 });
