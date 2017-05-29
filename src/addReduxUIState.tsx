@@ -28,7 +28,7 @@ export interface AddReduxUIStateConfigWithTransform<
   TUIState, TProps, TTransformedProps
 > extends AddReduxUIStateConfig<TUIState, TProps> {
   transformProps: (
-    uiState: TUIState, ownProps: Readonly<TProps>, dispatchProps: DispatchProps<TUIState>
+    uiState: TUIState, dispatchProps: DispatchProps<TUIState>, ownProps: Readonly<TProps>
   ) => TTransformedProps;
 }
 
@@ -103,7 +103,7 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
 
       if (uiState) {
         const props = config.transformProps
-          ? config.transformProps(uiState, this.props as Readonly<TProps>, this.mappedDispatchProps)
+          ? config.transformProps(uiState, this.mappedDispatchProps, this.props as Readonly<TProps>)
           : { uiState, ...this.mappedDispatchProps, ...omitReduxUIProps(this.props) };
         // TODO Remove the any below once TypeScript 2.4 emerges
         // https://github.com/Microsoft/TypeScript/pull/13288

@@ -79,7 +79,7 @@ const CounterNiceProps: React.StatelessComponent<TransformedProps> = ({ message,
 export const CounterTransformed = connectReduxUIState<UIState, {}, TransformedProps>({
   id: 'counterTransformed',
   initialState: () => ({ index: 0 }),
-  transformProps: ({ index }, ownProps, { setUIState }) => ({
+  transformProps: ({ index }, { setUIState }) => ({
     message: `Index: ${index}`,
     increment: () => setUIState({ index: index + 1 }),
     decrement: () => setUIState({ index: index - 1 }),
@@ -97,7 +97,7 @@ interface EverythingProps {
 export const CounterEverything = connectReduxUIState<UIState, EverythingProps, TransformedProps>({
   id: ({ uiStateId }) => uiStateId,
   initialState: ({ initialValue }) => ({ index: initialValue }),
-  transformProps: ({ index }, { messagePrefix }, { setUIState }) => ({
+  transformProps: ({ index }, { setUIState }, { messagePrefix }) => ({
     message: `${messagePrefix} ${index}`,
     increment: () => setUIState({ index: index + 1 }),
     decrement: () => setUIState({ index: index - 1 }),
