@@ -60,11 +60,18 @@ Your root reducer should look this:
 ```
 // rootReducer.js
 
+import { combineReducers } from 'redux';
 import { pojoReducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
 
-export default (state = {}, action) => ({
+const initialState = {
+  counter: {
+    index: 0
+  },
+}
+
+export default combineReducers({
   ...
-  [DEFAULT_BRANCH_NAME]: pojoReducer(state[DEFAULT_BRANCH_NAME], action),
+  [DEFAULT_BRANCH_NAME]: createReducer(initialState),
   ...
 });
 ```
@@ -79,10 +86,10 @@ Use the `connectReduxUIState` higher order component to inject `uiState` (to be 
 
 import React from 'react';
 
-const Counter = ({ index, increment, decrement }) => (
+const Counter = ({ indexMessage, increment, decrement }) => (
   <div>
     <div>
-      {index}
+      {indexMessage}
     </div>
     <div>
       <button onClick={decrement}>-</button>
@@ -91,17 +98,14 @@ const Counter = ({ index, increment, decrement }) => (
   </div>
 );
 
-const config: AddReduxUIStateConfig = {
-  id: 'counter',
-  initialState: ({ initialIndex }) => ({ index: initialIndex }),
-  transformProps: ({ index }, { setUIState }) = ({
-    index,
-    increment: () => setUIState({ index: index + 1 }),
+export default connectReduxUIState(
+  'counter',
+  ({ index }, { setUIState }, { message }) = ({
+    indexMessage: `${message}${index}`,
     decrement: () => setUIState({ index: index - 1 }),
+    increment: () => setUIState({ index: index + 1 }),
   })
-};
-
-export default connectReduxUIState(config)(Counter);
+)(Counter);
 
 // App.js
 import React from 'react';
@@ -109,7 +113,7 @@ import Counter from './Counter';
 
 const App = () => (
   <div>
-    <Counter initialIndex={0} />
+    <Counter initialIndex={0} message="Value: " />
   </div>
 );
 
