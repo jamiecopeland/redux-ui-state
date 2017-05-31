@@ -61,7 +61,7 @@
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
     "tslint-react": "^2.2.0",
-    "typescript": "^2.2.0",
+    "typescript": "^2.3.4",
     "webpack": "^1.14.0"
   }
 }

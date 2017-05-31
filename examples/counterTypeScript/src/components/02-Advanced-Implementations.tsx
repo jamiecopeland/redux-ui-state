@@ -4,7 +4,6 @@ import { compose } from 'redux';
 
 import {
   addReduxUIState,
-  AddReduxUIStateConfig,
   DEFAULT_BRANCH_NAME,
   DefaultStateShape,
   DispatchProps,
@@ -18,19 +17,19 @@ import {
 // Raw Component
 
 interface Props {
-  initialValue: number;
+  message: string;
 }
 
 interface UIState {
   index: number;
 }
 
-const Counter: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
-  uiState, setUIState
+const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
+  message, uiState, setUIState
 }) => (
   <div>
     <div>
-      {uiState.index}
+      {message}{uiState.index}
     </div>
     <div>
       <button onClick={() => setUIState({ index: uiState.index - 1 })}>-</button>
@@ -43,10 +42,7 @@ const Counter: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
 
 export const CounterUtil = compose(
   createConnectWrapper<Props, DefaultStateShape>(),
-  addReduxUIState<UIState, Props>({
-    id: 'counterUtil',
-    initialState: ({ initialValue }) => ({ index: initialValue }),
-  })
+  addReduxUIState<UIState, Props>('counterUtil')
 )(Counter);
 
 // Manually connecting to the store
@@ -66,7 +62,4 @@ export function mapStateToProps<TAppState>(state: TAppState, ownProps: Props) {
 
 export const CounterManual = connect<
   ExportedComponentStateProps, ExportedComponentDispatchProps, Props
->(mapStateToProps)(addReduxUIState<UIState, Props>({
-  id: 'counterManual',
-  initialState: ({ initialValue }) => ({ index: initialValue }),
-})(Counter));
+>(mapStateToProps)(addReduxUIState<UIState, Props>('counterManual')(Counter));

@@ -8,7 +8,7 @@ import { createSelector } from 'reselect';
 // Reselect.OutputParametricSelector but doesn't import the Reselect namespage in the uiStateSelector definition
 import 'reselect';
 
-import { setUIState, replaceUIState, destroyUIState } from './actions';
+import { setUIState, replaceUIState } from './actions';
 import { DEFAULT_BRANCH_NAME } from './constants';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -42,8 +42,6 @@ export interface StateProps<TUIState> {
 export interface DispatchProps<TUIState> {
   setUIState: (state: Partial<TUIState>) => void;
   replaceUIState: (state: TUIState) => void;
-  resetUIState: () => void;
-  destroyUIState: () => void;
 }
 
 /**
@@ -144,7 +142,7 @@ export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
  * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
  * defaults will be used.
  */
-export function createConnectWrapper<TProps, TAppState>(
+export function createConnectWrapper<TProps = {}, TAppState = DefaultStateShape>(
   mapStateToProps: (state: TAppState | DefaultStateShape) => ExportedComponentStateProps = defaultMapStateToProps,
   mapDispatchToProps: (dispatch: Dispatch<TAppState>) => { dispatch: Dispatch<TAppState>; } = defaultMapDispatchToProps
 ) {
@@ -163,6 +161,13 @@ export function createConnectWrapper<TProps, TAppState>(
  * A string or a function accepting the props as an argument and returning a string
  */
 export type Id<TProps> = string | ((props: TProps) => string);
+
+// TODO Add comment
+export type TransformPropsFunc<TUIState, TProps, TTransformedProps> = (
+  uiState: TUIState,
+  dispatchProps: DispatchProps<TUIState>,
+  ownProps: Readonly<TProps>
+) => TTransformedProps;
 
 /**
  * A type guard guaranteeing id is a string;
@@ -237,7 +242,7 @@ export function mapDispatchToProps<TUIState, TProps>(
   dispatch: Dispatch<DefaultStateShape>,
   props: TProps,
   id: string,
-  initialState: InitialState<TUIState, TProps>
+  // initialState: InitialState<TUIState, TProps>
 ): DispatchProps<TUIState> {
   return {
     setUIState: (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
@@ -247,13 +252,6 @@ export function mapDispatchToProps<TUIState, TProps>(
     replaceUIState: (state: TUIState): Action => dispatch(replaceUIState<TUIState>({
       id,
       state: state,
-    })),
-    resetUIState: (): Action => dispatch(replaceUIState<TUIState>({
-      id,
-      state: getInitialStateValue(initialState, props),
-    })),
-    destroyUIState: (): Action => dispatch(destroyUIState({
-      id,
     })),
   };
 }

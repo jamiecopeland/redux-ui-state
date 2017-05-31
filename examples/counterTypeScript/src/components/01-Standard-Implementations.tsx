@@ -5,69 +5,23 @@ import {
   Props as ReduxUIStateProps,
 } from 'redux-ui-state';
 
-// -------------------------------------------------------------------------------------------------
-// Component acccepting raw props
-
-interface UIState {
-  index: number;
+interface Props {
+  message: string;
 }
-
-const CounterRawProps: React.StatelessComponent<ReduxUIStateProps<UIState>> = ({
-  uiState, setUIState
-}) => (
-  <div>
-    <div>
-      {uiState.index}
-    </div>
-    <div>
-      <button onClick={() => setUIState({ index: uiState.index - 1 })}>-</button>
-      <button onClick={() => setUIState({ index: uiState.index + 1 })}>+</button>
-    </div>
-  </div>
-);
-
-// Counter static
-
-export const CounterStatic = connectReduxUIState<UIState, {}>({
-  id: 'counterStatic',
-  initialState: { index: 0 },
-})(CounterRawProps);
-
-// Counter dynamic initial state
-
-interface DynamicInitialStateProps {
-  initialValue: number;
-}
-
-export const CounterDynamicInitialState =  connectReduxUIState<UIState, DynamicInitialStateProps>({
-  id: 'counterDynamicInitialState',
-  initialState: ({ initialValue }) => ({ index: initialValue }),
-})(CounterRawProps);
-
-// Counter dynamic id
-
-interface DynamicIdProps {
-  uiStateId: string;
-}
-
-export const CounterDynamicId = connectReduxUIState<UIState, DynamicIdProps>({
-  id: ({ uiStateId }) => uiStateId,
-  initialState: () => ({ index: 0 }),
-})(CounterRawProps);
 
 // -------------------------------------------------------------------------------------------------
-// Component acccepting nice props
+// Component accepting nice props
 
 interface TransformedProps {
-  message: string;
+  indexMessage: string;
   increment: () => void;
   decrement: () => void;
 }
 
-const CounterNiceProps: React.StatelessComponent<TransformedProps> = ({ message, increment, decrement }) => (
+const CounterNiceProps: React.StatelessComponent<TransformedProps> = ({ indexMessage, increment, decrement }) => (
   <div>
     <div>
-      {message}
+      {indexMessage}
     </div>
     <div>
       <button onClick={decrement}>-</button>
@@ -76,30 +30,48 @@ const CounterNiceProps: React.StatelessComponent<TransformedProps> = ({ message,
   </div>
 );
 
-export const CounterTransformed = connectReduxUIState<UIState, {}, TransformedProps>({
-  id: 'counterTransformed',
-  initialState: () => ({ index: 0 }),
-  transformProps: ({ index }, { setUIState }) => ({
-    message: `Index: ${index}`,
+// Counter transfomed props
+
+export const CounterTransformed = connectReduxUIState<UIState, Props, TransformedProps>(
+  'counterTransformed',
+  ({ index }, { setUIState }, { message }) => ({
+    indexMessage: `${message}${index}`,
     increment: () => setUIState({ index: index + 1 }),
     decrement: () => setUIState({ index: index - 1 }),
   })
-})(CounterNiceProps);
+)(CounterNiceProps);
 
-// Counter with transform
+// -------------------------------------------------------------------------------------------------
+// Component acccepting raw props
 
-interface EverythingProps {
-  initialValue: number;
-  uiStateId: string;
-  messagePrefix: string;
+interface UIState {
+  index: number;
 }
 
-export const CounterEverything = connectReduxUIState<UIState, EverythingProps, TransformedProps>({
-  id: ({ uiStateId }) => uiStateId,
-  initialState: ({ initialValue }) => ({ index: initialValue }),
-  transformProps: ({ index }, { setUIState }, { messagePrefix }) => ({
-    message: `${messagePrefix} ${index}`,
-    increment: () => setUIState({ index: index + 1 }),
-    decrement: () => setUIState({ index: index - 1 }),
-  })
-})(CounterNiceProps);
+const CounterRawProps: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
+  message, uiState, setUIState
+}) => (
+  <div>
+    <div>
+      {message}{uiState.index}
+    </div>
+    <div>
+      <button onClick={() => setUIState({ index: uiState.index - 1 })}>-</button>
+      <button onClick={() => setUIState({ index: uiState.index + 1 })}>+</button>
+    </div>
+  </div>
+);
+
+// Counter static id
+
+export const CounterStatic = connectReduxUIState<UIState, Props>('counterStatic')(CounterRawProps);
+
+// Counter dynamic id
+
+interface DynamicIdProps extends Props {
+  uiStateId: string;
+}
+
+export const CounterDynamicId = connectReduxUIState<UIState, DynamicIdProps>(
+  ({ uiStateId }) => uiStateId
+)(CounterRawProps);

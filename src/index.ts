@@ -19,6 +19,6 @@ export {
   destroyUIState,
 } from './actions';
 
-export { reducer as pojoReducer } from './pojoReducer';
-export { AddReduxUIStateConfig, AddReduxUIStateConfigWithTransform, addReduxUIState } from './addReduxUIState';
+export { createReducer } from './pojoReducer';
+export { addReduxUIState } from './addReduxUIState';
 export { connectReduxUIState } from './connectReduxUIState';

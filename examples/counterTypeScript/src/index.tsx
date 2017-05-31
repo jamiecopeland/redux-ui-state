@@ -6,8 +6,6 @@ import { createLogger } from 'redux-logger';
 
 import rootReducer from './reducers/index';
 import App from './components/App';
-// import CounterUtilConnect from './components/CounterUtilConnect';
-// import CounterManualConnect from './components/CounterManualConnect';
 
 const store = createStore(rootReducer, {}, applyMiddleware(createLogger({ collapsed: true })));
 const rootEl = document.getElementById('root');

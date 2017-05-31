@@ -20,7 +20,7 @@
     "@types/redux": "^3.6.0",
     "@types/redux-logger": "^3.0.0",
     "ts-loader": "^0.9.5",
-    "typescript": "^2.2.0",
+    "typescript": "^2.3.4",
     "webpack": "^1.9.6",
     "webpack-dev-server": "^1.8.2"
   },

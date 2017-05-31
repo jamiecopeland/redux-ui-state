@@ -1,15 +1,13 @@
-import { SET_UI_STATE, REPLACE_UI_STATE, DESTROY_UI_STATE, ModifyUIStateAction, DestroyUIStateAction } from './actions';
+import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction, DestroyUIStateAction } from './actions';
 import { UIStateBranch } from './utils';
-
-export const initialState: UIStateBranch = {
-  components: {},
-};
 
 /**
  * Makes all your dreams (or at least actions) come true.
  */
-export const reducer = (
-  state = initialState,
+export const createReducer = <TInitialState = Record<string, any>>( // tslint:disable-line:no-any
+  initialState: TInitialState
+) => (
+  state: UIStateBranch = { components: initialState },
   action: ModifyUIStateAction<object> | DestroyUIStateAction
 ) => {
   switch (action.type) {
@@ -33,15 +31,6 @@ export const reducer = (
           ...state.components,
           [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
         }
-      };
-    }
-
-    case DESTROY_UI_STATE: {
-      const newComponentsObj = {...state.components};
-      delete newComponentsObj[action.payload.id];
-      return {
-        ...state,
-        components: newComponentsObj
       };
     }
 
