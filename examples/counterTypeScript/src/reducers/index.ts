@@ -11,5 +11,5 @@ const initialState = {
 };
 
 export default combineReducers({
-  [DEFAULT_BRANCH_NAME as string]: createReducer(initialState)
+  [DEFAULT_BRANCH_NAME]: createReducer(initialState)
 });

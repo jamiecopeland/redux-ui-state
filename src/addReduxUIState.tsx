@@ -48,7 +48,7 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
         throw new Error(`Cannot find dispatch in props. ${missingReduxPropsMessage}`);
       }
 
-      const idString = getStringFromId<Readonly<TProps>>(id, this.props);
+      const idString = this.getId();
 
       if (!idString) {
         throw new Error(`
@@ -60,17 +60,24 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
       this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(this.props.dispatch, props, idString);
     }
 
+    getId() {
+      return getStringFromId<Readonly<TProps>>(id, this.props);
+    }
+
     getComponentState() {
       return getComponentStateFromUIStateBranch<TUIState>(
-        this.props.uiStateBranch, getStringFromId<Readonly<TProps>>(id, this.props)
+        this.props.uiStateBranch, this.getId()
       );
     }
 
-    // TODO Add shouldComponentUpdate
+    shouldComponentUpdate(nextProps: ExportedComponentProps) {
+      return getComponentStateFromUIStateBranch<TUIState>(
+        nextProps.uiStateBranch, this.getId()
+      ) !== this.getComponentState();
+    }
 
     render() {
       const uiState = this.getComponentState();
-      console.log('render:', this.props);
       if (uiState) {
         const props = transformProps
           ? transformProps(uiState, this.mappedDispatchProps, this.props as Readonly<TProps>)
