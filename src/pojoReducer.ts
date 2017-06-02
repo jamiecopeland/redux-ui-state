@@ -1,14 +1,14 @@
-import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction, DestroyUIStateAction } from './actions';
+import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction } from './actions';
 import { UIStateBranch } from './utils';
 
 /**
- * Makes all your dreams (or at least actions) come true.
+ * Makes all your dreams (or at least your actions) come true.
  */
 export const createReducer = <TInitialState = Record<string, any>>( // tslint:disable-line:no-any
-  initialState: TInitialState
+  initialState?: TInitialState
 ) => (
   state: UIStateBranch = { components: initialState },
-  action: ModifyUIStateAction<object> | DestroyUIStateAction
+  action: ModifyUIStateAction<object>
 ) => {
   switch (action.type) {
     case SET_UI_STATE: {

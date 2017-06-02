@@ -1,132 +1,138 @@
-import { reducer, initialState as defaultInitialState } from '../pojoReducer';
-import { setUIState, replaceUIState, destroyUIState } from '../actions';
+import { createReducer  } from '../pojoReducer';
+import { setUIState, replaceUIState, SET_UI_STATE } from '../actions';
 import { UIStateBranch } from '../utils';
 
 const COMPONENT_ID = 'thing';
 
-interface ComponentUIState {
+interface ComponentUIStateOptional {
   readonly isOpen?: boolean;
   readonly selectedIndex?: number;
 }
 
-const getUser = (): ComponentUIState => ({
+interface ComponentUIStateMandatory extends ComponentUIStateOptional {
+  readonly isOpen: boolean;
+  readonly selectedIndex: number;
+}
+
+const getItem1State = (): ComponentUIStateOptional => ({
   isOpen: true,
   selectedIndex: 0,
 });
 
-const createState = (
-  state: ComponentUIState, componentId: string = COMPONENT_ID
-): UIStateBranch => ({
-    components: {
-      [componentId]: state,
-    },
-  });
+const getItem2State = (): ComponentUIStateOptional => ({
+  isOpen: false,
+  selectedIndex: 666,
+});
+
+const ITEM_1_ID = 'item1';
+const ITEM_2_ID = 'item2';
+
+const getInitialState = () => ({
+  [ITEM_1_ID]: getItem1State(),
+  [ITEM_2_ID]: getItem2State(),
+});
+
+const getWrappedInitialState = (state: any = getInitialState()) => ({ // TODO add return type
+  components: state,
+});
+
+const createTestableReducer = () => createReducer(getInitialState());
 
 describe('pojoReducer', () => {
 
+  describe('initial state', () => {
+
+    it('contain the correct populated initial state', () => {
+      const reducer = createTestableReducer();
+      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any) // tslint:disable-line:no-any
+      const expected = getWrappedInitialState();
+
+      expect(actual).toEqual(expected);
+    });
+
+    it('contain the correct undefined initial state', () => {
+      const reducer = createReducer();
+      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any) // tslint:disable-line:no-any
+      const expected = {};
+
+      expect(actual).toEqual(expected);
+    });
+  });
+
   describe('SET_UI_STATE', () => {
     it('set a new primitive value in empty initial state', () => {
-      const action = setUIState<ComponentUIState>({
+      const action = setUIState<ComponentUIStateOptional>({
         state: {
-          isOpen: getUser().isOpen,
+          isOpen: false,
         },
-        id: COMPONENT_ID,
+        id: ITEM_1_ID,
       });
-      const newState = reducer(defaultInitialState, action);
-
-      expect(newState).toEqual(createState({
-        isOpen: getUser().isOpen,
-      }));
+      const initialState = {
+        components: {}
+      };
+      const actual = createReducer(initialState)(initialState, action);
+      const expected = {
+        components: {
+          [ITEM_1_ID]: {
+            isOpen: action.payload.state.isOpen
+          }
+        }
+      };
+      expect(actual).toEqual(expected);
     });
 
     it('set a new primitive value in populated initial state', () => {
-      const initialState: UIStateBranch = createState({
-        selectedIndex: getUser().selectedIndex,
-      });
-      const action = setUIState<ComponentUIState>({
+      const action = setUIState<ComponentUIStateOptional>({
         state: {
-          isOpen: getUser().isOpen,
+          isOpen: false,
         },
-        id: COMPONENT_ID,
+        id: ITEM_1_ID,
       });
-      const newState = reducer(initialState, action);
-      expect(newState).toEqual(createState({
-        isOpen: getUser().isOpen,
-        selectedIndex: getUser().selectedIndex,
-      }));
+      const actual = createReducer()(getWrappedInitialState(), action);
+      const expected = getWrappedInitialState();
+      expected.components[ITEM_1_ID].isOpen = false;
+      expect(actual).toEqual(expected);
     });
 
-    it('set the value of a pre-existing property', () => {
-      const initialIndex = 0;
-      const newIndex = 1;
-
-      const initialState: UIStateBranch = createState({
-        selectedIndex: initialIndex,
-      });
-      const action = setUIState<ComponentUIState>({
-        state: {
-          selectedIndex: newIndex,
-        },
-        id: COMPONENT_ID,
-      });
-      const newState = reducer(initialState, action);
-      expect(newState).toEqual(createState({
-        selectedIndex: newIndex,
-      }));
-    });
   });
 
   describe('REPLACE_UI_STATE', () => {
-    it('should replace ui state with empty state', () => {
-      const initialState: UIStateBranch = createState({});
-
-      const replacementState: ComponentUIState = {
-        selectedIndex: getUser().selectedIndex,
-      };
-
-      const action = replaceUIState({
-        id: COMPONENT_ID,
-        state: replacementState,
+    it('set a new primitive value in empty initial state', () => {
+      const action = replaceUIState<ComponentUIStateMandatory>({
+        state: {
+          isOpen: false,
+          selectedIndex: 1,
+        },
+        id: ITEM_1_ID,
       });
-
-      const newState = reducer(initialState, action);
-      expect(newState).toEqual(createState(replacementState));
-    });
-
-    it('should replace ui state with populated state', () => {
-      const initialState: UIStateBranch = createState({
-        isOpen: getUser().isOpen,
-      });
-
-      const replacementState: ComponentUIState = {
-        selectedIndex: getUser().selectedIndex,
-      };
-
-      const action = replaceUIState<ComponentUIState>({
-        id: COMPONENT_ID,
-        state: replacementState,
-      });
-
-      const newState = reducer(initialState, action);
-      expect(newState).toEqual(createState(replacementState));
-    });
-  });
-
-  describe('DESTROY_UI_STATE', () => {
-    it('should destroy ui state', () => {
-      const initialState: UIStateBranch = createState({
-        isOpen: getUser().isOpen,
-      });
-
-      const action = destroyUIState({
-        id: COMPONENT_ID,
-      });
-
-      const newState = reducer(initialState, action);
-
-      expect(newState).toEqual({
+      const initialState = {
         components: {}
-      });
+      };
+      const actual = createReducer(initialState)(initialState, action);
+      const expected = {
+        components: {
+          [ITEM_1_ID]: {
+            isOpen: action.payload.state.isOpen
+          }
+        }
+      };
+      expect(actual).toEqual(expected);
     });
+
+    it.only('set a new primitive value in populated initial state', () => {
+      const action = replaceUIState<ComponentUIStateMandatory>({
+        state: {
+          isOpen: false,
+          selectedIndex: 1,
+        },
+        id: ITEM_1_ID,
+      });
+      const actual = createReducer()(getWrappedInitialState(), action);
+      const expected = getWrappedInitialState();
+      expected.components[ITEM_1_ID] = action.payload.state;
+      expect(actual).toEqual(expected);
+    });
+
   });
+
 });
