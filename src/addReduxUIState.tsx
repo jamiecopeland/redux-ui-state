@@ -19,7 +19,7 @@ export function addReduxUIState<TUIState, TProps>(
 
 export function addReduxUIState<TUIState, TProps, TTransformedProps>(
   id: Id<TProps>,
-  transformProps: TransformPropsFunc<TUIState, TProps, TTransformedProps>
+  transformFunction: TransformPropsFunc<TUIState, TProps, TTransformedProps>
 ): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => (
   React.ComponentClass<ExportedComponentProps & TProps>
 );
@@ -56,8 +56,7 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
           An id must be specified in order to uniquely identify a particular piece of ui state
         `);
       }
-
-      this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(this.props.dispatch, props, idString);
+      this.defineMappedDispatchProps(idString, props);
     }
 
     getId() {
@@ -70,22 +69,40 @@ export function addReduxUIState<TUIState, TProps, TTransformedProps>(
       );
     }
 
-    shouldComponentUpdate(nextProps: ExportedComponentProps) {
-      return getComponentStateFromUIStateBranch<TUIState>(
-        nextProps.uiStateBranch, this.getId()
-      ) !== this.getComponentState();
+    defineMappedDispatchProps(idString: string, props: TProps & ExportedComponentProps) {
+      this.mappedDispatchProps = mapDispatchToProps<TUIState, TProps>(props.dispatch, props, idString);
+    }
+
+    componentWillUpdate(nextProps: TProps & ExportedComponentProps) {
+      // If the id changes update the dispatch props
+      const nextIdString = getStringFromId<Readonly<TProps>>(id, nextProps);
+      if (nextIdString !== getStringFromId<Readonly<TProps>>(id, this.props)) {
+        this.defineMappedDispatchProps(nextIdString, nextProps);
+      }
+    }
+
+    shouldComponentUpdate(nextProps: ExportedComponentProps & TProps) {
+      return (
+        getStringFromId<Readonly<TProps>>(id, nextProps) !== getStringFromId<Readonly<TProps>>(id, this.props)
+        ||
+        getComponentStateFromUIStateBranch<TUIState>(nextProps.uiStateBranch, this.getId()) !== this.getComponentState()
+      );
     }
 
     render() {
       const uiState = this.getComponentState();
       if (uiState) {
-        const props = transformProps
-          ? transformProps(uiState, this.mappedDispatchProps, this.props as Readonly<TProps>)
-          : { uiState, ...this.mappedDispatchProps, ...omitReduxUIProps(this.props) };
-        // TODO Remove the any below once TypeScript 2.4 emerges
-        // https://github.com/Microsoft/TypeScript/pull/13288
-        // tslint:disable-next-line:no-any
-        return <WrappedComponent {...props as any} />;
+        return (
+          <WrappedComponent
+          {
+            ...(
+              transformProps
+                ? transformProps(uiState, this.mappedDispatchProps, omitReduxUIProps(this.props))
+                : { uiState, ...this.mappedDispatchProps, ...omitReduxUIProps(this.props) }
+            )
+          }
+          />
+        );
       }
 
       return null;
