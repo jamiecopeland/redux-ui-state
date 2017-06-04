@@ -32,7 +32,7 @@ const getInitialState = () => ({
   [ITEM_2_ID]: getItem2State(),
 });
 
-const getWrappedInitialState = (state: any = getInitialState()) => ({ // TODO add return type
+const getWrappedInitialState = (state: {} = getInitialState()) => ({
   components: state,
 });
 
@@ -44,7 +44,7 @@ describe('pojoReducer', () => {
 
     it('contain the correct populated initial state', () => {
       const reducer = createTestableReducer();
-      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any) // tslint:disable-line:no-any
+      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any); // tslint:disable-line:no-any
       const expected = getWrappedInitialState();
 
       expect(actual).toEqual(expected);
@@ -52,7 +52,7 @@ describe('pojoReducer', () => {
 
     it('contain the correct undefined initial state', () => {
       const reducer = createReducer();
-      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any) // tslint:disable-line:no-any
+      const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any); // tslint:disable-line:no-any
       const expected = {};
 
       expect(actual).toEqual(expected);
