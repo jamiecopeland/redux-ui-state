@@ -1,60 +1,66 @@
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Action, Dispatch } from 'redux';
-
 import { StatelessComponent } from 'react';
+
 import {
   Props as ReduxUIStateProps,
   addReduxUIState,
   ExportedComponentDispatchProps,
   ExportedComponentStateProps,
-  AddReduxUIStateConfig,
   UIStateBranch,
-  setUIState, replaceUIState, destroyUIState
+  setUIState, replaceUIState,
+  Id,
+  DefaultStateShape,
+  DispatchProps,
+  TransformPropsFunction,
 } from '../index';
-// TODO Check if these should be exported from index
-import { Id, InitialState, InitialStateFunction, DefaultStateShape, DispatchProps } from '../utils';
 
-// Data fixture
+// Component props
 
 interface UIState {
   index: number;
   isActive: boolean;
 }
 
-interface CustomStateProps {
-  uiStateId: string;
-  initialIndex: number;
+interface ComponentStateProps {
+  indexPrefix: string;
+  dynamicId?: string;
 }
 
-interface CustomDispatchProps {
+interface ComponentDispatchProps {
   onSomethingUnrelated: () => void;
 }
 
-const componentId = 'thing';
+type ComponentProps = ComponentStateProps & ComponentDispatchProps;
+
+// Fixtures
+
+const defaultId = 'thing';
+const dynamicId = 'dynamicThing';
 
 const initialUIStateFixture: UIState = {
-  index: 666,
+  index: 0,
   isActive: false,
 };
 
-const componentStatePropsFixture: CustomStateProps = {
-  uiStateId: componentId,
-  initialIndex: 0,
+const componentStatePropsFixture: ComponentStateProps = {
+  indexPrefix: 'Value: ',
+  dynamicId: 'dynamicThing',
 };
-const initialIsActive = true;
 
-const componentDispatchPropsFixture: CustomDispatchProps = {
+const componentDispatchPropsFixture: ComponentDispatchProps = {
   onSomethingUnrelated: () => undefined,
 };
 
 const reduxStateBranchFixture: UIStateBranch = {
   components: {
-    [componentId]: initialUIStateFixture
+    [defaultId]: initialUIStateFixture,
+    [dynamicId]: initialUIStateFixture,
   }
 };
 
-type AllProps = ExportedComponentStateProps & ExportedComponentDispatchProps & CustomStateProps & CustomDispatchProps;
+type AllProps = ExportedComponentStateProps & ExportedComponentDispatchProps & ComponentProps;
 
 const getPropsFixture = (dispatch = jest.fn()): AllProps => ({
   ...componentStatePropsFixture,
@@ -65,281 +71,218 @@ const getPropsFixture = (dispatch = jest.fn()): AllProps => ({
 
 // Component fixture
 
-const TestComponent: StatelessComponent<CustomStateProps & CustomDispatchProps & ReduxUIStateProps<UIState>> = (
-  { uiState, setUIState, replaceUIState, resetUIState, destroyUIState }
+const RawPropsComponent: StatelessComponent<ComponentProps & ReduxUIStateProps<UIState>> = (
+  { uiState, setUIState, replaceUIState, indexPrefix }
 ) => (
-  <div>
-    <span id="indexLabel">{uiState.index}</span>
+  <div id="root">
+    <span id="indexLabel">{indexPrefix} {uiState.index}</span>
     <button id="setUIStateButton" onClick={() => setUIState({ index: uiState.index + 1 })}>
       setState
     </button>
     <button id="replaceUIStateButton" onClick={() => replaceUIState({ index: uiState.index + 1, isActive: true })}>
       replaceState
     </button>
-    <button id="resetUIStateButton" onClick={() => resetUIState()}>
-      replaceState
+  </div>
+);
+
+interface TransformedComponentProps {
+  index: number;
+  increment: () => void;
+  toggleActive: () => void;
+}
+
+const transformFunctionImplementation: TransformPropsFunction<UIState, ComponentProps, TransformedComponentProps> = (
+  uiState: UIState,
+  dispatchProps: DispatchProps<UIState>,
+  ownProps: ComponentProps,
+) => ({
+  index: uiState.index,
+  increment: () => dispatchProps.setUIState({ index: uiState.index + 1 }),
+  toggleActive: () => dispatchProps.setUIState({ isActive: !uiState.isActive }),
+});
+
+const TransformedPropsComponent: StatelessComponent<ComponentProps & TransformedComponentProps> = (
+  { index, increment, toggleActive }
+) => (
+  <div id="root">
+    <span id="indexLabel">{index}</span>
+    <button id="incrementButton" onClick={increment}>
+      Increment
     </button>
-    <button id="destroyUIStateButton" onClick={() => destroyUIState()}>
-      replaceState
+    <button id="toggleActiveButton" onClick={toggleActive}>
+      Toggle active
     </button>
   </div>
 );
 
-const wrapperFixtureStateValues = {
-  index: 0,
-  isActive: false,
-};
-
-const wrapperFixture = {
-  staticIdFixture: componentId,
-  dynamicIdFixture: ({ uiStateId = componentId }) => uiStateId,
-  staticUIState: wrapperFixtureStateValues,
-  dynamicUIState: ({ initialIndex = wrapperFixtureStateValues.index }) => ({
-    index: initialIndex,
-    isActive: wrapperFixtureStateValues.isActive
-  }),
-};
-
-// const staticIdFixture: Id<StateProps> = componentId;
-// const dynamicIdFixture: Id<StateProps>  = ({ uiStateId = componentId }) => uiStateId;
-// const staticUIState: InitialState<UIState, StateProps> = { index: 0, isActive: false };
-// const dynamicUIState: InitialStateFunction<UIState, StateProps>  = ({ initialIndex = 0 }) => ({
-//   index: initialIndex,
-//   isActive: initialIsActive
-// });
+// const wrapperFixture = {
+//   staticIdFixture: defaultId,
+//   dynamicIdFixture: ({ dynamicId = defaultId }: ComponentStateProps) => dynamicId,
+// };
 
 interface GetWrapperOutput {
   dispatch: jest.Mock<Action>;
-  wrapper: ReactWrapper<CustomStateProps & CustomDispatchProps, void>;
-  onUnmountMock: jest.Mock<void>;
+  wrapper: ReactWrapper<ComponentStateProps & ComponentDispatchProps, void>;
 }
 
-const getWrapper = (
-  id: Id<CustomStateProps>,
-  initialState: InitialState<UIState, CustomStateProps> | InitialStateFunction<UIState, CustomStateProps>,
+const getRawPropsWrapper = (
+  id: Id<ComponentStateProps>,
 ): GetWrapperOutput => {
-  const onUnmountMock = jest.fn<void>();
-  const config: AddReduxUIStateConfig<UIState, CustomStateProps> = {
-    id,
-    initialState,
-    onUnmount: onUnmountMock,
-  };
-  const Component = addReduxUIState<UIState, CustomStateProps & CustomDispatchProps>(config)(TestComponent);
+  const Component = addReduxUIState<UIState, ComponentStateProps & ComponentDispatchProps>(id)(RawPropsComponent);
   const props = getPropsFixture();
 
   return {
     wrapper: mount(<Component {...props} />),
     dispatch: props.dispatch as jest.Mock<Action>,
-    onUnmountMock,
+  };
+};
+
+const getTransformPropsWrapper = (
+  id: Id<ComponentStateProps>,
+  // transformFunction: TransformPropsFunc<UIState, ComponentProps, TransformedComponentProps>
+) => {
+  const transformFunction = jest.fn();
+  const Component = addReduxUIState<UIState, ComponentProps, TransformedComponentProps>(
+    id, transformFunction
+  )(TransformedPropsComponent);
+  const props = getPropsFixture();
+
+  return {
+    wrapper: mount(<Component {...props} />),
+    dispatch: props.dispatch as jest.Mock<Action>,
+    transformFunction,
   };
 };
 
 describe('addReduxUIState', () => {
 
   const runGlobalTests = (getSpecificWrapper: () => GetWrapperOutput) => {
+
     it('should recieve proxied props', () => {
       const { wrapper } = getSpecificWrapper();
-      expect((wrapper.find(TestComponent).props()).initialIndex)
-        .toEqual(componentStatePropsFixture.initialIndex);
-      expect((wrapper.find(TestComponent).props()).onSomethingUnrelated)
+      expect((wrapper.first().props()).indexPrefix)
+        .toEqual(componentStatePropsFixture.indexPrefix);
+      expect((wrapper.first().props()).onSomethingUnrelated)
         .toEqual(componentDispatchPropsFixture.onSomethingUnrelated);
     });
 
-    it('should recieve correct uiState prop ', () => {
-      const { wrapper } = getSpecificWrapper();
-      expect(((wrapper.find(TestComponent).props())).uiState).toEqual(initialUIStateFixture);
+  };
+
+  describe('Raw props implementation', () => {
+
+    runGlobalTests(() => getRawPropsWrapper(defaultId));
+    runGlobalTests(() => getRawPropsWrapper((props) => props.dynamicId));
+
+    it('should recieve correct uiState prop with static id', () => {
+      const { wrapper } = getRawPropsWrapper(defaultId);
+      expect(((wrapper.find(RawPropsComponent).props())).uiState).toEqual(initialUIStateFixture);
     });
 
-    it('should recieve setUIState function', () => {
-      const { wrapper } = getSpecificWrapper();
-      expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
-    });
-
-    it('should recieve replaceUIState function', () => {
-      const { wrapper } = getSpecificWrapper();
-      expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
-    });
-
-    it('should recieve resetUIState function', () => {
-      const { wrapper } = getSpecificWrapper();
-      expect(typeof wrapper.find(TestComponent).props().setUIState).toEqual('function');
-    });
-
-    it('should recieve destroyUIState function', () => {
-      const { wrapper } = getSpecificWrapper();
-      expect(typeof wrapper.find(TestComponent).props().destroyUIState).toEqual('function');
+    it('should recieve correct uiState prop with dynamic id', () => {
+      const { wrapper } = getRawPropsWrapper((props) => props.dynamicId);
+      expect(((wrapper.find(RawPropsComponent).props())).uiState).toEqual(initialUIStateFixture);
     });
 
     it('should dispatch setUIState action when setUIState prop is called', () => {
-      const { wrapper, dispatch } = getSpecificWrapper();
+      const { wrapper, dispatch } = getRawPropsWrapper(defaultId);
 
-      wrapper.find('#setUIStateButton').simulate('click');
+      wrapper.find(RawPropsComponent).props().setUIState({
+        index: initialUIStateFixture.index + 1,
+      });
 
       const action: Action = setUIState({
-        id: componentId,
+        id: defaultId,
         state: {
           index: initialUIStateFixture.index + 1,
         }
       });
 
-      expect(dispatch).toHaveBeenCalledTimes(2);
+      expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith(action);
     });
 
     it('should dispatch replaceUIState action when replaceUIState prop is called', () => {
-      const { wrapper, dispatch } = getSpecificWrapper();
+      const { wrapper, dispatch } = getRawPropsWrapper(defaultId);
 
-      wrapper.find('#replaceUIStateButton').simulate('click');
+      const newState = {
+        index: initialUIStateFixture.index + 1,
+        isActive: true,
+      };
+      wrapper.find(RawPropsComponent).props().replaceUIState(newState);
 
       const action: Action = replaceUIState({
-        id: componentId,
-        state: {
-          index: initialUIStateFixture.index + 1,
-          isActive: true
-        }
+        id: defaultId,
+        state: newState,
       });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1][0]).toEqual(action);
-    });
-
-    it('should dispatch resetUIState when resetUIState prop is called', () => {
-      const { wrapper, dispatch } = getSpecificWrapper();
-
-      wrapper.find('#resetUIStateButton').simulate('click');
-
-      const action: Action = replaceUIState({
-        id: componentId,
-        state: wrapperFixtureStateValues
-      });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1][0]).toEqual(action);
-    });
-
-    it('should dispatch destroyUIState when destroyUIState prop is called', () => {
-      const { wrapper, dispatch } = getSpecificWrapper();
-
-      wrapper.find('#destroyUIStateButton').simulate('click');
-
-      const action: Action = destroyUIState({
-        id: componentId,
-      });
-
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1][0]).toEqual(action);
-    });
-
-    it('should call onUnmount on unmount - setUIState', () => {
-      const { wrapper, dispatch, onUnmountMock } = getSpecificWrapper();
-      const uiState: Partial<UIState> = {
-        index: 2,
-      };
-
-      expect(onUnmountMock).toHaveBeenCalledTimes(0);
-      wrapper.unmount();
-      expect(onUnmountMock.mock.calls[0][1]).toEqual(initialUIStateFixture);
-      expect(onUnmountMock.mock.calls[0][2])
-        .toEqual({ ...componentStatePropsFixture, ...componentDispatchPropsFixture });
-
-      onUnmountMock.mock.calls[0][0].setUIState(uiState);
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1]).toEqual([setUIState<UIState>({ id: componentId, state: uiState })]);
-    });
-
-    it('should call onUnmount on unmount - replaceUIState', () => {
-      const { wrapper, dispatch, onUnmountMock } = getSpecificWrapper();
-      const uiState: UIState = {
-        index: 2,
-        isActive: false,
-      };
-
-      expect(onUnmountMock).toHaveBeenCalledTimes(0);
-      wrapper.unmount();
-      expect(onUnmountMock.mock.calls[0][1]).toEqual(initialUIStateFixture);
-      expect(onUnmountMock.mock.calls[0][2])
-        .toEqual({ ...componentStatePropsFixture, ...componentDispatchPropsFixture });
-
-      onUnmountMock.mock.calls[0][0].replaceUIState(uiState);
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1]).toEqual([replaceUIState<UIState>({ id: componentId, state: uiState })]);
-    });
-
-    it('should call onUnmount on unmount - resetUIState', () => {
-      const { wrapper, dispatch, onUnmountMock } = getSpecificWrapper();
-
-      expect(onUnmountMock).toHaveBeenCalledTimes(0);
-      wrapper.unmount();
-      expect(onUnmountMock.mock.calls[0][1]).toEqual(initialUIStateFixture);
-      expect(onUnmountMock.mock.calls[0][2])
-        .toEqual({ ...componentStatePropsFixture, ...componentDispatchPropsFixture });
-
-      onUnmountMock.mock.calls[0][0].resetUIState();
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1])
-        .toEqual([replaceUIState<UIState>({ id: componentId, state: wrapperFixtureStateValues })]);
-    });
-
-    it('should call onUnmount on unmount - destroyUIState', () => {
-      const { wrapper, dispatch, onUnmountMock } = getSpecificWrapper();
-
-      expect(onUnmountMock).toHaveBeenCalledTimes(0);
-      wrapper.unmount();
-      expect(onUnmountMock.mock.calls[0][1]).toEqual(initialUIStateFixture);
-      expect(onUnmountMock.mock.calls[0][2])
-        .toEqual({ ...componentStatePropsFixture, ...componentDispatchPropsFixture });
-
-      onUnmountMock.mock.calls[0][0].destroyUIState();
-      expect(dispatch).toHaveBeenCalledTimes(2);
-      expect(dispatch.mock.calls[1])
-        .toEqual([destroyUIState({ id: componentId })]);
-    });
-  };
-
-  describe('static config', () => {
-
-    runGlobalTests(() => getWrapper(wrapperFixture.staticIdFixture, wrapperFixture.staticUIState));
-
-    it('should dispatch setUIState action on mount with correct values', () => {
-      const { dispatch } = getWrapper(wrapperFixture.staticIdFixture, wrapperFixture.staticUIState);
 
       expect(dispatch).toHaveBeenCalledTimes(1);
-      const action: Action = setUIState({
-        id: componentId,
-        state: wrapperFixture.staticUIState,
-      });
-
       expect(dispatch).toHaveBeenCalledWith(action);
     });
 
   });
 
-  describe('dynamic config', () => {
+  describe('Transform props implementation', () => {
 
-    runGlobalTests(() => getWrapper(wrapperFixture.dynamicIdFixture, wrapperFixture.dynamicUIState));
+    runGlobalTests(() => getTransformPropsWrapper(defaultId));
+    runGlobalTests(() => getTransformPropsWrapper((props) => props.dynamicId));
 
-    it('should dispatch setUIState action on mount with correct id and state', () => {
-      const { dispatch } = getWrapper(wrapperFixture.dynamicIdFixture, wrapperFixture.dynamicUIState);
+    it('should call transformFunction once', () => {
+      const { transformFunction } = getTransformPropsWrapper(defaultId);
 
-      expect(dispatch).toHaveBeenCalledTimes(1);
-      const action: Action = setUIState({
-        id: componentId,
-        state: wrapperFixtureStateValues,
+      expect(transformFunction).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call transformFunction with correct uiState argument', () => {
+      const { transformFunction } = getTransformPropsWrapper(defaultId);
+
+      expect(transformFunction.mock.calls[0][0]).toEqual(initialUIStateFixture);
+    });
+
+    it('should call transformFunction with correct setUIState argument', () => {
+      const { transformFunction, dispatch } = getTransformPropsWrapper(defaultId);
+
+      transformFunction.mock.calls[0][1].setUIState({
+        index: initialUIStateFixture.index + 1,
       });
 
+      const action: Action = setUIState({
+        id: defaultId,
+        state: {
+          index: initialUIStateFixture.index + 1,
+        }
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
       expect(dispatch).toHaveBeenCalledWith(action);
     });
 
-    it('should pass existingState argument to initialState function', () => {
-      const config: AddReduxUIStateConfig<UIState, CustomStateProps> = {
-        id: componentId,
-        initialState: jest.fn(),
-      };
-      const Component = addReduxUIState<UIState, CustomStateProps & CustomDispatchProps>(config)(TestComponent);
-      mount(<Component {...getPropsFixture()} />);
+    it('should call transformFunction with correct replaceUIState argument', () => {
+      const { transformFunction, dispatch } = getTransformPropsWrapper(defaultId);
 
-      expect(config.initialState)
-        .toBeCalledWith((expect as any).anything(), initialUIStateFixture); // tslint:disable-line:no-any
+      const newState = {
+        index: initialUIStateFixture.index + 1,
+        isActive: true,
+      };
+      transformFunction.mock.calls[0][1].replaceUIState(newState);
+
+      const action: Action = replaceUIState({
+        id: defaultId,
+        state: newState
+      });
+
+      expect(dispatch).toHaveBeenCalledTimes(1);
+      expect(dispatch).toHaveBeenCalledWith(action);
+    });
+
+    it('should pass through outer props', () => {
+      const { transformFunction, dispatch } = getTransformPropsWrapper(defaultId);
+
+      expect(transformFunction.mock.calls[0][2])
+        .toEqual({
+          ...componentStatePropsFixture,
+          ...componentDispatchPropsFixture,
+          dispatch,
+        });
     });
 
   });

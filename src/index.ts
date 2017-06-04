@@ -4,6 +4,8 @@ export {
   ExportedComponentDispatchProps, ExportedComponentStateProps,
   UIStateBranch,
   DefaultStateShape,
+  Id,
+  TransformPropsFunction,
   defaultBranchSelector,
   defaultMapStateToProps,
   defaultMapDispatchToProps,

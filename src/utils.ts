@@ -163,7 +163,7 @@ export function createConnectWrapper<TProps = {}, TAppState = DefaultStateShape>
 export type Id<TProps> = string | ((props: TProps) => string);
 
 // TODO Add comment
-export type TransformPropsFunc<TUIState, TProps, TTransformedProps> = (
+export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
   uiState: TUIState,
   dispatchProps: DispatchProps<TUIState>,
   ownProps: Readonly<TProps>
@@ -187,45 +187,9 @@ export function idIsFunction<TProps>(id: Id<TProps>): id is (props: TProps) => s
  * Returns a string or undefined from the union type of (string | function that returns string)
  */
 export function getStringFromId<TProps>(id: Id<TProps>, props: TProps): string | undefined {
-  if (idIsString(id)) {
-    return id;
-  }
-
-  if (idIsFunction(id)) {
-    return id(props);
-  }
-
-  return undefined;
-}
-
-// Initial State
-export type InitialStateFunction<TUIState, TProps> = ((props: TProps, existingState?: TUIState) => TUIState);
-export type InitialState<TUIState, TProps> = TUIState | InitialStateFunction<TUIState, TProps>;
-
-export function initialStateIsString<TUIState, TProps>(
-  initialState: InitialState<TUIState, TProps>
-): initialState is TUIState {
-  return typeof initialState === 'string';
-}
-
-export function initialStateIsFunction<TUIState, TProps>(
-  initialState: InitialState<TUIState, TProps>
-): initialState is (props: TProps) => TUIState {
-  return typeof initialState === 'function';
-}
-
-export function getInitialStateValue<TUIState, TProps>(
-  initialState: InitialState<TUIState, TProps>, props: TProps, existingState?: TUIState
-): TUIState {
-  if (typeof initialState === 'object') {
-    return initialState as TUIState;
-  }
-
-  if (typeof initialState === 'function') {
-    return (initialState as InitialStateFunction<TUIState, TProps>)(props, existingState);
-  }
-
-  return undefined;
+  return idIsFunction(id)
+    ? id(props)
+    : id;
 }
 
 /**
@@ -242,7 +206,6 @@ export function mapDispatchToProps<TUIState, TProps>(
   dispatch: Dispatch<DefaultStateShape>,
   props: TProps,
   id: string,
-  // initialState: InitialState<TUIState, TProps>
 ): DispatchProps<TUIState> {
   return {
     setUIState: (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
@@ -257,9 +220,7 @@ export function mapDispatchToProps<TUIState, TProps>(
 }
 
 export const omitReduxUIProps = <TProps extends object>(props: ExportedComponentProps & TProps) => {
-  // TODO Remove any once type checking regression is fixed in TypeScript 2.4
-  let cleanedProps = {...props as any}; // tslint:disable-line:no-any
-  delete cleanedProps.uiStateBranch;
-  delete cleanedProps.dispatch;
-  return cleanedProps;
+  // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
+  const { uiStateBranch, ...rest } = props as any; // tslint:disable-line:no-any
+  return rest;
 };

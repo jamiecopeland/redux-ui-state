@@ -3,7 +3,7 @@ import { ComponentClass } from 'react';
 import {
   InputComponent, InputComponentWithTransform,
   createConnectWrapper, DefaultStateShape,
-  Id, TransformPropsFunc
+  Id, TransformPropsFunction
 } from './utils';
 import {
   addReduxUIState
@@ -15,12 +15,12 @@ export function connectReduxUIState<TUIState, TProps>(
 
 export function connectReduxUIState<TUIState, TProps, TTransformedProps>(
   id: Id<TProps>,
-  transformProps: TransformPropsFunc<TUIState, TProps, TTransformedProps>
+  transformProps: TransformPropsFunction<TUIState, TProps, TTransformedProps>
 ): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
 
 export function connectReduxUIState<TUIState, TProps, TTransformedProps>(
   id: Id<TProps>,
-  transformProps?: TransformPropsFunc<TUIState, TProps, TTransformedProps>
+  transformProps?: TransformPropsFunction<TUIState, TProps, TTransformedProps>
 ) {
     return (
       Component: InputComponent<TUIState, TProps> | InputComponentWithTransform<TUIState, TProps, TTransformedProps>

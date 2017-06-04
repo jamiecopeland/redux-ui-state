@@ -10,7 +10,7 @@ import {
   mapDispatchToProps,
   getComponentStateFromUIStateBranch,
   omitReduxUIProps,
-  TransformPropsFunc
+  TransformPropsFunction
 } from './utils';
 
 export function addReduxUIState<TUIState, TProps>(
@@ -19,14 +19,14 @@ export function addReduxUIState<TUIState, TProps>(
 
 export function addReduxUIState<TUIState, TProps, TTransformedProps>(
   id: Id<TProps>,
-  transformFunction: TransformPropsFunc<TUIState, TProps, TTransformedProps>
+  transformFunction: TransformPropsFunction<TUIState, TProps, TTransformedProps>
 ): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => (
   React.ComponentClass<ExportedComponentProps & TProps>
 );
 
 export function addReduxUIState<TUIState, TProps, TTransformedProps>(
   id: Id<TProps>,
-  transformProps?: TransformPropsFunc<TUIState, TProps, TTransformedProps>
+  transformProps?: TransformPropsFunction<TUIState, TProps, TTransformedProps>
 ) {
   return (WrappedComponent: InputComponent<TUIState, TProps>): React.ComponentClass<ExportedComponentProps & TProps> => // tslint:disable-line:max-line-length
   class ExportedComponent extends React.PureComponent<TProps & ExportedComponentProps, {}> {
