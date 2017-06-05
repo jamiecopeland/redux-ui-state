@@ -5,7 +5,7 @@ import { compose } from 'redux';
 import {
   addReduxUIState,
   DEFAULT_BRANCH_NAME,
-  DefaultStateShape,
+  DefaultStoreState,
   DispatchProps,
   ExportedComponentDispatchProps,
   ExportedComponentStateProps,
@@ -41,7 +41,7 @@ const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
 // Using the createConnectWrapper utility to connect to the store
 
 export const CounterUtil = compose(
-  createConnectWrapper<Props, DefaultStateShape>(),
+  createConnectWrapper<Props, DefaultStoreState>(),
   addReduxUIState<UIState, Props>('counterUtil')
 )(Counter);
 

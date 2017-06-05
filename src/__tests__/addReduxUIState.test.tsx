@@ -11,7 +11,7 @@ import {
   UIStateBranch,
   setUIState, replaceUIState,
   Id,
-  DefaultStateShape,
+  DefaultStoreState,
   DispatchProps,
   TransformPropsFunction,
 } from '../index';

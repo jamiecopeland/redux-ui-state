@@ -3,13 +3,13 @@ export {
   StateProps, DispatchProps, Props,
   ExportedComponentDispatchProps, ExportedComponentStateProps,
   UIStateBranch,
-  DefaultStateShape,
+  DefaultStoreState,
   Id,
   TransformPropsFunction,
-  defaultBranchSelector,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
   createConnectWrapper,
+  defaultBranchSelector
 } from './utils';
 
 export {
