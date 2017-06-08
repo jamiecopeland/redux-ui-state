@@ -29,11 +29,16 @@ export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppSta
   uiStateBranchSelector?: UIStateBranchSelector<TAppState>
 ) {
     return (
-      Component: WrappedComponentWithoutTransform<TUIState, TProps>
+      Component:
+        WrappedComponentWithoutTransform<TUIState, TProps>
         | WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>
     ): ComponentClass<TProps> => connect(
       (state: TAppState, props: TProps) => createStateProps<TProps, TAppState>(id, state, props, uiStateBranchSelector),
       (dispatch: Dispatch<TAppState>, props: TProps) => createDispatchProps(id, dispatch, props),
       transformPropsFunction
-    )(Component as any);
+    )(
+      // This any is ok, because the function overloading will catch errors relating to passing mismatching components
+      // and transform functions
+      Component as any // tslint:disable-line:no-any
+    );
   }

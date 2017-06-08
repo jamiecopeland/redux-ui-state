@@ -1,11 +1,6 @@
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 
-// TODO Investigate typings weirdness
-// Importing the whole of reselect fixes a strange issue where the transpiler seems to swap out createSelector for
-// Reselect.OutputParametricSelector but doesn't import the Reselect namespage in the uiStateSelector definition
-import 'reselect';
-
 import { setUIState, replaceUIState } from './actions';
 import { DEFAULT_BRANCH_NAME } from './constants';
 
@@ -157,13 +152,12 @@ export const getItemFromUIStateBranch = <TProps>(uiStateBranch: UIStateBranch, i
 
 export const createUIStateSelector = <TUIState, TProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any
+  // TODO Look into a nicer way of defaulting, possibly with currying of having a second method that passes in default
+  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any) => (
 ) => (
   state: TAppState,
   props: TProps
-): TUIState => (
-  getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
-);
+): TUIState => getItemFromUIStateBranch(uiStateBranchSelector(state), id, props);
 
 /**
  * Creates the dispatch props for the wrapped component
@@ -195,6 +189,7 @@ export const createStateProps = <TProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
   state: TAppState,
   props: TProps,
+  // TODO Look into a nicer way of defaulting, possibly with currying of having a second method that passes in default
   uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any
 ) => ({
   uiState: getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
