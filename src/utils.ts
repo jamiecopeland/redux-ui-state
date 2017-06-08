@@ -1,7 +1,5 @@
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
-import { connect } from 'react-redux';
-// import { createSelector } from 'reselect';
 
 // TODO Investigate typings weirdness
 // Importing the whole of reselect fixes a strange issue where the transpiler seems to swap out createSelector for
@@ -49,17 +47,20 @@ export interface DispatchProps<TUIState> {
  */
 export type Props<TUIState> = StateProps<TUIState> & DispatchProps<TUIState>;
 
-export type RawInputComponent<Props> = React.StatelessComponent<Props> | React.ComponentClass<Props>;
+/**
+ * The component passed into addReduxUIState
+ */
+export type AbstractWrappedComponent<TProps> = React.StatelessComponent<TProps> | React.ComponentClass<TProps>;
 
 /**
  * A component being passed into addReduxUIState that accepts the default props
  */
-export type InputComponent<TUIState, TProps> = RawInputComponent<TProps & Props<TUIState>>;
+export type WrappedComponentWithoutTransform<TUIState, TProps> = AbstractWrappedComponent<TProps & Props<TUIState>>;
 
 /**
  * A component being passed into addReduxUIState that accepts transformed props
  */
-export type InputComponentWithTransform<TUIState, TProps, TTransformedProps> = RawInputComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
+export type WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> = AbstractWrappedComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
 
 /**
  * The state props of the component returned by addReduxUIState
@@ -80,10 +81,12 @@ export interface ExportedComponentDispatchProps {
  */
 export type ExportedComponentProps = ExportedComponentStateProps & ExportedComponentDispatchProps;
 
+export type UIStateBranchSelector<TAppState = DefaultStoreState> = (appState: TAppState) => UIStateBranch;
+
 /**
  * Selects the ui state branch from the default location in the Redux store
  */
-export const defaultBranchSelector = (state: DefaultStoreState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+export const defaultBranchSelector: UIStateBranchSelector = (state) => state[DEFAULT_BRANCH_NAME];
 
 /**
  * Maps uiStateBranch to props if the default state shape for the Redux store has been used
@@ -101,34 +104,15 @@ export const defaultMapDispatchToProps = <TAppState = object>(dispatch: Dispatch
 });
 
 /**
- * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
- * defaults will be used.
- */
-export function createConnectWrapper<TProps = {}, TAppState = DefaultStoreState>(
-  mapStateToProps: (state: TAppState | DefaultStoreState) => ExportedComponentStateProps = defaultMapStateToProps,
-  mapDispatchToProps: (dispatch: Dispatch<TAppState>) => { dispatch: Dispatch<TAppState>; } = defaultMapDispatchToProps
-) {
-  return (component: React.ComponentClass<ExportedComponentProps & TProps> ) =>
-  connect<
-    ExportedComponentStateProps,
-    ExportedComponentDispatchProps,
-    TProps
-  >(mapStateToProps, mapDispatchToProps)(component);
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
-// addReduxUIState function Utils
-
-/**
  * A string or a function accepting the props as an argument and returning a string
  */
 export type Id<TProps> = string | ((props: TProps) => string);
 
 // TODO Add comment
-export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
-  uiState: TUIState,
+export type TransformPropsFunction2<TUIState, TProps, TTransformedProps> = (
+  stateProps: StateProps<TUIState>,
   dispatchProps: DispatchProps<TUIState>,
-  ownProps: Readonly<TProps>
+  ownProps: Readonly<TProps>,
 ) => TTransformedProps;
 
 /**
@@ -161,25 +145,60 @@ export function getComponentStateFromUIStateBranch<TUIState>(state: UIStateBranc
   return state.components[id];
 }
 
+export interface IdProps<TProps> {
+  id: Id<TProps>;
+}
+
+export const getItemFromUIStateBranch = <TProps>(uiStateBranch: UIStateBranch, id: Id<TProps>, props: TProps) => (
+  // TODO Look into a nicer way of handling this
+  uiStateBranch.components[getStringFromId(id, props)] ||
+  console.warn(`${getStringFromId(id, props)} is undefined Redux UI state`)
+);
+
+export const createUIStateSelector = <TUIState, TProps, TAppState = DefaultStoreState>(
+  id: Id<TProps>,
+  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any
+) => (
+  state: TAppState,
+  props: TProps
+): TUIState => (
+  getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
+);
+
 /**
  * Creates the dispatch props for the wrapped component
  */
-export function mapDispatchToProps<TUIState, TProps>(
+export const createDispatchProps = <TUIState, TProps>(
+  id: Id<TProps>,
   dispatch: Dispatch<DefaultStoreState>,
   props: TProps,
-  id: string,
-): DispatchProps<TUIState> {
+): DispatchProps<TUIState> => {
+  const stringId = getStringFromId(id, props);
   return {
     setUIState: (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
-      id,
-      state: state,
+      id: stringId,
+      state,
     })),
     replaceUIState: (state: TUIState): Action => dispatch(replaceUIState<TUIState>({
-      id,
+      id: stringId,
       state: state,
     })),
   };
-}
+};
+
+export const createMapDispatchToProps = <TUIState, TProps>(id: Id<TProps>) => (
+  dispatch: Dispatch<DefaultStoreState>,
+  props: TProps
+): DispatchProps<TUIState> => createDispatchProps(id, dispatch, props);
+
+export const createStateProps = <TProps, TAppState = DefaultStoreState>(
+  id: Id<TProps>,
+  state: TAppState,
+  props: TProps,
+  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any
+) => ({
+  uiState: getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
+});
 
 export const omitReduxUIProps = <TProps extends object>(props: ExportedComponentProps & TProps) => {
   // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4

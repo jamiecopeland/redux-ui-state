@@ -1,34 +1,41 @@
 import { ComponentClass } from 'react';
+import { Dispatch } from 'redux';
+import { connect } from 'react-redux';
 
 import {
-  InputComponent, InputComponentWithTransform,
-  createConnectWrapper, DefaultStoreState,
-  Id, TransformPropsFunction
+  WrappedComponentWithTransform, WrappedComponentWithoutTransform,
+  DefaultStoreState,
+  Id, TransformPropsFunction2,
+  UIStateBranchSelector,
+  createStateProps,
+  createDispatchProps
 } from './utils';
-import {
-  addReduxUIState
-} from './addReduxUIState';
 
-export function connectReduxUIState<TUIState, TProps>(
+export function connectReduxUIState<TUIState, TProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-): (WrappedComponent: InputComponent<TUIState, TProps>) => React.ComponentClass<TProps>;
+  uiStateBranchSelector?: UIStateBranchSelector<TAppState>
+): (Component: WrappedComponentWithoutTransform<TUIState, TProps>) =>
+  React.ComponentClass<TProps>;
 
-export function connectReduxUIState<TUIState, TProps, TTransformedProps>(
+export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-  transformProps: TransformPropsFunction<TUIState, TProps, TTransformedProps>
-): (WrappedComponent: InputComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
+  transformPropsFunction: TransformPropsFunction2<TUIState, TProps, TTransformedProps>,
+  uiStateBranchSelector?: UIStateBranchSelector<TAppState>
+): (Component: WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
 
-export function connectReduxUIState<TUIState, TProps, TTransformedProps>(
+export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-  transformProps?: TransformPropsFunction<TUIState, TProps, TTransformedProps>
+  transformPropsFunction?: TransformPropsFunction2<TUIState, TProps, TTransformedProps>,
+  uiStateBranchSelector?: UIStateBranchSelector<TAppState>
 ) {
     return (
-      Component: InputComponent<TUIState, TProps> | InputComponentWithTransform<TUIState, TProps, TTransformedProps>
-    ): ComponentClass<TProps> => createConnectWrapper<TProps, DefaultStoreState>()(
-        transformProps
-          ? addReduxUIState<TUIState, TProps, TTransformedProps>(id, transformProps)(
-              Component as InputComponentWithTransform<TUIState, TProps, TTransformedProps>
-            )
-          : addReduxUIState<TUIState, TProps>(id)(Component as InputComponent<TUIState, TProps> )
-      );
+      Component: WrappedComponentWithoutTransform<TUIState, TProps>
+        | WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>
+    ): ComponentClass<TProps> => connect(
+      (state: TAppState, props: TProps) => createStateProps<TProps, TAppState>(
+        id, state, props, uiStateBranchSelector
+      ),
+      (dispatch: Dispatch<TAppState>, props: TProps) => createDispatchProps(id, dispatch, props),
+      transformPropsFunction
+    )(Component as any);
   }

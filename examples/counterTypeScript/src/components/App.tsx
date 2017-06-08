@@ -1,14 +1,13 @@
 import * as React from 'react';
 
 import {
-  CounterStatic,
-  CounterDynamicId,
-  CounterTransformed,
+  CounterRawPropsStaticId,
+  CounterTranformedPropsStaticId,
+  CounterRawPropsDynamicId,
+  CounterTranformedPropsDynamicId
 } from './01-Standard-Implementations';
-import {
-  CounterUtil,
-  CounterManual
-} from './02-Advanced-Implementations' ;
+
+import { CounterManualStaticId, CounterManualDynamicId } from './02-Advanced-Implementations';
 
 class App extends React.Component<{}, void> {
   render() {
@@ -16,32 +15,43 @@ class App extends React.Component<{}, void> {
       <div>
         <h2>Standard Implementations</h2>
 
-        <h3>Transformed</h3>
-        <CounterTransformed message="Value: " />
+        <h3>Raw props, static id</h3>
+        <CounterRawPropsStaticId prefix="Value: " />
+        <CounterRawPropsStaticId prefix="Value: " />
 
         <hr />
 
-        <h3>Simple</h3>
-        <CounterStatic message="Value: " />
-        <CounterStatic message="Value: " />
+        <h3>Raw props, dynamic id</h3>
+        <CounterRawPropsDynamicId prefix="Value: " uiStateId="counterDynamicId1" />
+        <CounterRawPropsDynamicId prefix="Value: " uiStateId="counterDynamicId2" />
 
         <hr />
 
-        <h3>Dynamic id</h3>
-        <CounterDynamicId message="Value: " uiStateId="counterDynamicId1" />
-        <CounterDynamicId message="Value: " uiStateId="counterDynamicId2" />
+        <h3>Transformed props, static id</h3>
+        <CounterTranformedPropsStaticId prefix="Value: " />
+        <CounterTranformedPropsStaticId prefix="Value: " />
+
+        <hr />
+
+        <h3>Transformed props, dynamic id</h3>
+        <CounterTranformedPropsDynamicId prefix="Value: " uiStateId="counterDynamicId3" />
+        <CounterTranformedPropsDynamicId prefix="Value: " uiStateId="counterDynamicId4" />
 
         <hr />
 
         <h2>Advanced Implementations</h2>
 
-        <h3>Connect with util</h3>
-        <CounterUtil message="Value: " />
+        <h3>Static id</h3>
+
+        <CounterManualStaticId message="Value: " />
+        <CounterManualStaticId message="Value: " />
 
         <hr />
 
-        <h3>Connect manually</h3>
-        <CounterManual message="Value: " />
+        <h3>Dynamic id</h3>
+
+        <CounterManualDynamicId message="Value: " uiStateId="counterManualDynamicId1" />
+        <CounterManualDynamicId message="Value: " uiStateId="counterManualDynamicId2" />
 
       </div>
     );

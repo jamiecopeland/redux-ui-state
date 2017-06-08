@@ -1,9 +1,16 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { compose } from 'redux';
+import { compose, Dispatch } from 'redux';
 
 import {
-  addReduxUIState,
+  createMapDispatchToProps,
+  createUIStateSelector,
+  createDispatchProps,
+  createStateProps,
+  StateProps
+} from 'redux-ui-state/lib/utils';
+
+import {
   DEFAULT_BRANCH_NAME,
   DefaultStoreState,
   DispatchProps,
@@ -11,20 +18,23 @@ import {
   ExportedComponentStateProps,
   Props as ReduxUIStateProps,
   UIStateBranch,
-  createConnectWrapper,
 } from 'redux-ui-state';
 
 // Raw Component
 
-interface Props {
+interface CounterProps {
   message: string;
+}
+
+interface CounterDynamicIdProps extends CounterProps {
+  uiStateId: string;
 }
 
 interface UIState {
   index: number;
 }
 
-const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
+const Counter: React.StatelessComponent<CounterProps & ReduxUIStateProps<UIState>> = ({
   message, uiState, setUIState
 }) => (
   <div>
@@ -38,28 +48,27 @@ const Counter: React.StatelessComponent<Props & ReduxUIStateProps<UIState>> = ({
   </div>
 );
 
-// Using the createConnectWrapper utility to connect to the store
+// const stateSelector = createUIStateSelector<UIState, Props>('counterStatic');
+// const dispatchSelector = createDispatchSelector<UIState, Props>('counterStatic');
 
-export const CounterUtil = compose(
-  createConnectWrapper<Props, DefaultStoreState>(),
-  addReduxUIState<UIState, Props>('counterUtil')
+export const CounterManualStaticId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterProps>(
+  (state: DefaultStoreState, props: CounterProps) => ({
+    ...createStateProps('counterManualStaticId', state, props)
+    // Add other state props here
+  }),
+  (dispatch: Dispatch<DefaultStoreState>, props: CounterProps) => ({
+    ...createDispatchProps('counterManualStaticId', dispatch, props)
+    // Add other dispatch props here
+  })
 )(Counter);
 
-// Manually connecting to the store
-
-// NOTE: The mapStateToProps and uiBranchSelector functions are included here to be completely
-// explicit about what's going on, but in most applications they should be be swapped out for the
-// defaultMapStateToProps utility function provided by the library.
-export function uiBranchSelector<TAppState>(state: TAppState): UIStateBranch {
-  return state[DEFAULT_BRANCH_NAME];
-};
-export function mapStateToProps<TAppState>(state: TAppState, ownProps: Props) {
-  return ({
-    uiStateBranch: uiBranchSelector(state),
-    ownProps
-  });
-}
-
-export const CounterManual = connect<
-  ExportedComponentStateProps, ExportedComponentDispatchProps, Props
->(mapStateToProps)(addReduxUIState<UIState, Props>('counterManual')(Counter));
+export const CounterManualDynamicId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterDynamicIdProps>(
+  (state: DefaultStoreState, props) => ({
+    ...createStateProps(({ uiStateId }) =>  uiStateId, state, props)
+    // Add other state props here
+  }),
+  (dispatch: Dispatch<DefaultStoreState>, props) => ({
+    ...createDispatchProps(({ uiStateId }) =>  uiStateId, dispatch, props)
+    // Add other dispatch props here
+  })
+)(Counter);

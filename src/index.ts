@@ -5,10 +5,9 @@ export {
   UIStateBranch,
   DefaultStoreState,
   Id,
-  TransformPropsFunction,
+  TransformPropsFunction2,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
-  createConnectWrapper,
   defaultBranchSelector
 } from './utils';
 
@@ -20,5 +19,4 @@ export {
 } from './actions';
 
 export { createReducer } from './pojoReducer';
-export { addReduxUIState } from './addReduxUIState';
 export { connectReduxUIState } from './connectReduxUIState';
