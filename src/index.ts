@@ -1,14 +1,21 @@
 export { DEFAULT_BRANCH_NAME } from './constants';
 export {
-  StateProps, DispatchProps, Props,
-  ExportedComponentDispatchProps, ExportedComponentStateProps,
+  StateProps,
+  DispatchProps,
+  Props,
+  ExportedComponentDispatchProps,
+  ExportedComponentStateProps,
   UIStateBranch,
   DefaultStoreState,
   Id,
   TransformPropsFunction2,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
-  defaultBranchSelector
+  defaultBranchSelector,
+  createMapDispatchToProps,
+  createUIStateSelector,
+  createDispatchProps,
+  createStateProps,
 } from './utils';
 
 export {
