@@ -8,7 +8,7 @@ export {
   UIStateBranch,
   DefaultStoreState,
   Id,
-  TransformPropsFunction2,
+  TransformPropsFunction,
   defaultMapStateToProps,
   defaultMapDispatchToProps,
   defaultBranchSelector,

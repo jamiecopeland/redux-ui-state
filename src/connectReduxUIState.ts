@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import {
   WrappedComponentWithTransform, WrappedComponentWithoutTransform,
   DefaultStoreState,
-  Id, TransformPropsFunction2,
+  Id, TransformPropsFunction,
   UIStateBranchSelector,
   createStateProps,
   createDispatchProps
@@ -19,13 +19,13 @@ export function connectReduxUIState<TUIState, TProps, TAppState = DefaultStoreSt
 
 export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-  transformPropsFunction: TransformPropsFunction2<TUIState, TProps, TTransformedProps>,
+  transformPropsFunction: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
   uiStateBranchSelector?: UIStateBranchSelector<TAppState>
 ): (Component: WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
 
 export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppState = DefaultStoreState>(
   id: Id<TProps>,
-  transformPropsFunction?: TransformPropsFunction2<TUIState, TProps, TTransformedProps>,
+  transformPropsFunction?: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
   uiStateBranchSelector?: UIStateBranchSelector<TAppState>
 ) {
     return (
@@ -33,7 +33,7 @@ export function connectReduxUIState<TUIState, TProps, TTransformedProps, TAppSta
         WrappedComponentWithoutTransform<TUIState, TProps>
         | WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>
     ): ComponentClass<TProps> => connect(
-      (state: TAppState, props: TProps) => createStateProps<TProps, TAppState>(id, state, props, uiStateBranchSelector),
+      (state: TAppState, props: TProps) => createStateProps(uiStateBranchSelector)(id, state, props),
       (dispatch: Dispatch<TAppState>, props: TProps) => createDispatchProps(id, dispatch, props),
       transformPropsFunction
     )(

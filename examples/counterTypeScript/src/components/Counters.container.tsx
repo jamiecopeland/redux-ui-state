@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
+import { defaultBranchSelector } from 'redux-ui-state';
 import {
   DefaultStoreState,
   DispatchProps,
@@ -61,7 +62,7 @@ export const CounterUtilsRawPropsDynamicId = connectReduxUIState<UIState, Counte
 // Manual connect with transformed props (recommended) and a static id
 export const CounterManualTransformedPropsStaticId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterProps, TransformedProps>(
   (state: DefaultStoreState, props: CounterProps) => ({
-    ...createStateProps('counterManualStaticId', state, props)
+    ...createStateProps()('counterManualStaticId', state, props)
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props: CounterProps) => ({
@@ -74,7 +75,7 @@ export const CounterManualTransformedPropsStaticId = connect<StateProps<UIState>
 // Manual connect with transformed props (recommended) and a dynamic id
 export const CounterManualTransformedPropsDynamicId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterDynamicIdProps, TransformedProps>(
   (state: DefaultStoreState, props) => ({
-    ...createStateProps(({ uiStateId }) =>  uiStateId, state, props)
+    ...createStateProps()(({ uiStateId }) =>  uiStateId, state, props)
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props) => ({
@@ -87,7 +88,7 @@ export const CounterManualTransformedPropsDynamicId = connect<StateProps<UIState
 // Manual connect with raw props and a static id
 export const CounterManualRawPropsStaticId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterProps>(
   (state: DefaultStoreState, props: CounterProps) => ({
-    ...createStateProps('counterManualStaticId', state, props)
+    ...createStateProps()('counterManualStaticId', state, props)
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props: CounterProps) => ({
@@ -99,7 +100,7 @@ export const CounterManualRawPropsStaticId = connect<StateProps<UIState>, Dispat
 // Manual connect with raw props and a dynamic id
 export const CounterManualRawPropsDynamicId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterDynamicIdProps>(
   (state: DefaultStoreState, props) => ({
-    ...createStateProps(({ uiStateId }) =>  uiStateId, state, props)
+    ...createStateProps()(({ uiStateId }) =>  uiStateId, state, props)
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props) => ({

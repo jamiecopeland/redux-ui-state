@@ -104,7 +104,7 @@ export const defaultMapDispatchToProps = <TAppState = object>(dispatch: Dispatch
 export type Id<TProps> = string | ((props: TProps) => string);
 
 // TODO Add comment
-export type TransformPropsFunction2<TUIState, TProps, TTransformedProps> = (
+export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
   stateProps: StateProps<TUIState>,
   dispatchProps: DispatchProps<TUIState>,
   ownProps: Readonly<TProps>,
@@ -150,14 +150,24 @@ export const getItemFromUIStateBranch = <TProps>(uiStateBranch: UIStateBranch, i
   console.warn(`${getStringFromId(id, props)} is undefined Redux UI state`)
 );
 
-export const createUIStateSelector = <TUIState, TProps, TAppState = DefaultStoreState>(
+export const createUIStateSelector = <TAppState = DefaultStoreState>(
+  uiStateBranchSelector: UIStateBranchSelector<TAppState> = defaultBranchSelector as any // tslint:disable-line:no-any
+) => <TUIState, TProps>(
   id: Id<TProps>,
-  // TODO Look into a nicer way of defaulting, possibly with currying of having a second method that passes in default
-  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any) => (
 ) => (
   state: TAppState,
   props: TProps
 ): TUIState => getItemFromUIStateBranch(uiStateBranchSelector(state), id, props);
+
+export const createStateProps = <TAppState = DefaultStoreState>(
+  uiStateBranchSelector: UIStateBranchSelector<TAppState> = defaultBranchSelector as any // tslint:disable-line:no-any
+) => <TProps>(
+  id: Id<TProps>,
+  state: TAppState,
+  props: TProps,
+) => ({
+  uiState: getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
+});
 
 /**
  * Creates the dispatch props for the wrapped component
@@ -184,16 +194,6 @@ export const createMapDispatchToProps = <TUIState, TProps>(id: Id<TProps>) => (
   dispatch: Dispatch<DefaultStoreState>,
   props: TProps
 ): DispatchProps<TUIState> => createDispatchProps(id, dispatch, props);
-
-export const createStateProps = <TProps, TAppState = DefaultStoreState>(
-  id: Id<TProps>,
-  state: TAppState,
-  props: TProps,
-  // TODO Look into a nicer way of defaulting, possibly with currying of having a second method that passes in default
-  uiStateBranchSelector: (state: TAppState) => UIStateBranch = defaultBranchSelector as any
-) => ({
-  uiState: getItemFromUIStateBranch(uiStateBranchSelector(state), id, props)
-});
 
 export const omitReduxUIProps = <TProps extends object>(props: ExportedComponentProps & TProps) => {
   // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
