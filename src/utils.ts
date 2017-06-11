@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 
-
 import { setUIState, replaceUIState } from './actions';
 import { DEFAULT_BRANCH_NAME } from './constants';
 import { createSelector } from 'reselect';
@@ -85,9 +84,6 @@ export type UIStateBranchSelector<TAppState = DefaultStoreState> = (appState: TA
  */
 export const defaultBranchSelector = <TAppState = DefaultStoreState>(state: TAppState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
-
-
-
 export interface TempSelectorProps<TAppState = DefaultStoreState> {
   uiStateBranchSelector?: UIStateBranchSelector<TAppState>;
 }
@@ -113,7 +109,7 @@ export const idSelector = <TProps>(_: any, props: TProps & ReduxUIStateIdProps<T
       // TODO add extra documentation explaining likely reason for error occurring
     `);
   }
-  return getStringFromId(props.uiStateId, props)
+  return getStringFromId(props.uiStateId, props);
 };
 
 export const propsSelector = <TProps>(_: any, props: TProps) => props;
@@ -133,10 +129,6 @@ export const setUIStateSelector = <TUIState, TProps>(dispatch: Dispatch<any>, pr
     state,
   }))
 )(dispatch, props);
-
-
-
-
 
 /**
  * Maps uiStateBranch to props if the default state shape for the Redux store has been used

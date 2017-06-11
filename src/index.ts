@@ -25,4 +25,4 @@ export {
 } from './actions';
 
 export { createReducer } from './pojoReducer';
-export { connectReduxUIState } from './connectReduxUIState';
+export { connectReduxUIState, createConnectReduxUIState } from './connectReduxUIState';

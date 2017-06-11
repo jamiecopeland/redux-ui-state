@@ -13,6 +13,7 @@ import {
   createDispatchProps,
   createStateProps,
   connectReduxUIState,
+  createConnectReduxUIState
 } from 'redux-ui-state';
 
 import {
@@ -44,10 +45,6 @@ function transformProps(
 export const CounterUtilTransformedPropsStaticId = connectReduxUIState<UIState, CounterProps, TransformedProps>(
   'counterRawStatic', transformProps
 )(CounterTransformedProps);
-
-// export const CounterUtilTransformedPropsStaticId = connectReduxUIState2<DefaultStoreState>(defaultBranchSelector)<UIState, CounterProps, TransformedProps>(
-//   'counterRawStatic', transformProps
-// )(CounterTransformedProps);
 
 // Using connectReduxUIState with transformed props (recommended) and a dynamic id
 export const CounterUtilTranformedPropsDynamicId = connectReduxUIState<UIState, CounterDynamicIdProps, TransformedProps>( // tslint:disable-line:max-line-length
