@@ -1,8 +1,10 @@
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 
+
 import { setUIState, replaceUIState } from './actions';
 import { DEFAULT_BRANCH_NAME } from './constants';
+import { createSelector } from 'reselect';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Public Utils
@@ -34,7 +36,7 @@ export interface StateProps<TUIState> {
  */
 export interface DispatchProps<TUIState> {
   setUIState: (state: Partial<TUIState>) => void;
-  replaceUIState: (state: TUIState) => void;
+  replaceUIState?: (state: TUIState) => void;
 }
 
 /**
@@ -81,7 +83,60 @@ export type UIStateBranchSelector<TAppState = DefaultStoreState> = (appState: TA
 /**
  * Selects the ui state branch from the default location in the Redux store
  */
-export const defaultBranchSelector: UIStateBranchSelector = (state) => state[DEFAULT_BRANCH_NAME];
+export const defaultBranchSelector = <TAppState = DefaultStoreState>(state: TAppState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+
+
+
+
+export interface TempSelectorProps<TAppState = DefaultStoreState> {
+  uiStateBranchSelector?: UIStateBranchSelector<TAppState>;
+}
+
+export const uiStateBranchSelector = <TAppState = DefaultStoreState>(
+  state: TAppState,
+  props: TempSelectorProps<TAppState>
+) => (props.uiStateBranchSelector || defaultBranchSelector)(state);
+
+export const uiStateComponentsSelector = createSelector(
+  uiStateBranchSelector,
+  (uiStateBranch) => uiStateBranch.components
+);
+
+export interface ReduxUIStateIdProps<TProps> {
+  uiStateId: Id<TProps>;
+}
+
+export const idSelector = <TProps>(_: any, props: TProps & ReduxUIStateIdProps<TProps>) => {
+  if (!props.uiStateId) {
+    throw(`
+      Couldn\'t find uiStateId prop for idSelector in Redux UI State${props.uiStateId}
+      // TODO add extra documentation explaining likely reason for error occurring
+    `);
+  }
+  return getStringFromId(props.uiStateId, props)
+};
+
+export const propsSelector = <TProps>(_: any, props: TProps) => props;
+
+export const uiStateSelector = createSelector(
+  uiStateComponentsSelector,
+  idSelector,
+  propsSelector,
+  (components, id, props) => components[id]
+);
+
+type SetUIState<TUIState> = (state: Partial<TUIState>) => void;
+export const setUIStateSelector = <TUIState, TProps>(dispatch: Dispatch<any>, props?: TProps): SetUIState<TUIState>  => createSelector(
+  idSelector,
+  (idString) => (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
+    id: idString,
+    state,
+  }))
+)(dispatch, props);
+
+
+
+
 
 /**
  * Maps uiStateBranch to props if the default state shape for the Redux store has been used
@@ -189,11 +244,6 @@ export const createDispatchProps = <TUIState, TProps>(
     })),
   };
 };
-
-export const createMapDispatchToProps = <TUIState, TProps>(id: Id<TProps>) => (
-  dispatch: Dispatch<DefaultStoreState>,
-  props: TProps
-): DispatchProps<TUIState> => createDispatchProps(id, dispatch, props);
 
 export const omitReduxUIProps = <TProps extends object>(props: ExportedComponentProps & TProps) => {
   // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4

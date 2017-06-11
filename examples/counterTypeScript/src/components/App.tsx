@@ -18,8 +18,10 @@ class App extends React.Component<{}, void> {
       <div>
         <h2>Standard Implementations</h2>
 
+
         <h3>Raw props, static id</h3>
         <CounterUtilRawPropsStaticId prefix="Value: " />
+
         <CounterUtilRawPropsStaticId prefix="Value: " />
 
         <hr />
@@ -54,7 +56,7 @@ class App extends React.Component<{}, void> {
         <h3>Transformed props, dynamic id</h3>
 
         <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId1" />
-        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId1" />
+        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId2" />
 
         <hr />
 

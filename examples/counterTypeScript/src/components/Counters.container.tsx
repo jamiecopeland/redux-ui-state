@@ -2,13 +2,17 @@ import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { defaultBranchSelector } from 'redux-ui-state';
+
+// TODO export nicely
+import { uiStateSelector, setUIStateSelector } from 'redux-ui-state/lib/utils';
+
 import {
   DefaultStoreState,
   DispatchProps,
   StateProps,
   createDispatchProps,
   createStateProps,
-  connectReduxUIState
+  connectReduxUIState,
 } from 'redux-ui-state';
 
 import {
@@ -41,6 +45,10 @@ export const CounterUtilTransformedPropsStaticId = connectReduxUIState<UIState, 
   'counterRawStatic', transformProps
 )(CounterTransformedProps);
 
+// export const CounterUtilTransformedPropsStaticId = connectReduxUIState2<DefaultStoreState>(defaultBranchSelector)<UIState, CounterProps, TransformedProps>(
+//   'counterRawStatic', transformProps
+// )(CounterTransformedProps);
+
 // Using connectReduxUIState with transformed props (recommended) and a dynamic id
 export const CounterUtilTranformedPropsDynamicId = connectReduxUIState<UIState, CounterDynamicIdProps, TransformedProps>( // tslint:disable-line:max-line-length
   ({ uiStateId }) =>  uiStateId, transformProps
@@ -60,26 +68,50 @@ export const CounterUtilsRawPropsDynamicId = connectReduxUIState<UIState, Counte
 // Connect manually - Should be used when
 
 // Manual connect with transformed props (recommended) and a static id
+// export const CounterManualTransformedPropsStaticId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterProps, TransformedProps>(
+//   (state: DefaultStoreState, props: CounterProps) => ({
+//     ...createStateProps()('counterManualStaticId', state, props)
+//     // Add other state props here
+//   }),
+//   (dispatch: Dispatch<DefaultStoreState>, props: CounterProps) => ({
+//     ...createDispatchProps('counterManualStaticId', dispatch, props)
+//     // Add other dispatch props here
+//   }),
+//   transformProps
+// )(CounterTransformedProps);
+
 export const CounterManualTransformedPropsStaticId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterProps, TransformedProps>(
   (state: DefaultStoreState, props: CounterProps) => ({
-    ...createStateProps()('counterManualStaticId', state, props)
+    uiState: uiStateSelector(state, { uiStateId: 'counterManualStaticId' })
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props: CounterProps) => ({
-    ...createDispatchProps('counterManualStaticId', dispatch, props)
+    setUIState: setUIStateSelector(dispatch, { uiStateId: 'counterManualStaticId' })
     // Add other dispatch props here
   }),
   transformProps
 )(CounterTransformedProps);
 
 // Manual connect with transformed props (recommended) and a dynamic id
+// export const CounterManualTransformedPropsDynamicId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterDynamicIdProps, TransformedProps>(
+//   (state: DefaultStoreState, props) => ({
+//     // ...createStateProps()(({ uiStateId }) =>  uiStateId, state, props)
+//     uiState: uiStateSelector(state, props)
+//     // Add other state props here
+//   }),
+//   (dispatch: Dispatch<DefaultStoreState>, props) => ({
+//     ...createDispatchProps(({ uiStateId }) =>  uiStateId, dispatch, props)
+//     // Add other dispatch props here
+//   }),
+//   transformProps
+// )(CounterTransformedProps);
 export const CounterManualTransformedPropsDynamicId = connect<StateProps<UIState>, DispatchProps<UIState>, CounterDynamicIdProps, TransformedProps>(
   (state: DefaultStoreState, props) => ({
-    ...createStateProps()(({ uiStateId }) =>  uiStateId, state, props)
+    uiState: uiStateSelector(state, props)
     // Add other state props here
   }),
   (dispatch: Dispatch<DefaultStoreState>, props) => ({
-    ...createDispatchProps(({ uiStateId }) =>  uiStateId, dispatch, props)
+    setUIState: setUIStateSelector(dispatch, props)
     // Add other dispatch props here
   }),
   transformProps

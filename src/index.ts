@@ -12,7 +12,6 @@ export {
   defaultMapStateToProps,
   defaultMapDispatchToProps,
   defaultBranchSelector,
-  createMapDispatchToProps,
   createUIStateSelector,
   createDispatchProps,
   createStateProps,
