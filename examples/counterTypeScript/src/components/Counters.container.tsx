@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { Dispatch } from 'redux';
 import { connect } from 'react-redux';
 
@@ -20,13 +19,6 @@ import {
   CounterTransformedProps,
   CounterRawProps,
 } from './Counters';
-
-import {
-  utilTransformedStatic,
-  utilRawStatic,
-  manualTransformedStatic,
-  manualRawStatic,
-} from '../uiState';
 
 /**
  * Transforms the raw Redux UI State API into a nicer, more contextually shape
@@ -91,7 +83,7 @@ export const CounterManualTransformedPropsDynamicId = (
       uiState: uiStateSelector(state, props)
       // Add other state props here
     }),
-    (dispatch: Dispatch<DefaultStoreState>, props) => ({
+    (dispatch: Dispatch<DefaultStoreState>, props: CounterDynamicIdProps) => ({
       setUIState: setUIStateSelector(dispatch, props)
       // Add other dispatch props here
     }),
@@ -121,7 +113,7 @@ export const CounterManualRawPropsDynamicId = (
       uiState: uiStateSelector(state, props)
       // Add other state props here
     }),
-    (dispatch: Dispatch<DefaultStoreState>, props) => ({
+    (dispatch: Dispatch<DefaultStoreState>, props: CounterDynamicIdProps) => ({
       setUIState: setUIStateSelector(dispatch, props)
       // Add other dispatch props here
     })

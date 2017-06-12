@@ -13,16 +13,12 @@ import {
 } from './Counters.container';
 
 import {
-  utilTransformedStatic,
   utilTransformedDynamic1,
   utilTransformedDynamic2,
-  utilRawStatic,
   utilRawDynamic1,
   utilRawDynamic2,
-  manualTransformedStatic,
   manualTransformedDynamic1,
   manualTransformedDynamic2,
-  manualRawStatic,
   manualRawDynamic1,
   manualRawDynamic2,
 } from '../uiState';
