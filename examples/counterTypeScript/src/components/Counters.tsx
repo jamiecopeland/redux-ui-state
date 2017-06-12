@@ -1,7 +1,6 @@
 import * as React from 'react';
 
 import { Props as ReduxUIStateProps, } from 'redux-ui-state';
-import { DefaultStoreState } from 'redux-ui-state/lib/utils';
 
 export interface UIState {
   index: number;

@@ -45,11 +45,13 @@ export interface DefaultStoreState {
   uiState: UIStateBranch;
 }
 
+export type ComponentsDictionary = Record<string, {}>;
+
 /**
  * The branch of the Redux store governed by reduxUIState's reducer
  */
 export interface UIStateBranch {
-  components: Record<string, {}>;
+  components: ComponentsDictionary;
 }
 
 /**
