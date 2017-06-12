@@ -13,6 +13,7 @@
     "outDir": "lib",
     "rootDir": "src",
     "sourceMap": true,
+    "strict": true,
     "suppressImplicitAnyIndexErrors": true,
     "suppressExcessPropertyErrors": true,
     "target": "es5",

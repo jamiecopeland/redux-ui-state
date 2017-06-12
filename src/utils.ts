@@ -143,7 +143,7 @@ export const uiStateBranchSelector = createSelector(
   uiStateBranchSelectorSelector,
   stateSelector,
   (selector, state) => {
-    const branch = selector(state);
+    const branch = selector(state!);
     if (!branch) {
       throw new Error(
         'redux-ui-state Could not select UI state branch from the store - this is either because the reducer has not' +
@@ -173,7 +173,7 @@ export const uiStateSelector = createSelector(
   uiStateComponentsSelector,
   idSelector,
   (components, id) => {
-    const uiState = components[id];
+    const uiState = id && components[id];
     if (!uiState) {
       console.warn(
         `redux-ui-state uiStateSelector found undefined state for key: ${id}.\n` +
@@ -194,7 +194,10 @@ export const uiStateSelector = createSelector(
 export const setUIStateSelector = <TUIState, TProps extends UIStateIdProps<TProps>>(
   dispatch: Dispatch<any>, // tslint:disable-line:no-any
   props: TProps
-) => (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({
-  id: idSelector<TProps>(undefined, props),
-  state,
-}));
+) => {
+  const id = idSelector<TProps>(undefined, props);
+  if (!id) {
+    throw new Error('redux-ui-state uiStateId is undefined');
+  }
+  return (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({ id, state }));
+};

@@ -39,23 +39,30 @@ const _connectReduxUIState: _connectReduxUIState = <TUIState, TProps extends obj
   uiStateBranchSelector?: UIStateBranchSelector<TAppState>
 ) => (
   Component: WrappedComponentWithoutTransform<TUIState, TProps> | WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> // tslint:disable-line:max-line-length
-): ComponentClass<TProps> => connect( // TODO Add generics to connect?
-    (state: TAppState, props: TProps) => ({
-      // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
-      // tslint:disable-next-line:no-any
-      uiState: uiStateSelector(state, { uiStateId: id, uiStateBranchSelector,  ...props as any })
-    }),
-    (dispatch: Dispatch<TAppState>, props: TProps) => ({
-      // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
-      // tslint:disable-next-line:no-any
-      setUIState: setUIStateSelector(dispatch, { uiStateId: id, ...props as any })
-    }),
-    transformPropsFunction
+): ComponentClass<TProps> => {
+
+  const mapStateToProps = (state: TAppState, props: TProps) => ({
+    // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
+    // tslint:disable-next-line:no-any
+    uiState: uiStateSelector(state, { uiStateId: id, uiStateBranchSelector,  ...props as any })
+  })
+
+  const mapDispatchToProps = (dispatch: Dispatch<TAppState>, props: TProps) => ({
+    // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
+    // tslint:disable-next-line:no-any
+    setUIState: setUIStateSelector(dispatch, { uiStateId: id, ...props as any })
+  })
+
+  return connect( // TODO Add generics to connect?
+    mapStateToProps,
+    mapDispatchToProps,
+    transformPropsFunction!
   )(
     // This any is ok, because the function overloading will catch errors relating to passing mismatching components
     // and transform functions
     Component as any // tslint:disable-line:no-any
   );
+}
 
 export interface connectReduxUIState { // tslint:disable-line:class-name
   <TUIState, TProps, TAppState = DefaultStoreState>(
@@ -76,7 +83,7 @@ export interface connectReduxUIState { // tslint:disable-line:class-name
 export const connectReduxUIState: connectReduxUIState = <TUIState, TProps extends object, TTransformedProps>(
   id: Id<TProps>,
   transformPropsFunction?: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
-) => _connectReduxUIState(id, transformPropsFunction);
+) => _connectReduxUIState(id, transformPropsFunction!);
 
 /**
  * Creates a function with a identical functionality to connectReduxUIState, but using a custom UI state branch
@@ -89,5 +96,5 @@ export const createConnectReduxUIState = <TAppState>(uiStateBranchSelector: UISt
   <TUIState, TProps, TTransformedProps>(
     id: Id<TProps>,
     transformPropsFunction?: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
-  ) => _connectReduxUIState(id, transformPropsFunction, uiStateBranchSelector)
+  ) => _connectReduxUIState(id, transformPropsFunction!, uiStateBranchSelector)
 ) as connectReduxUIState;
