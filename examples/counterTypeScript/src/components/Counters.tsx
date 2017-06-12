@@ -17,6 +17,8 @@ export interface CounterDynamicIdProps extends CounterProps {
 
 // -------------------------------------------------------------------------------------------------
 // Component accepting transformed props
+// This implementation is clearly the better of the two, since it has a cleaner, more contextually relevant API.
+// See Counters.containers.tsx for several example implentations of how to transform props
 
 export interface TransformedProps {
   message: string;
@@ -24,7 +26,9 @@ export interface TransformedProps {
   decrement: () => void;
 }
 
-export const CounterTransformedProps: React.StatelessComponent<TransformedProps> = ({ message, increment, decrement }) => (
+export const CounterTransformedProps: React.StatelessComponent<TransformedProps> = (
+  { message, increment, decrement }
+) => (
   <div>
     <div>
       {message}
@@ -38,6 +42,9 @@ export const CounterTransformedProps: React.StatelessComponent<TransformedProps>
 
 // -------------------------------------------------------------------------------------------------
 // Component acccepting raw props
+// This style of component still works, but the use of raw props necessitates extra, contextually irrelevant knowledge
+// of the inner workings of Redux UI State's API.
+// See Counters.containers.tsx for several example implentations of how to transform props
 
 export const CounterRawProps: React.StatelessComponent<CounterProps & ReduxUIStateProps<UIState>> = ({
   prefix, uiState, setUIState

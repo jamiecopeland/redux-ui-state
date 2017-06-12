@@ -12,24 +12,26 @@ import {
   CounterManualRawPropsDynamicId
 } from './Counters.container';
 
+import {
+  utilTransformedStatic,
+  utilTransformedDynamic1,
+  utilTransformedDynamic2,
+  utilRawStatic,
+  utilRawDynamic1,
+  utilRawDynamic2,
+  manualTransformedStatic,
+  manualTransformedDynamic1,
+  manualTransformedDynamic2,
+  manualRawStatic,
+  manualRawDynamic1,
+  manualRawDynamic2,
+} from '../uiState';
+
 class App extends React.Component<{}, void> {
   render() {
     return (
       <div>
         <h2>Standard Implementations</h2>
-
-        <h3>Raw props, static id</h3>
-        <CounterUtilRawPropsStaticId prefix="Value: " />
-
-        <CounterUtilRawPropsStaticId prefix="Value: " />
-
-        <hr />
-
-        <h3>Raw props, dynamic id</h3>
-        <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId="counterDynamicId1" />
-        <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId="counterDynamicId2" />
-
-        <hr />
 
         <h3>Transformed props, static id</h3>
         <CounterUtilTransformedPropsStaticId prefix="Value: " />
@@ -38,8 +40,20 @@ class App extends React.Component<{}, void> {
         <hr />
 
         <h3>Transformed props, dynamic id</h3>
-        <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId="counterDynamicId3" />
-        <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId="counterDynamicId4" />
+        <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId={utilTransformedDynamic1.key} />
+        <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId={utilTransformedDynamic2.key} />
+
+        <hr />
+
+        <h3>Raw props, static id</h3>
+        <CounterUtilRawPropsStaticId prefix="Value: " />
+        <CounterUtilRawPropsStaticId prefix="Value: " />
+
+        <hr />
+
+        <h3>Raw props, dynamic id</h3>
+        <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId={utilRawDynamic1.key} />
+        <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId={utilRawDynamic2.key} />
 
         <hr />
 
@@ -54,8 +68,8 @@ class App extends React.Component<{}, void> {
 
         <h3>Transformed props, dynamic id</h3>
 
-        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId1" />
-        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId2" />
+        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId={manualTransformedDynamic1.key} />
+        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId={manualTransformedDynamic2.key} />
 
         <hr />
 
@@ -68,8 +82,8 @@ class App extends React.Component<{}, void> {
 
         <h3>Raw props, dynamic id</h3>
 
-        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId1" />
-        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId="counterManualDynamicId2" />
+        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId={manualRawDynamic1.key} />
+        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId={manualRawDynamic2.key} />
 
       </div>
     );
