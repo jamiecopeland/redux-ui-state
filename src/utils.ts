@@ -143,7 +143,7 @@ export const uiStateBranchSelector = createSelector(
   uiStateBranchSelectorSelector,
   stateSelector,
   (selector, state) => {
-    const branch = selector(state!);
+    const branch = selector(state);
     if (!branch) {
       throw new Error(
         'redux-ui-state Could not select UI state branch from the store - this is either because the reducer has not' +

@@ -45,13 +45,13 @@ const _connectReduxUIState: _connectReduxUIState = <TUIState, TProps extends obj
     // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
     // tslint:disable-next-line:no-any
     uiState: uiStateSelector(state, { uiStateId: id, uiStateBranchSelector,  ...props as any })
-  })
+  });
 
   const mapDispatchToProps = (dispatch: Dispatch<TAppState>, props: TProps) => ({
     // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
     // tslint:disable-next-line:no-any
     setUIState: setUIStateSelector(dispatch, { uiStateId: id, ...props as any })
-  })
+  });
 
   return connect( // TODO Add generics to connect?
     mapStateToProps,
@@ -62,7 +62,7 @@ const _connectReduxUIState: _connectReduxUIState = <TUIState, TProps extends obj
     // and transform functions
     Component as any // tslint:disable-line:no-any
   );
-}
+};
 
 export interface connectReduxUIState { // tslint:disable-line:class-name
   <TUIState, TProps, TAppState = DefaultStoreState>(
