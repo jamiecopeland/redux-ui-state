@@ -6,10 +6,6 @@ import {
   CounterUtilTranformedPropsDynamicId,
   CounterUtilRawPropsStaticId,
   CounterUtilsRawPropsDynamicId,
-  CounterManualTransformedPropsStaticId,
-  CounterManualTransformedPropsDynamicId,
-  CounterManualRawPropsStaticId,
-  CounterManualRawPropsDynamicId
 } from './Counters.container';
 
 import {
@@ -17,10 +13,6 @@ import {
   utilTransformedDynamic2,
   utilRawDynamic1,
   utilRawDynamic2,
-  manualTransformedDynamic1,
-  manualTransformedDynamic2,
-  manualRawDynamic1,
-  manualRawDynamic2,
 } from '../uiState';
 
 class App extends React.Component<{}, void> {
@@ -52,34 +44,6 @@ class App extends React.Component<{}, void> {
         <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId={utilRawDynamic2.key} />
 
         <hr />
-
-        <h2>Advanced Implementations</h2>
-
-        <h3>Transformed props, static id</h3>
-
-        <CounterManualTransformedPropsStaticId prefix="Value: " />
-        <CounterManualTransformedPropsStaticId prefix="Value: " />
-
-        <hr />
-
-        <h3>Transformed props, dynamic id</h3>
-
-        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId={manualTransformedDynamic1.key} />
-        <CounterManualTransformedPropsDynamicId prefix="Value: " uiStateId={manualTransformedDynamic2.key} />
-
-        <hr />
-
-        <h3>Raw props, static id</h3>
-
-        <CounterManualRawPropsStaticId prefix="Value: " />
-        <CounterManualRawPropsStaticId prefix="Value: " />
-
-        <hr />
-
-        <h3>Raw props, dynamic id</h3>
-
-        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId={manualRawDynamic1.key} />
-        <CounterManualRawPropsDynamicId prefix="Value: " uiStateId={manualRawDynamic2.key} />
 
       </div>
     );

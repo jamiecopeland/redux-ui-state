@@ -120,9 +120,7 @@ export const propsSelector = <TProps>(_: any, props: TProps) => props; // tslint
 /**
  * Selects the ui state branch from the default location in the Redux store
  */
-export const defaultUIStateBranchSelector = <TAppState = DefaultStoreState>(state: TAppState): UIStateBranch => (
-  state[DEFAULT_BRANCH_NAME]
-);
+export const defaultUIStateBranchSelector = (state: DefaultStoreState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
 /**
  * The props containing the selector for the uiState branch.
@@ -143,7 +141,7 @@ export const uiStateBranchSelector = createSelector(
   uiStateBranchSelectorSelector,
   stateSelector,
   (selector, state) => {
-    const branch = selector(state);
+    const branch = selector(state as any);
     if (!branch) {
       throw new Error(
         'redux-ui-state Could not select UI state branch from the store - this is either because the reducer has not' +

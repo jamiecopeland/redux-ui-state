@@ -13,9 +13,6 @@
     "rootDir": "src",
     "sourceMap": true,
     "strict": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "suppressExcessPropertyErrors": true,
     "target": "es5",
     "types": ["jest"]
   },
