@@ -52,7 +52,6 @@
     "@types/react": "^15.0.24",
     "@types/react-dom": "^15.5.0",
     "@types/react-redux": "^4.4.40",
-    "@types/redux": "^3.6.0",
     "enzyme": "^2.8.2",
     "jest": "^18.1.0",
     "react-addons-test-utils": "^15.0.1",
