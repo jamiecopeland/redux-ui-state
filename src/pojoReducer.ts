@@ -1,5 +1,5 @@
 import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction } from './actions';
-import { UIStateBranch, ComponentsDictionary } from './utils';
+import { UIStateBranch, ComponentsDictionary } from './connectReduxUIState';
 
 /**
  * Makes all your dreams (or at least your actions) come true.
