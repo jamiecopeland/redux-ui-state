@@ -60,7 +60,7 @@ const getPropsWithCustomSelector: UIStateBranchSelectorSelectorProps<CustomStore
 //////////////////////////////////////////////////
 // Tests
 
-describe.only('utils', () => {
+describe('utils', () => {
 
   describe('idIsString', () => {
     it('should return true if id is string', () => {
@@ -134,13 +134,13 @@ describe.only('utils', () => {
     it('should return props when props are present', () => {
       const state: DefaultStoreState = { uiState: { components: { } } };
       expect(
-        stateSelector(state, undefined)
+        stateSelector(state)
       ).toBe(state);
     });
 
     it('should return undefined when props are not present', () => {
       expect(
-        stateSelector(undefined, undefined)
+        stateSelector(undefined)
       ).toBeUndefined();
     });
   });
@@ -169,7 +169,7 @@ describe.only('utils', () => {
 
     it('should select undefined from unpopulated state', () => {
       expect(
-        defaultUIStateBranchSelector({})
+        defaultUIStateBranchSelector({} as any) // tslint:disable-line:no-any
       ).toBeUndefined();
     });
   });
@@ -199,7 +199,7 @@ describe.only('utils', () => {
 
     it('should select undefined from unpopulated state', () => {
       expect(
-        defaultUIStateBranchSelector({})
+        defaultUIStateBranchSelector({} as any) // tslint:disable-line:no-any
       ).toBeUndefined();
     });
   });
@@ -280,7 +280,7 @@ describe.only('utils', () => {
     });
   });
 
-  describe.only('setUIStateSelector', () => {
+  describe('setUIStateSelector', () => {
     interface UIState {
       index: number;
       otherValue?: string;
