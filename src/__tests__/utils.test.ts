@@ -1,13 +1,11 @@
-// TODO Fix imports
-import {
-  DefaultStoreState,
-  UIStateBranch, UIStateBranchSelectorSelectorProps, uiStateBranchSelectorSelector
-} from '../utils';
 import { setUIState as setUIStateActionCreator } from '../actions';
 
 import {
   Id,
   UIStateIdProps,
+  DefaultStoreState,
+  UIStateBranch,
+  UIStateBranchSelectorSelectorProps,
 
   idIsString,
   idIsFunction,
@@ -15,6 +13,7 @@ import {
   stateSelector,
   propsSelector,
   defaultUIStateBranchSelector,
+  uiStateBranchSelectorSelector,
   uiStateBranchSelector,
   uiStateComponentsSelector,
   idSelector,
@@ -230,7 +229,6 @@ describe('utils', () => {
 
   describe('idSelector', () => {
     it('should select the id from the props if id is a string', () => {
-
       expect(
         idSelector({}, {
           uiStateId: componentId
@@ -250,8 +248,7 @@ describe('utils', () => {
       ).toBe(componentId);
     });
 
-    it('should select undefined if id is a function and correct props are present', () => {
-
+    it('should select undefined if id is a function and dynamic id props is missing', () => {
       interface Props extends UIStateIdProps<Props> {
         customId?: string;
       }
@@ -301,6 +298,11 @@ describe('utils', () => {
         id: componentId,
         state: newState
       }));
+    });
+
+    it('should throw an error if uiStateId is undefined', () => {
+      expect(() => setUIStateSelector<UIState, UIStateIdProps<{}>>(jest.fn(), { uiStateId: () => undefined }))
+        .toThrow();
     });
   });
 
