@@ -93,7 +93,7 @@ export type WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> =
  * A Selector that accepts the full application state and returns the Redux UI State branch
  */
 // export type UIStateBranchSelector<TAppState = DefaultStoreState> = (appState: TAppState) => UIStateBranch;
-
+// This looks weird, but the standard type definition (commented out above) causes a Reselect import error
 export interface UIStateBranchSelector<TAppState> extends ParametricSelector<TAppState, {}, UIStateBranch> {
   (appState: TAppState): UIStateBranch;
 }
