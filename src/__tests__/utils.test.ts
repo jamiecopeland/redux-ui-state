@@ -174,7 +174,7 @@ describe('utils', () => {
   });
 
   describe('uiStateBranchSelectorSelector', () => {
-    it('should return a custom selector if props are populated', () => {
+    it('should return a selector if props are populated', () => {
       expect(
         uiStateBranchSelectorSelector({}, {
           uiStateBranchSelector: customSelector
@@ -182,10 +182,10 @@ describe('utils', () => {
       ).toBe(customSelector);
     });
 
-    it('should return the default selector if props are empty', () => {
+    it('should return the undefined if props are empty', () => {
       expect(
-        uiStateBranchSelectorSelector({}, {})
-      ).toBe(defaultUIStateBranchSelector);
+        () => uiStateBranchSelectorSelector({}, {})
+      ).toThrowError();
     });
   });
 
