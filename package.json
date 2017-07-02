@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state",
-  "version": "1.4.1",
+  "version": "2.0.0",
   "description": "UI state management for Redux applications",
   "main": "lib/index.js",
   "directories": {
@@ -8,19 +8,28 @@
   },
   "typings": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc",
-    "build:watch": "tsc -w",
-    "prepublish": "npm run build",
+    "clean": "rm -rf ./lib && rm -rf ./dist",
+    "build:lib": "tsc",
+    "build:lib:watch": "tsc -w",
+    "build:dist": "rollup -c",
+    "build": "npm run build:lib && npm run build:dist",
+    "prepublish": "npm run clean && npm run build",
     "lint": "tslint 'src/**/*.{ts,tsx}'",
-    "test": "jest --config jest/test.config.json",
-    "test:watch": "jest --config jest/test.config.json --watch"
+    "test": "jest --config jest.json",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/jamiecopeland/redux-ui-state.git"
   },
   "keywords": [
-    "React"
+    "react",
+    "redux",
+    "ui",
+    "state",
+    "ui state",
+    "higher order component",
+    "higher order function"
   ],
   "author": "Jamie Copeland",
   "license": "MIT",
@@ -29,29 +38,30 @@
   },
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
   "dependencies": {
-    "babel-polyfill": "^6.3.14",
-    "react": "^15.3.2",
-    "react-dom": "^15.0.1",
-    "react-redux": "^4.4.5",
+    "react": "^15.5.4",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
     "redux": "^3.6.0",
-    "reselect": "^2.5.4"
+    "reselect": "^3.0.1"
   },
   "devDependencies": {
-    "@types/enzyme": "^2.7.1",
-    "@types/jest": "^16.0.4",
-    "@types/react": "^15.0.0",
-    "@types/react-dom": "^0.14.20",
-    "@types/react-redux": "^4.4.35",
-    "@types/redux": "^3.6.0",
-    "@types/reselect": "^2.0.27",
-    "enzyme": "^2.7.0",
-    "jest": "^18.1.0",
+    "@types/enzyme": "^2.8.0",
+    "@types/jest": "^20.0.2",
+    "@types/react": "^15.0.24",
+    "@types/react-dom": "^15.5.0",
+    "@types/react-redux": "^4.4.40",
+    "enzyme": "^2.8.2",
+    "jest": "^20.0.4",
     "react-addons-test-utils": "^15.0.1",
+    "rollup": "^0.43.0",
+    "rollup-plugin-typescript2": "^0.4.5",
+    "rollup-plugin-uglify": "^2.0.1",
+    "ts-jest": "^20.0.6",
     "tslint": "^4.2.0",
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
     "tslint-react": "^2.2.0",
-    "typescript": "^2.1.4",
+    "typescript": "^2.3.4",
     "webpack": "^1.14.0"
   }
 }

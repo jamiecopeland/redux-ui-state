@@ -1,24 +1,39 @@
-export { DEFAULT_BRANCH_NAME } from './constants';
 export {
-  defaultBranchSelector,
-  defaultMapStateToProps,
-  defaultMapDispatchToProps,
-  createConnectWrapper,
+  IdFunction,
+  Id,
+  idIsString,
+  idIsFunction,
+  getStringFromId,
+  DefaultStoreState,
+  UIStateBranch,
+  StateProps,
+  DispatchProps,
+  Props,
+  AbstractWrappedComponent,
+  WrappedComponentWithoutTransform,
+  WrappedComponentWithTransform,
+  UIStateBranchSelector,
+  UIStateIdProps,
+  SetUIStateFunction,
+  TransformPropsFunction,
+  DEFAULT_BRANCH_NAME,
+  stateSelector,
+  propsSelector,
+  defaultUIStateBranchSelector,
+  UIStateBranchSelectorSelectorProps,
+  uiStateBranchSelectorSelector,
+  uiStateBranchSelector,
+  idSelector,
+  uiStateSelector,
+  setUIStateSelector
 } from './utils';
 
 export {
+  ModifyUIStateActionPayload,
+  ModifyUIStateAction,
   SET_UI_STATE,
-  REPLACE_UI_STATE,
-  DESTROY_UI_STATE,
   setUIState,
-  replaceUIState,
-  destroyUIState,
 } from './actions';
 
-export { reducer as pojoReducer } from './pojoReducer';
-export {
-  addReduxUIState, AddReduxUIStateConfig, UIStateBranch,
-  StateProps, DispatchProps, Props,
-  ExportedComponentDispatchProps, ExportedComponentStateProps,
-} from './addReduxUIState';
-export { connectReduxUIState } from './connectReduxUIState';
+export { createReducer } from './reducer';
+export { createConnectUIState, defaultConnectUIState } from './connectUIState';

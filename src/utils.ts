@@ -1,84 +1,211 @@
+
 import * as React from 'react';
-import { Dispatch } from 'redux';
-import { connect } from 'react-redux';
-import { createSelector } from 'reselect';
+import { Dispatch, Action } from 'redux';
+import { createSelector, ParametricSelector } from 'reselect';
 
-import { DEFAULT_BRANCH_NAME } from './constants';
-import {
-  UIStateBranch,
-  DefaultStateShape,
-  ExportedComponentStateProps,
-  ExportedComponentDispatchProps,
-  ExportedComponentProps
-} from './addReduxUIState';
+import { setUIState } from './actions';
+
+//////////////////////////////////////////////////
+// Id interfaces and functions
 
 /**
- * Selects the default from the Redux store
+ * A string or a function accepting the props as an argument and returning a string
  */
-export const defaultBranchSelector = (state: DefaultStateShape): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+export type IdFunction<TProps> = (props: TProps) => string;
+export type Id<TProps> = string | IdFunction<TProps>;
 
 /**
- * The shape of props passed into the idSelector
+ * A type guard guaranteeing id is a string;
  */
-export interface IdSelectorProps {
-  id: string;
+export const idIsString = <TProps>(id: Id<TProps>): id is string => typeof id === 'string';
+
+/**
+ * A type guard guaranteeing id is a function that accepts props and returns a string
+ */
+export const idIsFunction = <TProps>(id: Id<TProps>): id is IdFunction<TProps> => typeof id === 'function';
+
+/**
+ * Returns a string or undefined from the union type of (string | function that returns string)
+ */
+export const getStringFromId = <TProps>(id: Id<TProps>, props: TProps): string | undefined => {
+  if (idIsString(id)) { return id; }
+  if (idIsFunction(id)) { return id(props); }
+  return undefined;
+};
+
+//////////////////////////////////////////////////
+// Interfaces
+
+/**
+ * The default shape of a store containing the uiState reducer
+ */
+export interface DefaultStoreState {
+  // This is slightly gross and involves repetition of the value in DEFAULT_BRANCH_NAME, but
+  // TypeScript doesn't currently allow computed property names in interfaces - [DEFAULT_BRANCH_NAME]: UIStateBranch;
+  ui: UIStateBranch;
 }
 
 /**
- * Selects the id passed in by the props
+ * The branch of the Redux store governed by reduxUIState's reducer
  */
-export const idSelector = (_: Object, { id }: IdSelectorProps) => id;
+export type UIStateBranch = Record<string, {}>;
 
 /**
- * The shape of the props passed into branchSelectorSelector
+ * The state props passed into a component wrapped by addReduxUIState
  */
-export interface BranchSelectorSelectorProps {
-  branchSelector: (state: Object) => UIStateBranch;
+export interface StateProps<TUIState> {
+  uiState: TUIState;
 }
 
 /**
- * Selects the uiStateBranchSelector from the props
+ * The dispatch props passed into a component wrapped by addReduxUIState
  */
-export const branchSelectorSelector = (
-  _: Object, { branchSelector }: BranchSelectorSelectorProps
-) =>
-  branchSelector;
+export interface DispatchProps<TUIState> {
+  setUIState: (state: Partial<TUIState>) => void;
+}
 
 /**
- * Selects uiState of a component
+ * All the props props passed into a component wrapped by addReduxUIState
  */
+export type Props<TUIState> = StateProps<TUIState> & DispatchProps<TUIState>;
+
+/**
+ * The component passed into addReduxUIState
+ */
+export type AbstractWrappedComponent<TProps> = React.StatelessComponent<TProps> | React.ComponentClass<TProps>;
+
+/**
+ * A component being passed into addReduxUIState that accepts the default props
+ */
+export type WrappedComponentWithoutTransform<TUIState, TProps> = AbstractWrappedComponent<TProps & Props<TUIState>>;
+
+/**
+ * A component being passed into addReduxUIState that accepts transformed props
+ */
+export type WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> = AbstractWrappedComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
+
+/**
+ * A Selector that accepts the full application state and returns the Redux UI State branch
+ */
+// export type UIStateBranchSelector<TAppState = DefaultStoreState> = (appState: TAppState) => UIStateBranch;
+// This looks weird, but the standard type definition (commented out above) causes a Reselect import error
+export interface UIStateBranchSelector<TAppState> extends ParametricSelector<TAppState, {}, UIStateBranch> {
+  (appState: TAppState): UIStateBranch;
+}
+
+/**
+ * The props representing the key of the UI state data in the store
+ */
+export interface UIStateIdProps<TProps> {
+  uiStateId: Id<TProps>;
+}
+
+/**
+ * The function used to make changes to the state
+ */
+export type SetUIStateFunction<TUIState> = (state: Partial<TUIState>) => void;
+
+export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
+  stateProps: StateProps<TUIState>,
+  dispatchProps: DispatchProps<TUIState>,
+  ownProps: Readonly<TProps>,
+) => TTransformedProps;
+
+//////////////////////////////////////////////////
+// Constants
+
+export const DEFAULT_BRANCH_NAME = 'ui';
+
+//////////////////////////////////////////////////
+// Selectors
+
+export const stateSelector = <TAppState = DefaultStoreState>(state: TAppState) => state;
+export const propsSelector = <TProps>(_: any, props: TProps) => props; // tslint:disable-line:no-any
+
+/**
+ * Selects the ui state branch from the default location in the Redux store
+ */
+export const defaultUIStateBranchSelector = (state: DefaultStoreState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+
+/**
+ * The props containing the selector for the uiState branch.
+ */
+export interface UIStateBranchSelectorSelectorProps<TAppState> {
+  uiStateBranchSelector?: UIStateBranchSelector<TAppState>;
+}
+
+/**
+ * Selects the uiState branch selector, returning defaultUIStateBranchSelector if a custom is not found in the props
+ */
+export const uiStateBranchSelectorSelector = <TAppState>(
+  _: any, // tslint:disable-line:no-any
+  props: UIStateBranchSelectorSelectorProps<TAppState>
+) => {
+  const uiStateBranchSelector = props && props.uiStateBranchSelector;
+
+  if (!uiStateBranchSelector) {
+    throw new Error(
+      'redux-ui-state Couldn\'t find uiStateBranchSelector in props - this is most likely because ' +
+      'createConnectUIState was called without an argument');
+  }
+
+  return uiStateBranchSelector;
+};
+
+export const uiStateBranchSelector = createSelector(
+  uiStateBranchSelectorSelector,
+  stateSelector,
+  (selector, state) => {
+    const branch = selector(state);
+    if (!branch) {
+      throw new Error(
+        'redux-ui-state Could not select UI state branch from the store - this is either because the reducer has not' +
+        'been composed properly or the selector is looking in the wrong location.'
+      );
+    }
+    return branch;
+  }
+);
+
+export const idSelector = <TProps>(_: any, props: TProps & UIStateIdProps<TProps>) => { // tslint:disable-line:no-any
+  if (!props.uiStateId) {
+    throw new Error(
+      'Couldn\'t find uiStateId prop for idSelector in Redux UI State - this usually occurs because the id passed ' +
+      'into connectUIState is undefined, or the uiStateId prop being passed into a component is undefined.'
+    );
+  }
+  return getStringFromId(props.uiStateId, props);
+};
+
 export const uiStateSelector = createSelector(
-  state => state,
+  uiStateBranchSelector,
   idSelector,
-  branchSelectorSelector,
-  (state, id, branchSelector = defaultBranchSelector) => branchSelector(state).components[id],
+  (uiStateBranch, id) => {
+    const uiState = id && uiStateBranch[id];
+    if (!uiState) {
+      console.warn(
+        `redux-ui-state uiStateSelector found undefined state for key: ${id}.\n` +
+        `This is most often due to the value not being initialized in createReducer.`
+      );
+    }
+    return uiState;
+  }
 );
 
 /**
- * Maps uiStateBranch to props if the default state shape for the Redux store has been used
+ * Selects the setUIState function.
+ * This differs from normal selectors in that it is a dispatch selector, meaning that it expects dispatch as the first
+ * function and returns a function capable of dispatching through the Redux store.
+ * @param dispatch The dispatch function of the Redux store
+ * @param props The component's props
  */
-export const defaultMapStateToProps = (state: DefaultStateShape): ExportedComponentStateProps => ({
-  uiStateBranch: defaultBranchSelector(state),
-});
-
-/**
- * Maps dispatch to props.
- * NOTE: This will not vary based on state shape
- */
-export const defaultMapDispatchToProps = (dispatch: Dispatch<Object>) => ({
-  dispatch,
-});
-
-/**
- * Creates a connect wrapper for the addReduxUIState higher order component. If custom mappers are not specified,
- * defaults will be used.
- */
-export const createConnectWrapper = <TProps>(
-  mapStateToProps = defaultMapStateToProps,
-  mapDispatchToProps = defaultMapDispatchToProps
-) => (component: React.ComponentClass<ExportedComponentProps & TProps>) =>
-  connect<
-    ExportedComponentStateProps,
-    ExportedComponentDispatchProps,
-    TProps
-  >(mapStateToProps, mapDispatchToProps)(component);
+export const setUIStateSelector = <TUIState, TProps extends UIStateIdProps<TProps>>(
+  dispatch: Dispatch<any>, // tslint:disable-line:no-any
+  props: TProps
+) => {
+  const id = idSelector<TProps>(undefined, props);
+  if (!id) {
+    throw new Error('redux-ui-state uiStateId is undefined');
+  }
+  return (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({ id, state }));
+};
