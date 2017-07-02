@@ -37,7 +37,7 @@ NOTE: This is a simple implementation. For more complex implementations (e.g. cu
 
 Your root reducer should look this:
 
-```
+```typescript
 // rootReducer.js
 
 import { combineReducers } from 'redux';
@@ -61,7 +61,7 @@ export default combineReducers({
 Use the `connectUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
 `setUIState` (to be used in place of `this.setState`) into your component.
 
-```
+```typescript
 // Counter.js
 import React from 'react';
 import { defaultConnectUIState as connectUIState } from 'redux-ui-state';
