@@ -1,6 +1,9 @@
+/.rpt2_cache
+/dist
 /examples
 /jest
 /node_modules
+
 /npm-debug.log
 /tslint.json
 /tsconfig.json
