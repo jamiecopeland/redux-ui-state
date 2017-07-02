@@ -45,14 +45,10 @@ export interface DefaultStoreState {
   ui: UIStateBranch;
 }
 
-export type ComponentsDictionary = Record<string, {}>;
-
 /**
  * The branch of the Redux store governed by reduxUIState's reducer
  */
-export interface UIStateBranch {
-  components: ComponentsDictionary;
-}
+export type UIStateBranch = Record<string, {}>;
 
 /**
  * The state props passed into a component wrapped by addReduxUIState
@@ -171,11 +167,6 @@ export const uiStateBranchSelector = createSelector(
   }
 );
 
-export const uiStateComponentsSelector = createSelector(
-  uiStateBranchSelector,
-  (uiStateBranch) => uiStateBranch.components
-);
-
 export const idSelector = <TProps>(_: any, props: TProps & UIStateIdProps<TProps>) => { // tslint:disable-line:no-any
   if (!props.uiStateId) {
     throw new Error(
@@ -187,10 +178,10 @@ export const idSelector = <TProps>(_: any, props: TProps & UIStateIdProps<TProps
 };
 
 export const uiStateSelector = createSelector(
-  uiStateComponentsSelector,
+  uiStateBranchSelector,
   idSelector,
-  (components, id) => {
-    const uiState = id && components[id];
+  (uiStateBranch, id) => {
+    const uiState = id && uiStateBranch[id];
     if (!uiState) {
       console.warn(
         `redux-ui-state uiStateSelector found undefined state for key: ${id}.\n` +

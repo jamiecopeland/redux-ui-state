@@ -32,20 +32,14 @@ const getInitialState = () => ({
   [ITEM_2_ID]: getItem2State(),
 });
 
-const getWrappedInitialState = (state: {} = getInitialState()) => ({
-  components: state,
-});
-
-const createTestableReducer = () => createReducer(getInitialState());
-
 describe('reducer', () => {
 
   describe('initial state', () => {
 
     it('contain the correct populated initial state', () => {
-      const reducer = createTestableReducer();
+      const reducer = createReducer(getInitialState());
       const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any); // tslint:disable-line:no-any
-      const expected = getWrappedInitialState();
+      const expected = getInitialState();
 
       expect(actual).toEqual(expected);
     });
@@ -53,7 +47,7 @@ describe('reducer', () => {
     it('contain the correct undefined initial state', () => {
       const reducer = createReducer(undefined as any); // tslint:disable-line:no-any
       const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any); // tslint:disable-line:no-any
-      const expected = {};
+      const expected = undefined;
 
       expect(actual).toEqual(expected);
     });
@@ -67,15 +61,11 @@ describe('reducer', () => {
         },
         id: ITEM_1_ID,
       });
-      const initialState = {
-        components: {}
-      };
+      const initialState = {};
       const actual = createReducer(initialState)(initialState, action);
       const expected = {
-        components: {
-          [ITEM_1_ID]: {
-            isOpen: action.payload.state.isOpen
-          }
+        [ITEM_1_ID]: {
+          isOpen: action.payload.state.isOpen
         }
       };
       expect(actual).toEqual(expected);
@@ -88,9 +78,14 @@ describe('reducer', () => {
         },
         id: ITEM_1_ID,
       });
-      const actual = createReducer(getInitialState())(getWrappedInitialState(), action);
-      const expected = getWrappedInitialState();
-      expected.components[ITEM_1_ID].isOpen = false;
+      const actual = createReducer(getInitialState())(getInitialState(), action);
+      const expected = {
+        ...getInitialState(),
+        [ITEM_1_ID]: {
+          ...getInitialState()[ITEM_1_ID],
+          isOpen: false
+        }
+      };
       expect(actual).toEqual(expected);
     });
 
@@ -105,14 +100,10 @@ describe('reducer', () => {
         },
         id: ITEM_1_ID,
       });
-      const initialState = {
-        components: {}
-      };
+      const initialState = {};
       const actual = createReducer({})(initialState, action);
       const expected = {
-        components: {
-          [ITEM_1_ID]: action.payload.state
-        }
+        [ITEM_1_ID]: action.payload.state
       };
       expect(actual).toEqual(expected);
     });
@@ -126,13 +117,10 @@ describe('reducer', () => {
         id: ITEM_1_ID,
       });
 
-      const actual = createReducer(getInitialState())(getWrappedInitialState(), action);
+      const actual = createReducer(getInitialState())(getInitialState(), action);
       const expected = {
-        ...getWrappedInitialState(),
-        components: {
-          ...getInitialState(),
-          [ITEM_1_ID]: action.payload.state
-        }
+        ...getInitialState(),
+        [ITEM_1_ID]: action.payload.state,
       };
       expect(actual).toEqual(expected);
     });

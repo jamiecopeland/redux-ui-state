@@ -15,7 +15,7 @@ import {
   defaultUIStateBranchSelector,
   uiStateBranchSelectorSelector,
   uiStateBranchSelector,
-  uiStateComponentsSelector,
+  // uiStateComponentsSelector,
   idSelector,
   uiStateSelector,
   setUIStateSelector,
@@ -218,14 +218,14 @@ describe('utils', () => {
     });
   });
 
-  describe('uiStateComponentsSelector', () => {
-    it('should select the components property', () => {
-      const appState = getDefaultAppState();
-      expect(
-        uiStateComponentsSelector.resultFunc(appState.ui)
-      ).toBe(appState.ui.components);
-    });
-  });
+  // describe('uiStateComponentsSelector', () => {
+  //   it('should select the components property', () => {
+  //     const appState = getDefaultAppState();
+  //     expect(
+  //       uiStateComponentsSelector.resultFunc(appState.ui)
+  //     ).toBe(appState.ui.components);
+  //   });
+  // });
 
   describe('idSelector', () => {
     it('should select the id from the props if id is a string', () => {

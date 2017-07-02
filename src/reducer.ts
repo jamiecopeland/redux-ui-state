@@ -1,36 +1,30 @@
 import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction } from './actions';
-import { UIStateBranch, ComponentsDictionary } from './utils';
+import { UIStateBranch } from './utils';
 
 /**
  * Makes all your dreams (or at least your actions) come true.
  */
 export const createReducer = ( // tslint:disable-line:no-any
-  initialState: ComponentsDictionary
+  initialState: UIStateBranch
 ) => (
-  state: UIStateBranch = { components: initialState },
+  state: UIStateBranch = initialState,
   action: ModifyUIStateAction<object>
 ) => {
   switch (action.type) {
     case SET_UI_STATE: {
       return ({
         ...state,
-        components: {
-          ...state.components,
-          [action.payload.id]: {
-            ...state.components[action.payload.id],
-            ...(action as ModifyUIStateAction<object>).payload.state
-          },
-        }
+        [action.payload.id]: {
+          ...state[action.payload.id],
+          ...(action as ModifyUIStateAction<object>).payload.state
+        },
       });
     }
 
     case REPLACE_UI_STATE: {
       return {
         ...state,
-        components: {
-          ...state.components,
-          [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
-        }
+        [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
       };
     }
 
