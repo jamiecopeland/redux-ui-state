@@ -23,7 +23,13 @@
     "url": "git+https://github.com/jamiecopeland/redux-ui-state.git"
   },
   "keywords": [
-    "React"
+    "react",
+    "redux",
+    "ui",
+    "state",
+    "ui state",
+    "higher order component",
+    "higher order function"
   ],
   "author": "Jamie Copeland",
   "license": "MIT",
