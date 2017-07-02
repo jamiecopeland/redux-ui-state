@@ -1,19 +1,12 @@
 # Redux UI State
 
-<p>
-  <a href="https://npmjs.com/package/redux-ui-state">
-    <img src="https://img.shields.io/npm/v/redux-ui-state.svg">
-  </a>
-  <a href="https://github.com/jamiecopeland/redux-ui-state/blob/master/LICENSE.md">
-    <img src="https://img.shields.io/github/license/jamiecopeland/redux-ui-state.svg">
-  </a>
-  <img src="https://img.shields.io/travis/jamiecopeland/redux-ui-state.svg">
-  <img src="http://img.badgesize.io/https://unpkg.com/redux-ui-state/dist/redux-ui-state.min.js?compression=gzip&label=gzip%20size">
-  <img src="http://img.badgesize.io/https://unpkg.com/redux-ui-state/dist/redux-ui-state.min.js?label=size">
-  <a href="https://npmjs.com/package/redux-ui-state">
-    <img src="https://img.shields.io/npm/dm/redux-ui-state.svg">
-  </a>
-<p>
+[![version](https://img.shields.io/npm/v/redux-ui-state.svg)](https://npmjs.com/package/redux-ui-state)
+[![licence](https://img.shields.io/github/license/jamiecopeland/redux-ui-state.svg)](https://github.com/jamiecopeland/redux-ui-state/blob/master/LICENSE.md)
+![build](https://img.shields.io/travis/jamiecopeland/redux-ui-state.svg)
+![gzip size](http://img.badgesize.io/https://unpkg.com/redux-ui-state/dist/redux-ui-state.min.js?compression=gzip&label=size%20gzipped)
+![size](http://img.badgesize.io/https://unpkg.com/redux-ui-state/dist/redux-ui-state.min.js?label=size%20ungzipped)
+[![downloads](https://img.shields.io/npm/dm/redux-ui-state.svg)](https://npmjs.com/package/redux-ui-state)
+
 
 UI state management for Redux applications.
 
