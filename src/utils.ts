@@ -42,7 +42,7 @@ export const getStringFromId = <TProps>(id: Id<TProps>, props: TProps): string |
 export interface DefaultStoreState {
   // This is slightly gross and involves repetition of the value in DEFAULT_BRANCH_NAME, but
   // TypeScript doesn't currently allow computed property names in interfaces - [DEFAULT_BRANCH_NAME]: UIStateBranch;
-  uiState: UIStateBranch;
+  ui: UIStateBranch;
 }
 
 export type ComponentsDictionary = Record<string, {}>;
@@ -118,7 +118,7 @@ export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
 //////////////////////////////////////////////////
 // Constants
 
-export const DEFAULT_BRANCH_NAME = 'uiState';
+export const DEFAULT_BRANCH_NAME = 'ui';
 
 //////////////////////////////////////////////////
 // Selectors

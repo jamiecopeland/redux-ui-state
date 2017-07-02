@@ -35,22 +35,22 @@ const getUIState = (): UIStateBranch => ({
 });
 
 const getDefaultAppState = (): DefaultStoreState => ({
-  uiState: getUIState(),
+  ui: getUIState(),
 });
 
 interface CustomStoreState {
   vendors: {
-    uiState: UIStateBranch;
+    ui: UIStateBranch;
   };
 }
 
 const getCustomAppState = (): CustomStoreState => ({
   vendors: {
-    uiState: getUIState(),
+    ui: getUIState(),
   }
 });
 
-const customSelector = (state: CustomStoreState) => state.vendors.uiState;
+const customSelector = (state: CustomStoreState) => state.vendors.ui;
 
 const getPropsWithCustomSelector: UIStateBranchSelectorSelectorProps<CustomStoreState> = {
   uiStateBranchSelector: customSelector
@@ -131,7 +131,7 @@ describe('utils', () => {
 
   describe('stateSeletor', () => {
     it('should return props when props are present', () => {
-      const state: DefaultStoreState = { uiState: { components: { } } };
+      const state: DefaultStoreState = { ui: { components: { } } };
       expect(
         stateSelector(state)
       ).toBe(state);
@@ -208,7 +208,7 @@ describe('utils', () => {
       const appState = getDefaultAppState();
       expect(
         uiStateBranchSelector.resultFunc(defaultUIStateBranchSelector, appState)
-      ).toBe(appState.uiState);
+      ).toBe(appState.ui);
     });
 
     it('should select undefined if uiState branch is not present', () => {
@@ -222,8 +222,8 @@ describe('utils', () => {
     it('should select the components property', () => {
       const appState = getDefaultAppState();
       expect(
-        uiStateComponentsSelector.resultFunc(appState.uiState)
-      ).toBe(appState.uiState.components);
+        uiStateComponentsSelector.resultFunc(appState.ui)
+      ).toBe(appState.ui.components);
     });
   });
 
@@ -265,14 +265,14 @@ describe('utils', () => {
     it('should return the UI state for an identified component if present', () => {
       const appState = getDefaultAppState();
       expect(
-        uiStateSelector.resultFunc(appState.uiState.components, componentId)
-      ).toBe(appState.uiState.components[componentId]);
+        uiStateSelector.resultFunc(appState.ui.components, componentId)
+      ).toBe(appState.ui.components[componentId]);
     });
 
     it('should return undefined if value is not present', () => {
       const appState = getDefaultAppState();
       expect(
-        uiStateSelector.resultFunc(appState.uiState.components, 'notThing')
+        uiStateSelector.resultFunc(appState.ui.components, 'notThing')
       ).toBeUndefined();
     });
   });
