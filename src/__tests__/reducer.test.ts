@@ -1,5 +1,5 @@
 import { createReducer  } from '../reducer';
-import { setUIState, replaceUIState, SET_UI_STATE } from '../actions';
+import { setUIState, SET_UI_STATE } from '../actions';
 import { UIStateBranch } from '../utils';
 
 const COMPONENT_ID = 'thing';
@@ -85,42 +85,6 @@ describe('reducer', () => {
           ...getInitialState()[ITEM_1_ID],
           isOpen: false
         }
-      };
-      expect(actual).toEqual(expected);
-    });
-
-  });
-
-  describe('REPLACE_UI_STATE', () => {
-    it('set a new primitive value in empty initial state', () => {
-      const action = replaceUIState<ComponentUIStateMandatory>({
-        state: {
-          isOpen: false,
-          selectedIndex: 1,
-        },
-        id: ITEM_1_ID,
-      });
-      const initialState = {};
-      const actual = createReducer({})(initialState, action);
-      const expected = {
-        [ITEM_1_ID]: action.payload.state
-      };
-      expect(actual).toEqual(expected);
-    });
-
-    it('set a new primitive value in populated initial state', () => {
-      const action = replaceUIState<ComponentUIStateMandatory>({
-        state: {
-          isOpen: false,
-          selectedIndex: 1,
-        },
-        id: ITEM_1_ID,
-      });
-
-      const actual = createReducer(getInitialState())(getInitialState(), action);
-      const expected = {
-        ...getInitialState(),
-        [ITEM_1_ID]: action.payload.state,
       };
       expect(actual).toEqual(expected);
     });

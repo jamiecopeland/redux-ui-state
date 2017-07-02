@@ -1,4 +1,4 @@
-import { SET_UI_STATE, REPLACE_UI_STATE, ModifyUIStateAction } from './actions';
+import { SET_UI_STATE, ModifyUIStateAction } from './actions';
 import { UIStateBranch } from './utils';
 
 /**
@@ -19,13 +19,6 @@ export const createReducer = ( // tslint:disable-line:no-any
           ...(action as ModifyUIStateAction<object>).payload.state
         },
       });
-    }
-
-    case REPLACE_UI_STATE: {
-      return {
-        ...state,
-        [action.payload.id]: (action as ModifyUIStateAction<object>).payload.state,
-      };
     }
 
     default: {
