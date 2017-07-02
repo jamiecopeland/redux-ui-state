@@ -1,4 +1,4 @@
-import { createReducer  } from '../pojoReducer';
+import { createReducer  } from '../reducer';
 import { setUIState, replaceUIState, SET_UI_STATE } from '../actions';
 import { UIStateBranch } from '../utils';
 

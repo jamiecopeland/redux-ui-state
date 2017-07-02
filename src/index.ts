@@ -17,5 +17,5 @@ export {
   setUIState,
 } from './actions';
 
-export { createReducer } from './pojoReducer';
+export { createReducer } from './reducer';
 export { connectReduxUIState, createConnectReduxUIState } from './connectReduxUIState';

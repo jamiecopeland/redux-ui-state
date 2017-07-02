@@ -56,7 +56,7 @@ Your root reducer should look this:
 // rootReducer.js
 
 import { combineReducers } from 'redux';
-import { pojoReducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
+import { createReducer, DEFAULT_BRANCH_NAME } from 'redux-ui-state';
 
 const initialState = {
   counter: {
