@@ -18,4 +18,4 @@ export {
 } from './actions';
 
 export { createReducer } from './reducer';
-export { connectReduxUIState, createConnectReduxUIState } from './connectReduxUIState';
+export { defaultConnectUIState as connectUIState, createConnectUIState } from './connectReduxUIState';

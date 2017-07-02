@@ -1,4 +1,4 @@
-import { connectReduxUIState, TransformPropsFunction } from 'redux-ui-state';
+import { connectUIState, TransformPropsFunction } from 'redux-ui-state';
 
 import {
   UIState,
@@ -23,22 +23,22 @@ const transformProps: TransformPropsFunction<UIState, CounterProps, TransformedP
   decrement: () => setUIState({ index: index - 1 }),
 });
 
-// Using connectReduxUIState with transformed props (recommended) and a static id
-export const CounterUtilTransformedPropsStaticId = connectReduxUIState<UIState, CounterProps, TransformedProps>(
+// Using connectUIState with transformed props (recommended) and a static id
+export const CounterUtilTransformedPropsStaticId = connectUIState<UIState, CounterProps, TransformedProps>(
   'utilTransformedStatic', transformProps
 )(CounterTransformedProps);
 
-// Using connectReduxUIState with transformed props (recommended) and a dynamic id
-export const CounterUtilTranformedPropsDynamicId = connectReduxUIState<UIState, CounterDynamicIdProps, TransformedProps>( // tslint:disable-line:max-line-length
+// Using connectUIState with transformed props (recommended) and a dynamic id
+export const CounterUtilTranformedPropsDynamicId = connectUIState<UIState, CounterDynamicIdProps, TransformedProps>( // tslint:disable-line:max-line-length
   ({ uiStateId }) =>  uiStateId, transformProps
 )(CounterTransformedProps);
 
-// Using connectReduxUIState with raw props and a static id
-export const CounterUtilRawPropsStaticId = connectReduxUIState<UIState, CounterProps>(
+// Using connectUIState with raw props and a static id
+export const CounterUtilRawPropsStaticId = connectUIState<UIState, CounterProps>(
   'utilRawStatic'
 )(CounterRawProps);
 
-// Using connectReduxUIState with raw props and a dynamic id
-export const CounterUtilsRawPropsDynamicId = connectReduxUIState<UIState, CounterDynamicIdProps>(
+// Using connectUIState with raw props and a dynamic id
+export const CounterUtilsRawPropsDynamicId = connectUIState<UIState, CounterDynamicIdProps>(
   ({ uiStateId }) => uiStateId
 )(CounterRawProps);

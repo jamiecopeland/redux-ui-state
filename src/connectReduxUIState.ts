@@ -31,13 +31,20 @@ export interface ConnectReduxUIState { // tslint:disable-line:class-name
 }
 
 /**
- * Creates a function with a identical functionality to connectReduxUIState, but using a custom UI state branch
- * selector.
- * This function is only necessary if the Redux UI State reducer is not located at the root of your store:
- * `state.uiState` (the default location) within the store.
+ * A higher order component factory that passes UI state related properties and functions to the wrapped component.
+ * The first function should always be called only once during the life of an application as shown below, with the
+ * result being a standard HOC.
+ *
+ * // utils.ts
+ * const connectUIState = createConnectUIState(state => state.ui);
+ *
+ * // Counter.ts
+ * ...
+ * export default connectUIState('counter')(Counter);
+ *
  * @param uiStateBranchSelector The function that selects the uiState branch from the store
  */
-export const createConnectReduxUIState = <TAppState = DefaultStoreState>(
+export const createConnectUIState = <TAppState = DefaultStoreState>(
   uiStateBranchSelector: UIStateBranchSelector<TAppState>
 ): ConnectReduxUIState => <TUIState, TProps extends object, TTransformedProps, TAppState>( // tslint:disable-line:max-line-length
   id: Id<TProps>,
@@ -65,4 +72,4 @@ export const createConnectReduxUIState = <TAppState = DefaultStoreState>(
   );
 };
 
-export const connectReduxUIState = createConnectReduxUIState(defaultUIStateBranchSelector);
+export const defaultConnectUIState = createConnectUIState(defaultUIStateBranchSelector);
