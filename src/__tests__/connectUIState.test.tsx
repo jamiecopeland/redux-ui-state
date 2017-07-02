@@ -5,14 +5,14 @@ import { mount, ReactWrapper } from 'enzyme';
 import { Action, Dispatch } from 'redux';
 import { StatelessComponent } from 'react';
 
-import { createConnectReduxUIState } from '../connectReduxUIState';
+import { createConnectUIState } from '../connectUIState';
 import {
+  DEFAULT_BRANCH_NAME,
   Props as ReduxUIStateProps,
   defaultUIStateBranchSelector,
   uiStateBranchSelector,
   uiStateSelector
 } from '../utils';
-import { DEFAULT_BRANCH_NAME } from '../constants';
 import { connect } from 'react-redux';
 import { CounterTransformedProps } from '../../examples/counterTypeScript/src/components/Counters';
 import { setUIStateSelector } from '../utils';
@@ -82,7 +82,7 @@ const setUIStateSelectorMockOutput = () => undefined;
 const restoreMocks = (mocks: { [key: string]: jest.Mock<any> | jest.SpyInstance<any> }) => // tslint:disable-line:no-any
   Object.keys(mocks).forEach(key => (mocks[key] as any).mockRestore()); // tslint:disable-line:no-any
 
-describe('createConnectReduxUIState', () => {
+describe('createConnectUIState', () => {
 
   interface UniversalAssertionMocks {
     connect: jest.SpyInstance<Function>;
@@ -121,7 +121,7 @@ describe('createConnectReduxUIState', () => {
       setUIStateSelector: jest.spyOn(utils, 'setUIStateSelector').mockReturnValue(setUIStateSelectorMockOutput),
     };
 
-    createConnectReduxUIState(defaultUIStateBranchSelector)(uiStateId)(
+    createConnectUIState(defaultUIStateBranchSelector)(uiStateId)(
       CounterRaw
     );
 
@@ -138,7 +138,7 @@ describe('createConnectReduxUIState', () => {
     };
 
     const transform = jest.fn();
-    createConnectReduxUIState(defaultUIStateBranchSelector)(uiStateId, transform)(
+    createConnectUIState(defaultUIStateBranchSelector)(uiStateId, transform)(
       CounterTransformedProps
     );
 

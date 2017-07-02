@@ -88,7 +88,7 @@ export default combineReducers({
 
 ### 2. Create a component:
 
-Use the `connectReduxUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
+Use the `connectUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
 `setUIState` (to be used in place of `this.setState`) into your component.
 
 ```

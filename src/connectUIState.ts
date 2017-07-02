@@ -19,7 +19,7 @@ import {
  * @param id A string or function that accepts component props and returns a string
  * @param transformPropsFunction A function that transforms raw props into a nicer more contextually relevant shape
  */
-export interface ConnectReduxUIState { // tslint:disable-line:class-name
+export interface ConnectUIState { // tslint:disable-line:class-name
   <TUIState, TProps, TAppState = DefaultStoreState>(
     id: Id<TProps>,
   ): (Component: WrappedComponentWithoutTransform<TUIState, TProps>) => React.ComponentClass<TProps>;
@@ -46,7 +46,7 @@ export interface ConnectReduxUIState { // tslint:disable-line:class-name
  */
 export const createConnectUIState = <TAppState = DefaultStoreState>(
   uiStateBranchSelector: UIStateBranchSelector<TAppState>
-): ConnectReduxUIState => <TUIState, TProps extends object, TTransformedProps, TAppState>( // tslint:disable-line:max-line-length
+): ConnectUIState => <TUIState, TProps extends object, TTransformedProps, TAppState>( // tslint:disable-line:max-line-length
   id: Id<TProps>,
   transformPropsFunction?: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
 ) => (

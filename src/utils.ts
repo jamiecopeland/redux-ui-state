@@ -150,7 +150,7 @@ export const uiStateBranchSelectorSelector = <TAppState>(
   if (!uiStateBranchSelector) {
     throw new Error(
       'redux-ui-state Couldn\'t find uiStateBranchSelector in props - this is most likely because ' +
-      'createConnectReduxUIState was called without an argument');
+      'createConnectUIState was called without an argument');
   }
 
   return uiStateBranchSelector;
@@ -180,7 +180,7 @@ export const idSelector = <TProps>(_: any, props: TProps & UIStateIdProps<TProps
   if (!props.uiStateId) {
     throw new Error(
       'Couldn\'t find uiStateId prop for idSelector in Redux UI State - this usually occurs because the id passed ' +
-      'into connectReduxUIState is undefined, or the uiStateId prop being passed into a component is undefined.'
+      'into connectUIState is undefined, or the uiStateId prop being passed into a component is undefined.'
     );
   }
   return getStringFromId(props.uiStateId, props);
