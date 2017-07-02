@@ -12,8 +12,8 @@
     "build:watch": "tsc -w",
     "prepublish": "npm run build",
     "lint": "tslint 'src/**/*.{ts,tsx}'",
-    "test": "jest",
-    "test:watch": "jest --watch"
+    "test": "jest --config jest.json",
+    "test:watch": "npm run test -- --watch"
   },
   "repository": {
     "type": "git",
@@ -28,17 +28,6 @@
     "url": "https://github.com/jamiecopeland/redux-ui-state/issues"
   },
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
-  "jest": {
-    "transform": {
-      ".*": "<rootDir>/jest/preprocessor.js"
-    },
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "testRegex": "<rootDir>/src/.*\\.test\\.(ts|tsx|js)$"
-  },
   "dependencies": {
     "react": "^15.5.4",
     "react-dom": "^15.5.4",
@@ -48,14 +37,14 @@
   },
   "devDependencies": {
     "@types/enzyme": "^2.8.0",
-    "@types/jest": "^16.0.7",
+    "@types/jest": "^20.0.2",
     "@types/react": "^15.0.24",
     "@types/react-dom": "^15.5.0",
     "@types/react-redux": "^4.4.40",
     "enzyme": "^2.8.2",
-    "jest": "^18.1.0",
+    "jest": "^20.0.4",
     "react-addons-test-utils": "^15.0.1",
-    "ts-jest": "^20.0.3",
+    "ts-jest": "^20.0.6",
     "tslint": "^4.2.0",
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",

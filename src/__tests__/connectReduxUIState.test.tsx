@@ -1,30 +1,5 @@
-// Mocks need to come before imports
-
-const connectMockOutput = () => () => undefined;
-const uiStateSelectorMockOutput = { index: 0 };
-const setUIStateSelectorMockOutput = () => undefined;
-
-const mocks = {
-  connect: jest.fn().mockImplementation(connectMockOutput),
-  uiStateSelector: jest.fn().mockReturnValue(uiStateSelectorMockOutput),
-  setUIStateSelector: jest.fn().mockReturnValue(setUIStateSelectorMockOutput),
-};
-
-const resetMocks = () => Object.keys(mocks).map(key => mocks[key].mockClear());
-
-const utils = require('../utils');
-
-jest.mock('react-redux', () => ({
-  connect: mocks.connect
-}));
-
-jest.mock('../utils', () => ({
-  ...utils,
-  uiStateSelector: mocks.uiStateSelector,
-  setUIStateSelector: mocks.setUIStateSelector
-}));
-
-// Imports need to come after mocks
+import * as reactRedux from 'react-redux';
+import * as utils from '../utils';
 import * as React from 'react';
 import { mount, ReactWrapper } from 'enzyme';
 import { Action, Dispatch } from 'redux';
@@ -40,6 +15,7 @@ import {
 import { DEFAULT_BRANCH_NAME } from '../constants';
 import { connect } from 'react-redux';
 import { CounterTransformedProps } from '../../examples/counterTypeScript/src/components/Counters';
+import { setUIStateSelector } from '../utils';
 
 export interface UIState {
   index: number;
@@ -100,14 +76,22 @@ const initialState = {
   [uiStateId]: 0
 };
 
+const uiStateSelectorMockOutput = { index: 0 };
+const setUIStateSelectorMockOutput = () => undefined;
+
+const restoreMocks = (mocks: { [key: string]: jest.Mock<any> | jest.SpyInstance<any> }) => // tslint:disable-line:no-any
+  Object.keys(mocks).forEach(key => (mocks[key] as any).mockRestore()); // tslint:disable-line:no-any
+
 describe.only('createConnectReduxUIState', () => {
 
-  beforeEach(() => {
-    resetMocks();
-  });
+  interface UniversalAssertionMocks {
+    connect: jest.SpyInstance<Function>;
+    uiStateSelector: jest.Mock<Function>;
+    setUIStateSelector: jest.Mock<Function>;
+  }
 
-  const runUniversalAssertions = () => {
-    const [mapStateToProps, mapDispatchToProps] = mocks.connect.mock.calls[0];
+  const runUniversalAssertions = (mocks: UniversalAssertionMocks) => {
+    const [mapStateToProps, mapDispatchToProps] = jest.spyOn(reactRedux, 'connect').mock.calls[0];
 
     expect(mocks.connect).toHaveBeenCalledTimes(1);
 
@@ -128,26 +112,42 @@ describe.only('createConnectReduxUIState', () => {
       });
     expect(mocks.setUIStateSelector)
       .toBeCalledWith(undefined, { uiStateId });
-  }
+  };
 
   it('should pass correct mapping functions to connect for raw props', () => {
+    const mocks = {
+      connect: jest.spyOn(reactRedux, 'connect'),
+      uiStateSelector: jest.spyOn(utils, 'uiStateSelector').mockReturnValue(uiStateSelectorMockOutput),
+      setUIStateSelector: jest.spyOn(utils, 'setUIStateSelector').mockReturnValue(setUIStateSelectorMockOutput),
+    };
+
     createConnectReduxUIState(defaultUIStateBranchSelector)(uiStateId)(
       CounterRaw
     );
 
-    runUniversalAssertions();
+    runUniversalAssertions(mocks);
+
+    restoreMocks(mocks);
   });
 
   it('should pass the correct mapping functions to connect for transformed props', () => {
+    const mocks = {
+      connect: jest.spyOn(reactRedux, 'connect'),
+      uiStateSelector: jest.spyOn(utils, 'uiStateSelector').mockReturnValue(uiStateSelectorMockOutput),
+      setUIStateSelector: jest.spyOn(utils, 'setUIStateSelector').mockReturnValue(setUIStateSelectorMockOutput),
+    };
+
     const transform = jest.fn();
     createConnectReduxUIState(defaultUIStateBranchSelector)(uiStateId, transform)(
       CounterTransformedProps
     );
 
-    runUniversalAssertions();
+    runUniversalAssertions(mocks);
 
     const mergeProps = mocks.connect.mock.calls[0][2];
     expect(mergeProps)
       .toBe(transform);
+
+    restoreMocks(mocks);
   });
 });
