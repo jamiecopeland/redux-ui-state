@@ -10,7 +10,7 @@ import {
 } from './Counters';
 
 /**
- * Transforms the raw Redux UI State API into a nicer, more contextually shape
+ * Transforms the raw Redux UI State API into a nicer, more contextually relevant shape
  * @param uiState
  * @param setUIState
  * @param props
