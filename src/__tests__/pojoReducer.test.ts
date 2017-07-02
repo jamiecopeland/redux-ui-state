@@ -38,7 +38,7 @@ const getWrappedInitialState = (state: {} = getInitialState()) => ({
 
 const createTestableReducer = () => createReducer(getInitialState());
 
-describe('pojoReducer', () => {
+describe('reducer', () => {
 
   describe('initial state', () => {
 
@@ -51,7 +51,7 @@ describe('pojoReducer', () => {
     });
 
     it('contain the correct undefined initial state', () => {
-      const reducer = createReducer();
+      const reducer = createReducer(undefined as any); // tslint:disable-line:no-any
       const actual = reducer(undefined as any, { type: 'NOT_AN_ACTION' } as any); // tslint:disable-line:no-any
       const expected = {};
 
@@ -88,7 +88,7 @@ describe('pojoReducer', () => {
         },
         id: ITEM_1_ID,
       });
-      const actual = createReducer()(getWrappedInitialState(), action);
+      const actual = createReducer(getInitialState())(getWrappedInitialState(), action);
       const expected = getWrappedInitialState();
       expected.components[ITEM_1_ID].isOpen = false;
       expect(actual).toEqual(expected);
@@ -108,18 +108,16 @@ describe('pojoReducer', () => {
       const initialState = {
         components: {}
       };
-      const actual = createReducer(initialState)(initialState, action);
+      const actual = createReducer({})(initialState, action);
       const expected = {
         components: {
-          [ITEM_1_ID]: {
-            isOpen: action.payload.state.isOpen
-          }
+          [ITEM_1_ID]: action.payload.state
         }
       };
       expect(actual).toEqual(expected);
     });
 
-    it.only('set a new primitive value in populated initial state', () => {
+    it('set a new primitive value in populated initial state', () => {
       const action = replaceUIState<ComponentUIStateMandatory>({
         state: {
           isOpen: false,
@@ -127,9 +125,15 @@ describe('pojoReducer', () => {
         },
         id: ITEM_1_ID,
       });
-      const actual = createReducer()(getWrappedInitialState(), action);
-      const expected = getWrappedInitialState();
-      expected.components[ITEM_1_ID] = action.payload.state;
+
+      const actual = createReducer(getInitialState())(getWrappedInitialState(), action);
+      const expected = {
+        ...getWrappedInitialState(),
+        components: {
+          ...getInitialState(),
+          [ITEM_1_ID]: action.payload.state
+        }
+      };
       expect(actual).toEqual(expected);
     });
 

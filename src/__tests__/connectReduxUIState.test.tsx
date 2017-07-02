@@ -82,7 +82,7 @@ const setUIStateSelectorMockOutput = () => undefined;
 const restoreMocks = (mocks: { [key: string]: jest.Mock<any> | jest.SpyInstance<any> }) => // tslint:disable-line:no-any
   Object.keys(mocks).forEach(key => (mocks[key] as any).mockRestore()); // tslint:disable-line:no-any
 
-describe.only('createConnectReduxUIState', () => {
+describe('createConnectReduxUIState', () => {
 
   interface UniversalAssertionMocks {
     connect: jest.SpyInstance<Function>;
