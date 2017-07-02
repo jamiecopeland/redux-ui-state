@@ -1,5 +1,5 @@
-export { DEFAULT_BRANCH_NAME } from './constants';
 export {
+  DEFAULT_BRANCH_NAME,
   StateProps,
   DispatchProps,
   Props,

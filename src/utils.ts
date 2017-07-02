@@ -4,7 +4,6 @@ import { Dispatch, Action } from 'redux';
 import { createSelector, ParametricSelector } from 'reselect';
 
 import { setUIState } from './actions';
-import { DEFAULT_BRANCH_NAME } from './constants';
 
 //////////////////////////////////////////////////
 // Id interfaces and functions
@@ -115,6 +114,11 @@ export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
   dispatchProps: DispatchProps<TUIState>,
   ownProps: Readonly<TProps>,
 ) => TTransformedProps;
+
+//////////////////////////////////////////////////
+// Constants
+
+export const DEFAULT_BRANCH_NAME = 'uiState';
 
 //////////////////////////////////////////////////
 // Selectors
