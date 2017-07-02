@@ -1,4 +1,4 @@
-import { connectUIState, TransformPropsFunction } from 'redux-ui-state';
+import { defaultConnectUIState as connectUIState, TransformPropsFunction } from 'redux-ui-state';
 
 import {
   UIState,

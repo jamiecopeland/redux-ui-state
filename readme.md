@@ -93,8 +93,8 @@ Use the `connectReduxUIState` higher order component to inject `uiState` (to be 
 
 ```
 // Counter.js
-
 import React from 'react';
+import { defaultConnectUIState as connectUIState } from 'redux-ui-state';
 
 const Counter = ({ indexMessage, increment, decrement }) => (
   <div>
@@ -108,7 +108,7 @@ const Counter = ({ indexMessage, increment, decrement }) => (
   </div>
 );
 
-export default connectReduxUIState(
+export default connectUIState(
   'counter',
   ({ index }, { setUIState }, { prefix }) = ({
     indexMessage: `${prefix}${index}`,
@@ -129,9 +129,11 @@ const App = () => (
 
 ```
 
+See the [example](https://github.com/jamiecopeland/redux-ui-state/tree/master/examples/counterTypeScript) for more
+advanced implementations, including passing a dynamic id and using raw props.
+
 ## TODO / Roadmap
-* Add Travis integration
-* Add version, coverage etc badges
+* Add Github pages page
 * Add documentation for advanced implementations
 * Add plain JavaScript examples
 * Add flow type definitions
