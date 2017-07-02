@@ -1,9 +1,13 @@
+/.rpt2_cache
+/dist
 /examples
 /jest
 /node_modules
-/dist
-/.rpt2_cache
 
 /npm-debug.log
+/.travs.yml
+/jest.json
+/npm-debug.log
+/rollup.config.js
 /tslint.json
 /tsconfig.json
