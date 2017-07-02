@@ -13,7 +13,7 @@
     "build:lib:watch": "tsc -w",
     "build:dist": "rollup -c",
     "build": "npm run build:lib && npm run build:dist",
-    "prepublish": "npm run build",
+    "prepublish": "npm run clean && npm run build",
     "lint": "tslint 'src/**/*.{ts,tsx}'",
     "test": "jest --config jest.json",
     "test:watch": "npm run test -- --watch"
