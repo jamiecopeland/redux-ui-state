@@ -38,10 +38,6 @@
   },
   "homepage": "https://github.com/jamiecopeland/redux-ui-state#readme",
   "dependencies": {
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "react-redux": "^5.0.4",
-    "redux": "^3.6.0",
     "reselect": "^3.0.1"
   },
   "devDependencies": {
@@ -52,7 +48,11 @@
     "@types/react-redux": "^4.4.40",
     "enzyme": "^2.8.2",
     "jest": "^20.0.4",
+    "react": "^15.5.4",
     "react-addons-test-utils": "^15.0.1",
+    "react-dom": "^15.5.4",
+    "react-redux": "^5.0.4",
+    "redux": "^3.6.0",
     "rollup": "^0.43.0",
     "rollup-plugin-typescript2": "^0.4.5",
     "rollup-plugin-uglify": "^2.0.1",
@@ -63,5 +63,11 @@
     "tslint-react": "^2.2.0",
     "typescript": "^2.3.4",
     "webpack": "^1.14.0"
+  },
+  "peerDependencies": {
+    "react": "^15.0.0",
+    "react-dom": "^15.0.0",
+    "react-redux": "^5.0.0",
+    "redux": "^3.6.0"
   }
 }
