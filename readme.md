@@ -73,7 +73,7 @@ const Counter = ({ indexMessage, increment, decrement }) => (
 
 export default connectUIState(
   'counter',
-  ({ index }, { setUIState }, { prefix }) = ({
+  ({ index }, { setUIState }, { prefix }) => ({
     indexMessage: `${prefix}${index}`,
     decrement: () => setUIState({ index: index - 1 }),
     increment: () => setUIState({ index: index + 1 }),
