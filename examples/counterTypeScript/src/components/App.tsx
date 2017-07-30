@@ -14,7 +14,7 @@ import {
   utilRawDynamic2,
 } from '../uiState';
 
-class App extends React.Component<{}, void> {
+class App extends React.Component<{}, {}> {
   render() {
     return (
       <div>
