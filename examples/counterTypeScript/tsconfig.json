@@ -14,10 +14,9 @@
     "sourceMap": true,
     "strict": true,
     "target": "es5",
-    "types": ["jest"]
+    "types": []
   },
   "exclude": [
-    "node_modules",
-    "static"
+    "node_modules"
   ]
 }
