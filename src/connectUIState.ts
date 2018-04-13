@@ -22,12 +22,12 @@ import {
 export interface ConnectUIState { // tslint:disable-line:class-name
   <TUIState, TProps, TAppState = DefaultStoreState>(
     id: Id<TProps>,
-  ): (Component: WrappedComponentWithoutTransform<TUIState, TProps>) => React.ComponentClass<TProps>;
+  ): (Component: WrappedComponentWithoutTransform<TUIState, TProps>) => ComponentClass<TProps>;
 
   <TUIState, TProps, TTransformedProps>(
     id: Id<TProps>,
     transformPropsFunction: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
-  ): (Component: WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>) => React.ComponentClass<TProps>;
+  ): (Component: WrappedComponentWithTransform<TUIState, TProps, TTransformedProps>) => ComponentClass<TProps>;
 }
 
 /**
@@ -46,30 +46,31 @@ export interface ConnectUIState { // tslint:disable-line:class-name
  */
 export const createConnectUIState = <TAppState = DefaultStoreState>(
   uiStateBranchSelector: UIStateBranchSelector<TAppState>
-): ConnectUIState => <TUIState, TProps extends object, TTransformedProps, TAppState>( // tslint:disable-line:max-line-length
+): ConnectUIState => <TUIState, TProps extends {}, TTransformedProps, TAppState>(
   id: Id<TProps>,
   transformPropsFunction?: TransformPropsFunction<TUIState, TProps, TTransformedProps>,
 ) => (
   Component: WrappedComponentWithoutTransform<TUIState, TProps> | WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> // tslint:disable-line:max-line-length
-): ComponentClass<TProps> => {
-  return connect( // TODO Add generics to connect?
-    (state: TAppState, props: TProps) => ({
-      // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4 - the compiler doesn't realise
-      // props is an object even though this is specifed in the TProp generic definition
-      // tslint:disable-next-line:no-any
-      uiState: uiStateSelector(state, { uiStateId: id, uiStateBranchSelector,  ...props as any })
-    }),
-    (dispatch: Dispatch<TAppState>, props: TProps) => ({
-      // TODO Remove nasty any once type checking regression is fixed in TypeScript 2.4
-      // tslint:disable-next-line:no-any
-      setUIState: setUIStateSelector(dispatch, { uiStateId: id, ...props as any })
-    }),
-    transformPropsFunction!
-  )(
-    // This any is ok, because the function overloading will catch errors relating to passing mismatching components
-    // and transform functions
-    Component as any // tslint:disable-line:no-any
-  );
-};
+): ComponentClass<TProps> => connect(
+  (state: TAppState, props: TProps) => ({
+    // TODO Remove nasty any once TypeScript allows interfaces to be spread - the compiler doesn't realise props is an
+    // object even though this is specifed in the TProp generic definition
+    // https://github.com/Microsoft/TypeScript/pull/13288
+    // tslint:disable-next-line:no-any
+    uiState: uiStateSelector(state, { uiStateId: id, uiStateBranchSelector,  ...props as any })
+  }),
+  (dispatch: Dispatch<TAppState>, props: TProps) => ({
+    // See comment above about spreading interfaces
+    // tslint:disable-next-line:no-any
+    setUIState: setUIStateSelector(dispatch, { uiStateId: id, ...props as any })
+  }),
+  // TODO Fix type issue related to possibly undefined uiState property in output of mapStateToProps
+  // tslint:disable-next-line:no-any
+  transformPropsFunction as any
+)(
+  // This any is in place because the function is overloaded - function interface variants will catch errors relating to
+  // passing mismatching components and transform functions
+  Component as any // tslint:disable-line:no-any
+);
 
 export const defaultConnectUIState = createConnectUIState(defaultUIStateBranchSelector);

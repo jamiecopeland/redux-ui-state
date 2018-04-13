@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { Dispatch, Action } from 'redux';
 import { createSelector, ParametricSelector } from 'reselect';
@@ -167,7 +166,10 @@ export const uiStateBranchSelector = createSelector(
   }
 );
 
-export const idSelector = <TProps>(_: any, props: TProps & UIStateIdProps<TProps>) => { // tslint:disable-line:no-any
+export const idSelector = <TProps>(
+  _: any, // tslint:disable-line:no-any
+  props: TProps & Partial<UIStateIdProps<TProps>>
+) => { 
   if (!props.uiStateId) {
     throw new Error(
       'Couldn\'t find uiStateId prop for idSelector in Redux UI State - this usually occurs because the id passed ' +
@@ -181,7 +183,7 @@ export const uiStateSelector = createSelector(
   uiStateBranchSelector,
   idSelector,
   (uiStateBranch, id) => {
-    const uiState = id && uiStateBranch[id];
+    const uiState = id ? uiStateBranch[id] : undefined;
     if (!uiState) {
       console.warn(
         `redux-ui-state uiStateSelector found undefined state for key: ${id}.\n` +
@@ -200,7 +202,7 @@ export const uiStateSelector = createSelector(
  * @param props The component's props
  */
 export const setUIStateSelector = <TUIState, TProps extends UIStateIdProps<TProps>>(
-  dispatch: Dispatch<any>, // tslint:disable-line:no-any
+  dispatch: Dispatch<object>,
   props: TProps
 ) => {
   const id = idSelector<TProps>(undefined, props);

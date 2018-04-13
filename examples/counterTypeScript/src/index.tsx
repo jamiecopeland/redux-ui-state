@@ -6,17 +6,17 @@ import { createLogger } from 'redux-logger';
 
 import rootReducer from './reducers/index';
 import App from './components/App';
+import registerServiceWorker from './registerServiceWorker';
+
+import './index.css';
 
 const store = createStore(rootReducer, {}, applyMiddleware(createLogger({ collapsed: true })));
-const rootEl = document.getElementById('root');
 
-function render() {
-  ReactDOM.render(
-    <Provider store={store}>
-      <App />
-    </Provider>,
-    rootEl
-  );
-}
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root') as HTMLElement
+);
 
-render();
+registerServiceWorker();
