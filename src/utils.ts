@@ -124,7 +124,9 @@ export const propsSelector = <TProps>(_: any, props: TProps) => props; // tslint
 /**
  * Selects the ui state branch from the default location in the Redux store
  */
-export const defaultUIStateBranchSelector = (state: DefaultStoreState): UIStateBranch => state[DEFAULT_BRANCH_NAME];
+export const defaultUIStateBranchSelector: UIStateBranchSelector<DefaultStoreState> = (
+  state: DefaultStoreState
+): UIStateBranch => state[DEFAULT_BRANCH_NAME];
 
 /**
  * The props containing the selector for the uiState branch.
@@ -202,12 +204,12 @@ export const uiStateSelector = createSelector(
  * @param props The component's props
  */
 export const setUIStateSelector = <TUIState, TProps extends UIStateIdProps<TProps>>(
-  dispatch: Dispatch<object>,
+  dispatch: Dispatch<Action>,
   props: TProps
 ) => {
   const id = idSelector<TProps>(undefined, props);
   if (!id) {
     throw new Error('redux-ui-state uiStateId is undefined');
   }
-  return (state: Partial<TUIState>): Action => dispatch(setUIState<Partial<TUIState>>({ id, state }));
+  return (state: Partial<TUIState>) => {dispatch(setUIState<Partial<TUIState>>({ id, state }))};
 };

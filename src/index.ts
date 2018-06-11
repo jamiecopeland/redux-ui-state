@@ -36,4 +36,5 @@ export {
 } from './actions';
 
 export { createReducer } from './reducer';
-export { createConnectUIState, defaultConnectUIState } from './connectUIState';
+export { setupConnectUIState, defaultConnectUIState } from './connectUIState';
+export { setupCreateUIState } from './createUIState';

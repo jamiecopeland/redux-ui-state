@@ -6,6 +6,16 @@ const initialValue = {
 
 // Key value pairs
 
+export const renderPropUnmapped =  {
+  key: 'renderPropUnmapped',
+  value: initialValue,
+};
+
+export const renderPropMapped =  {
+  key: 'renderPropMapped',
+  value: initialValue,
+};
+
 export const utilTransformedStatic =  {
   key: 'utilTransformedStatic',
   value: initialValue,

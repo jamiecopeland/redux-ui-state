@@ -3,11 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@types/react-redux": "^5.0.16",
-    "@types/redux": "^3.6.0",
-    "@types/redux-logger": "^3.0.5",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
+    "react-redux": "^5.0.7",
     "react-scripts-ts": "2.14.0",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
@@ -25,6 +23,9 @@
     "@types/node": "^9.6.4",
     "@types/react": "^16.3.9",
     "@types/react-dom": "^16.0.5",
+    "@types/react-redux": "^6.0.2",
+    "@types/redux": "^3.6.0",
+    "@types/redux-logger": "^3.0.5",
     "typescript": "^2.8.1"
   }
 }
