@@ -74,7 +74,7 @@ class App extends React.Component<{}, {}> {
               </div>
             </div>
           )}
-        </UIStateMapped>
+        </UIStateMapped> 
         <hr />
         <h2>Higher Order Component Implementations</h2>
         <h3>Transformed props, static id</h3>
@@ -85,15 +85,17 @@ class App extends React.Component<{}, {}> {
         <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId={utilTransformedDynamic1.key} />
         <CounterUtilTranformedPropsDynamicId prefix="Value: " uiStateId={utilTransformedDynamic2.key} />
         <hr />
+       
         <h3>Raw props, static id</h3>
         <CounterUtilRawPropsStaticId prefix="Value: " />
         <CounterUtilRawPropsStaticId prefix="Value: " />
         <hr />
+         
         <h3>Raw props, dynamic id</h3>
         <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId={utilRawDynamic1.key} />
         <CounterUtilsRawPropsDynamicId prefix="Value: " uiStateId={utilRawDynamic2.key} />
         <hr />
-        
+
       </div>
     );
   }

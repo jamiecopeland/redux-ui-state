@@ -76,12 +76,12 @@ export type AbstractWrappedComponent<TProps> = React.StatelessComponent<TProps> 
 /**
  * A component being passed into addReduxUIState that accepts the default props
  */
-export type WrappedComponentWithoutTransform<TUIState, TProps> = AbstractWrappedComponent<TProps & Props<TUIState>>;
+export type WrappedComponentWithDefaultProps<TUIState, TProps> = AbstractWrappedComponent<TProps & Props<TUIState>>;
 
 /**
- * A component being passed into addReduxUIState that accepts transformed props
+ * A component being passed into addReduxUIState that accepts mapped props
  */
-export type WrappedComponentWithTransform<TUIState, TProps, TTransformedProps> = AbstractWrappedComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
+export type WrappedComponentWithMappedProps<TUIState, TProps, TTransformedProps> = AbstractWrappedComponent<TProps & TTransformedProps>; // tslint:disable-line:max-line-length
 
 /**
  * A Selector that accepts the full application state and returns the Redux UI State branch
@@ -102,18 +102,13 @@ export interface UIStateIdProps<TProps> {
 /**
  * The function used to make changes to the state
  */
-export type SetUIStateFunction<TUIState> = (state: Partial<TUIState>) => void;
-
-export type TransformPropsFunction<TUIState, TProps, TTransformedProps> = (
-  stateProps: StateProps<TUIState>,
-  dispatchProps: DispatchProps<TUIState>,
-  ownProps: Readonly<TProps>,
-) => TTransformedProps;
+export type SetUIState<TUIState> = (state: Partial<TUIState>) => void;
 
 //////////////////////////////////////////////////
 // Constants
 
 export const DEFAULT_BRANCH_NAME = 'ui';
+export const UNDEFINED_KEY = 'REDUX_UI_STATE_UNDEFINED_KEY';
 
 //////////////////////////////////////////////////
 // Selectors
@@ -185,14 +180,17 @@ export const uiStateSelector = createSelector(
   uiStateBranchSelector,
   idSelector,
   (uiStateBranch, id) => {
-    const uiState = id ? uiStateBranch[id] : undefined;
+    if (!id) {
+      console.warn('redux-ui-state state key is undefined');
+    }
+    const uiState = uiStateBranch[id || UNDEFINED_KEY];
     if (!uiState) {
       console.warn(
         `redux-ui-state uiStateSelector found undefined state for key: ${id}.\n` +
         `This is most often due to the value not being initialized in createReducer.`
       );
     }
-    return uiState;
+    return uiState as any;
   }
 );
 
@@ -207,9 +205,11 @@ export const setUIStateSelector = <TUIState, TProps extends UIStateIdProps<TProp
   dispatch: Dispatch<Action>,
   props: TProps
 ) => {
-  const id = idSelector<TProps>(undefined, props);
+  const id = idSelector<TProps>(undefined, props) || UNDEFINED_KEY;
   if (!id) {
-    throw new Error('redux-ui-state uiStateId is undefined');
+    console.warn('redux-ui-state state key is undefined');
   }
-  return (state: Partial<TUIState>) => {dispatch(setUIState<Partial<TUIState>>({ id, state }))};
+  return (state: Partial<TUIState>) => {
+    dispatch(setUIState<Partial<TUIState>>({ id, state }))
+  };
 };

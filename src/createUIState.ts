@@ -23,27 +23,39 @@ export interface __IMPORT_FIX {
   DispatchProps: DispatchProps<{}>;
 }
 
-export interface UIStateComponentProps<TUIState> {
+/**
+ * The props for UIState component with a generic for the values accepted by the render prop
+ */
+export interface UIStateComponentProps<TProps> {
   // tslint:disable-next-line:no-any
-  children: (props: Props<TUIState>) => React.ReactElement<any> | null;
+  children: (props: TProps) => React.ReactElement<any> | null;
 }
 
-export interface UIStateComponentPropsMapped<TMappedProps> {
-  // tslint:disable-next-line:no-any
-  children: (props: TMappedProps) => React.ReactElement<any> | null;
-}
+/**
+ * A function that maps StateProps<T> & DispatchProps<T> into the shape required by the render
+ * prop function
+ */
+export type MapCreateUIStateProps<TUIState, TMappedProps> = (props: Props<TUIState>) => TMappedProps
 
-export type Mapper<TUIState, TMappedProps> = (props: Props<TUIState>) => TMappedProps
-
+/**
+ * A function to pass through the default props
+ * @param props The default props
+ */
 export const defaultMapper = <TUIState>(props: Props<TUIState>) => props;
 
+/**
+ * A render prop component factory responsible for injecting Redux UI State props into a render prop
+ * component
+ * @param uiStateBranchSelector A selector that selects the top level ui state branch from the
+ * redux store with default if no argument is passed.
+ */
 export const setupCreateUIState = <TAppState = DefaultStoreState>(
   uiStateBranchSelector = defaultUIStateBranchSelector
 ) => <TUIState, TMappedProps = Props<TUIState>>(
   id: string,
-  mapper?: Mapper<TUIState, TMappedProps>,
+  mapper?: MapCreateUIStateProps<TUIState, TMappedProps>,
 ) => connect(
-  (state: TAppState, props: UIStateComponentPropsMapped<TMappedProps>) => ({
+  (state: TAppState, props: UIStateComponentProps<TMappedProps>) => ({
     uiState: uiStateSelector(state, {
       uiStateId: id,
       uiStateBranchSelector,
