@@ -35,13 +35,9 @@ export interface UIStateComponentProps<TProps> {
  * A function that maps StateProps<T> & DispatchProps<T> into the shape required by the render
  * prop function
  */
-export type MapCreateUIStateProps<TUIState, TMappedProps> = (props: Props<TUIState>) => TMappedProps
-
-/**
- * A function to pass through the default props
- * @param props The default props
- */
-export const defaultMapper = <TUIState>(props: Props<TUIState>) => props;
+export type MapCreateUIStateProps<TUIState, TMappedProps> = (
+  props: Props<TUIState>
+) => TMappedProps;
 
 /**
  * A render prop component factory responsible for injecting Redux UI State props into a render prop
@@ -72,12 +68,12 @@ export const setupCreateUIState = <TAppState = DefaultStoreState>(
     ownProps,
     mapper
       ? mapper({...stateProps, ...dispatchProps})
-      : defaultMapper<TUIState>({...stateProps, ...dispatchProps})
+      : {...stateProps, ...dispatchProps}
   )
 )((props) => {
   // Until TypeScript allows spread on interfaces, force props to any to allow ES7 rest syntax
   // https://github.com/Microsoft/TypeScript/issues/16780
   // tslint:disable-next-line:no-any
   const { children, ...rest } = props as any;
-  return children(rest)
+  return children(rest);
 });

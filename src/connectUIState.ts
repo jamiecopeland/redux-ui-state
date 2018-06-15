@@ -9,9 +9,11 @@ import {
   setUIStateSelector,
   defaultUIStateBranchSelector,
   UIStateBranchSelector,
+  Props,
 } from './utils';
 import { StateProps, DispatchProps } from '../dist';
 
+// tslint:disable-next-line:class-name
 export interface __IMPORT_FIX {
   UIStateBranchSelector: UIStateBranchSelector<{}>;
 }
@@ -21,13 +23,14 @@ export type MapConnectUIStateProps<TUIState, TTransformedProps, TProps> = (
   ownProps: Readonly<TProps>,
 ) => TTransformedProps;
 
+export const defaultMapper = <TUIState>(props: Props<TUIState>) => props;
+
 /**
  * A higher order component responsible for injecting Redux UI State props (uiState and setUIState) into a Component
  * @param id A string or function that accepts component props and returns a string
  * @param mapProps A function that maps raw props into a nicer more contextually relevant shape
  */
 export interface ConnectUIState {
-  // tslint:disable-line:class-name
   <TUIState, TProps, TAppState = DefaultStoreState>(id: Id<TProps>): (
     Component: WrappedComponentWithDefaultProps<TUIState, TProps>
   ) => ComponentClass<TProps>;
@@ -97,7 +100,6 @@ export const setupConnectUIState = <TAppState = DefaultStoreState>(
     (stateProps, dispatchProps, ownProps) => mapProps
       ? mapProps(Object.assign({}, stateProps, dispatchProps), ownProps)
       : Object.assign({}, stateProps, dispatchProps, ownProps)
-    
   )(
     // This any is in place because the function is overloaded - function interface variants will
     // catch errors relating to passing mismatching components and mapping functions
@@ -108,5 +110,3 @@ export const setupConnectUIState = <TAppState = DefaultStoreState>(
 export const defaultConnectUIState = setupConnectUIState(
   defaultUIStateBranchSelector
 );
-
-

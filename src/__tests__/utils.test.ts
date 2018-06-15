@@ -18,6 +18,10 @@ import {
   idSelector,
   uiStateSelector,
   setUIStateSelector,
+  SET_UI_STATE_SELECTOR_WARNING_MESSAGE,
+  SET_UI_STATE_WARNING_MESSAGE,
+  UI_STATE_SELECTOR_WARNING_MESSAGE,
+  createUIStateSelectorWarningMessage,
 } from '../utils';
 
 //////////////////////////////////////////////////
@@ -260,10 +264,25 @@ describe('utils', () => {
     });
 
     it('should return undefined if value is not present', () => {
+      const spy = jest.spyOn(console, 'warn');
       const appState = getDefaultAppState();
+      const id = 'notAThing';
       expect(
-        uiStateSelector.resultFunc(appState.ui.components, 'notThing')
+        uiStateSelector.resultFunc(appState.ui.components, id)
       ).toBeUndefined();
+      expect(spy.mock.calls[0][0]).toBe(createUIStateSelectorWarningMessage(id));
+      spy.mockRestore();
+    });
+
+    it.only('should call console.warn if uiStateId is undefined', () => {
+      const spy = jest.spyOn(console, 'warn');
+      const appState = getDefaultAppState();
+
+      const output = uiStateSelector.resultFunc(appState.ui.components, undefined);
+      expect(spy.mock.calls[0][0]).toBe(UI_STATE_SELECTOR_WARNING_MESSAGE);
+      expect(output).toBeUndefined();
+      
+      spy.mockRestore();
     });
   });
 
@@ -290,9 +309,19 @@ describe('utils', () => {
       }));
     });
 
-    it('should throw an error if uiStateId is undefined', () => {
-      expect(() => setUIStateSelector<UIState, UIStateIdProps<{}>>(jest.fn(), { uiStateId: () => undefined }))
-        .toThrow();
+    it.only('should call console.warn if uiStateId is undefined', () => {
+      const spy = jest.spyOn(console, 'warn');
+      
+      const output = setUIStateSelector<UIState, UIStateIdProps<{}>>(
+        jest.fn(), { uiStateId: () => undefined }
+      );
+      expect(spy.mock.calls[0][0]).toBe(SET_UI_STATE_SELECTOR_WARNING_MESSAGE);
+      
+      // Call setUIState function
+      output({});
+      expect(spy.mock.calls[1][0]).toBe(SET_UI_STATE_WARNING_MESSAGE);
+  
+      spy.mockRestore();
     });
   });
 
