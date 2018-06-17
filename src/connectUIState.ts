@@ -10,8 +10,9 @@ import {
   defaultUIStateBranchSelector,
   UIStateBranchSelector,
   Props,
+  StateProps,
+  DispatchProps,
 } from './utils';
-import { StateProps, DispatchProps } from '../dist';
 
 // tslint:disable-next-line:class-name
 export interface __IMPORT_FIX {

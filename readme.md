@@ -124,6 +124,7 @@ Use the `setupConnectUIState` higher order component to inject `uiState` (to be 
 `setUIState` (to be used in place of `this.setState`) into your component.
 
 ```typescript
+//////////////////////////////////////////////////
 // UIState.js
 
 // This setupConnectUIState higher order function allows a custom selector for the ui branch of the
@@ -132,6 +133,7 @@ Use the `setupConnectUIState` higher order component to inject `uiState` (to be 
 // should be exported.
 const connectUIState = setupConnectUIState();
 
+//////////////////////////////////////////////////
 // Counter.js
 import React from 'react';
 import { defaultConnectUIState as connectUIState } from 'redux-ui-state';
@@ -157,6 +159,7 @@ export default connectUIState(
   })
 )(Counter);
 
+//////////////////////////////////////////////////
 // App.js
 import React from 'react';
 import Counter from './Counter';
