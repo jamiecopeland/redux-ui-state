@@ -49,14 +49,12 @@ export const setupCreateUIState = <TAppState = DefaultStoreState>(
   uiStateBranchSelector = defaultUIStateBranchSelector
 ) => <TUIState, TMappedProps = Props<TUIState>>(
   id: string,
-  mapper?: MapCreateUIStateProps<TUIState, TMappedProps>,
+  mapProps?: MapCreateUIStateProps<TUIState, TMappedProps>,
 ) => connect(
   (state: TAppState, props: UIStateComponentProps<TMappedProps>) => ({
-    uiState: uiStateSelector(state, {
-      uiStateId: id,
-      uiStateBranchSelector,
-      ...props,
-    }) as TUIState,
+    uiState: uiStateSelector(
+      state, Object.assign({ uiStateId: id, uiStateBranchSelector }, props)
+    ) as TUIState,
   }),
   (dispatch) => ({
     setUIState: setUIStateSelector<TUIState, UIStateIdProps<{}>>(dispatch, { uiStateId: id }),
@@ -66,8 +64,8 @@ export const setupCreateUIState = <TAppState = DefaultStoreState>(
   (stateProps, dispatchProps, ownProps) => Object.assign(
     {},
     ownProps,
-    mapper
-      ? mapper({...stateProps, ...dispatchProps})
+    mapProps
+      ? mapProps({...stateProps, ...dispatchProps})
       : {...stateProps, ...dispatchProps}
   )
 )((props) => {

@@ -274,7 +274,7 @@ describe('utils', () => {
       spy.mockRestore();
     });
 
-    it.only('should call console.warn if uiStateId is undefined', () => {
+    it('should call console.warn if uiStateId is undefined', () => {
       const spy = jest.spyOn(console, 'warn');
       const appState = getDefaultAppState();
 
@@ -309,7 +309,7 @@ describe('utils', () => {
       }));
     });
 
-    it.only('should call console.warn if uiStateId is undefined', () => {
+    it('should call console.warn if uiStateId is undefined', () => {
       const spy = jest.spyOn(console, 'warn');
       
       const output = setUIStateSelector<UIState, UIStateIdProps<{}>>(

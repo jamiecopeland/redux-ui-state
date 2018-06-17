@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "UI state management for Redux applications",
   "main": "lib/index.js",
   "directories": {
@@ -28,8 +28,10 @@
     "ui",
     "state",
     "ui state",
+    "state management",
     "higher order component",
-    "higher order function"
+    "higher order function",
+    "render props"
   ],
   "author": "Jamie Copeland",
   "license": "MIT",

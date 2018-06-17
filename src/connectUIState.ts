@@ -92,10 +92,7 @@ export const setupConnectUIState = <TAppState = DefaultStoreState>(
       ) as TUIState
     }),
     (dispatch, props: TProps) => ({
-      setUIState: setUIStateSelector(
-        dispatch,
-        Object.assign({ uiStateId: id }, props)
-      ),
+      setUIState: setUIStateSelector(dispatch, Object.assign({ uiStateId: id }, props)),
     }),
     (stateProps, dispatchProps, ownProps) => mapProps
       ? mapProps(Object.assign({}, stateProps, dispatchProps), ownProps)

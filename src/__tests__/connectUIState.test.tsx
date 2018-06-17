@@ -1,25 +1,15 @@
 import * as reactRedux from 'react-redux';
 import * as utils from '../utils';
 import * as React from 'react';
-
 import { setupConnectUIState } from '../connectUIState';
 import {
   Props as ReduxUIStateProps,
   defaultUIStateBranchSelector,
 } from '../utils';
-
-export interface UIState {
-  index: number;
-}
+import { MappedProps, UIState } from './componentTestUtils';
 
 export interface CounterProps {
   prefix: string;
-}
-
-export interface MappedProps {
-  message: string;
-  increment: () => void;
-  decrement: () => void;
 }
 
 export type RawProps = CounterProps & ReduxUIStateProps<UIState>;
@@ -58,8 +48,8 @@ export const CounterRaw: React.StatelessComponent<RawProps> = ({
     </div>
   </div>;
 
-const uiStateId = 'counter';
-const initialState = {
+export const uiStateId = 'counter';
+export const initialState = {
   [uiStateId]: 0
 };
 
@@ -140,7 +130,7 @@ describe('setupConnectUIState', () => {
       ownProps
     ]);
 
-    expect(mergedProps).toBe(mapPropsOutput);
+    expect(mergedProps).toEqual(mapPropsOutput);
 
     restoreMocks(mocks);
   });
