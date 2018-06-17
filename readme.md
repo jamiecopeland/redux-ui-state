@@ -49,12 +49,89 @@ export default combineReducers({
 });
 ```
 
-### 2. Create a component:
+### 2. Use the data in your UI:
 
-Use the `connectUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
+**Render Prop implementation**
+
+Use the `setupCreateUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
+`setUIState` (to be used in place of `this.setState`) into your render prop.
+
+```typescript
+//////////////////////////////////////////////////
+// UIState.js
+
+// This setupCcreateUIState higher order function allows a custom selector for the ui branch of the
+// redux store to be passed in if the ui branch is not named 'ui' and at the root. The call to 
+// setupConnectUIState should only be done once in your application and the connection function
+// should be exported.
+const createUIState = setupConnectUIState();
+
+//////////////////////////////////////////////////
+// CounterUIState.js
+
+// Either create a render prop component that maps the data into nicely structured props (preferred)
+export const CounterUIStateMapped = createUIState(
+  'counter',
+  ({ uiState, setUIState }) => ({
+    index: uiState.index,
+    increment: () => setUIState({ index: uiState.index + 1 }),
+    decrement: () => setUIState({ index: uiState.index - 1 })
+  })
+);
+
+// Or create a render prop component that recieves the raw props
+export const CounterUIStateUnmapped = createUIState<UIState>('counter');
+
+//////////////////////////////////////////////////
+// App.js
+import React from 'react';
+import Counter from './Counter';
+
+const App = () => (
+  <div>
+
+    <UIStateMapped>
+      {({ index, increment, decrement }) => (
+        <div>
+          <div>Value: {index}</div>
+          <div>
+            <button onClick={decrement}>-</button>
+            <button onClick={increment}>+</button>
+          </div>
+        </div>
+      )}
+    </UIStateMapped> 
+     
+    <UIStateUnmapped>
+      {({ uiState: { index }, setUIState }) => (
+        <div>
+          <div>Value: {index}</div>
+          <div>
+            <button onClick={() => setUIState({ index: index - 1})}>-</button>
+            <button onClick={() => setUIState({ index: index + 1})}>+</button> 
+          </div>
+        </div>
+      )}
+    </UIStateUnmapped>
+    
+  </div>
+);
+```
+
+#### Higner order component implementation
+
+Use the `setupConnectUIState` higher order component to inject `uiState` (to be used in place of `this.state`) and
 `setUIState` (to be used in place of `this.setState`) into your component.
 
 ```typescript
+// UIState.js
+
+// This setupConnectUIState higher order function allows a custom selector for the ui branch of the
+// redux store to be passed in if the ui branch is not named 'ui' and at the root. The call to 
+// setupConnectUIState should only be done once in your application and the connection function
+// should be exported.
+const connectUIState = setupConnectUIState();
+
 // Counter.js
 import React from 'react';
 import { defaultConnectUIState as connectUIState } from 'redux-ui-state';
@@ -89,7 +166,6 @@ const App = () => (
     <Counter prefix="Value: " initialIndex={0} />
   </div>
 );
-
 ```
 
 ## Rationale
