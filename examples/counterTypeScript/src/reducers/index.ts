@@ -1,6 +1,8 @@
 import { combineReducers } from 'redux';
 import { DEFAULT_BRANCH_NAME, createReducer } from 'redux-ui-state';
 import {
+  renderPropUnmapped,
+  renderPropMapped,
   utilTransformedStatic,
   utilTransformedDynamic1,
   utilTransformedDynamic2,
@@ -17,6 +19,8 @@ import {
 
 export default combineReducers({
   [DEFAULT_BRANCH_NAME]: createReducer({
+    [renderPropUnmapped.key]: renderPropUnmapped.value,
+    [renderPropMapped.key]: renderPropMapped.value,
     [utilTransformedStatic.key]: utilTransformedStatic.value,
     [utilTransformedDynamic1.key]: utilTransformedDynamic1.value,
     [utilTransformedDynamic2.key]: utilTransformedDynamic2.value,

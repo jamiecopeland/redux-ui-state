@@ -15,17 +15,17 @@ export interface CounterDynamicIdProps extends CounterProps {
 }
 
 // -------------------------------------------------------------------------------------------------
-// Component accepting transformed props
+// Component accepting mapped props
 // This implementation is clearly the better of the two, since it has a cleaner, more contextually relevant API.
 // See Counters.containers.tsx for several example implentations of how to transform props
 
-export interface TransformedProps {
+export interface MappedProps {
   message: string;
   increment: () => void;
   decrement: () => void;
 }
 
-export const CounterTransformedProps: React.StatelessComponent<TransformedProps> = (
+export const CounterTransformedProps: React.StatelessComponent<MappedProps> = (
   { message, increment, decrement }
 ) => (
   <div>

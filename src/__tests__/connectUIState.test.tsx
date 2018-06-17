@@ -1,43 +1,20 @@
 import * as reactRedux from 'react-redux';
 import * as utils from '../utils';
 import * as React from 'react';
-import { mount, ReactWrapper } from 'enzyme';
-import { Action, Dispatch } from 'redux';
-import { StatelessComponent } from 'react';
-
-import { createConnectUIState } from '../connectUIState';
+import { setupConnectUIState } from '../connectUIState';
 import {
-  DEFAULT_BRANCH_NAME,
   Props as ReduxUIStateProps,
   defaultUIStateBranchSelector,
-  uiStateBranchSelector,
-  uiStateSelector
 } from '../utils';
-import { connect } from 'react-redux';
-import { CounterTransformedProps } from '../../examples/counterTypeScript/src/components/Counters';
-import { setUIStateSelector } from '../utils';
-
-export interface UIState {
-  index: number;
-}
+import { MappedProps, UIState } from './componentTestUtils';
 
 export interface CounterProps {
   prefix: string;
 }
 
-// export interface CounterDynamicIdProps extends CounterProps {
-//   uiStateId: string;
-// }
-
-export interface NiceProps {
-  message: string;
-  increment: () => void;
-  decrement: () => void;
-}
-
 export type RawProps = CounterProps & ReduxUIStateProps<UIState>;
 
-export const CounterNice: React.StatelessComponent<NiceProps> = ({
+export const CounterMapped: React.StatelessComponent<MappedProps> = ({
   message,
   increment,
   decrement
@@ -71,8 +48,8 @@ export const CounterRaw: React.StatelessComponent<RawProps> = ({
     </div>
   </div>;
 
-const uiStateId = 'counter';
-const initialState = {
+export const uiStateId = 'counter';
+export const initialState = {
   [uiStateId]: 0
 };
 
@@ -82,7 +59,7 @@ const setUIStateSelectorMockOutput = () => undefined;
 const restoreMocks = (mocks: { [key: string]: jest.Mock<any> | jest.SpyInstance<any> }) => // tslint:disable-line:no-any
   Object.keys(mocks).forEach(key => (mocks[key] as any).mockRestore()); // tslint:disable-line:no-any
 
-describe('createConnectUIState', () => {
+describe('setupConnectUIState', () => {
 
   interface UniversalAssertionMocks {
     connect: jest.SpyInstance<Function>;
@@ -94,9 +71,10 @@ describe('createConnectUIState', () => {
     const [mapStateToProps, mapDispatchToProps] = jest.spyOn(reactRedux, 'connect').mock.calls[0];
 
     expect(mocks.connect).toHaveBeenCalledTimes(1);
-
+    
     expect(mapStateToProps())
       .toEqual({ uiState: uiStateSelectorMockOutput });
+      
     expect(mocks.uiStateSelector)
       .toBeCalledWith(
         undefined,
@@ -121,7 +99,7 @@ describe('createConnectUIState', () => {
       setUIStateSelector: jest.spyOn(utils, 'setUIStateSelector').mockReturnValue(setUIStateSelectorMockOutput),
     };
 
-    createConnectUIState(defaultUIStateBranchSelector)(uiStateId)(
+    setupConnectUIState(defaultUIStateBranchSelector)(uiStateId)(
       CounterRaw
     );
 
@@ -130,23 +108,29 @@ describe('createConnectUIState', () => {
     restoreMocks(mocks);
   });
 
-  it('should pass the correct mapping functions to connect for transformed props', () => {
+  it('should pass the correct mapping functions to connect for mapped props', () => {
     const mocks = {
       connect: jest.spyOn(reactRedux, 'connect'),
       uiStateSelector: jest.spyOn(utils, 'uiStateSelector').mockReturnValue(uiStateSelectorMockOutput),
       setUIStateSelector: jest.spyOn(utils, 'setUIStateSelector').mockReturnValue(setUIStateSelectorMockOutput),
     };
 
-    const transform = jest.fn();
-    createConnectUIState(defaultUIStateBranchSelector)(uiStateId, transform)(
-      CounterTransformedProps
-    );
+    const mapPropsOutput = { message: 'I have been mapped' };
+    const mapProps = jest.fn().mockReturnValue(mapPropsOutput);
+    setupConnectUIState(defaultUIStateBranchSelector)(uiStateId, mapProps)(CounterMapped);
 
     runUniversalAssertions(mocks);
+    const [mapStateToProps, mapDispatchToProps, mergeProps] = jest.spyOn(reactRedux, 'connect').mock.calls[0];
+    
+    const ownProps = { someOtherValue: 'Hello World!' };
+    const mergedProps = mergeProps(mapStateToProps(), mapDispatchToProps(), ownProps);
+    
+    expect(mapProps.mock.calls[0]).toEqual([
+      { ...mapStateToProps(), ...mapDispatchToProps() },
+      ownProps
+    ]);
 
-    const mergeProps = mocks.connect.mock.calls[0][2];
-    expect(mergeProps)
-      .toBe(transform);
+    expect(mergedProps).toEqual(mapPropsOutput);
 
     restoreMocks(mocks);
   });

@@ -1,6 +1,6 @@
 {
   "name": "redux-ui-state",
-  "version": "2.0.2",
+  "version": "3.0.0",
   "description": "UI state management for Redux applications",
   "main": "lib/index.js",
   "directories": {
@@ -28,8 +28,10 @@
     "ui",
     "state",
     "ui state",
+    "state management",
     "higher order component",
-    "higher order function"
+    "higher order function",
+    "render props"
   ],
   "author": "Jamie Copeland",
   "license": "MIT",
@@ -45,8 +47,11 @@
   "devDependencies": {
     "@types/jest": "^22.2.3",
     "@types/react": "^16.3.9",
-    "@types/react-redux": "^5.0.16",
+    "@types/react-redux": "^6.0.2",
     "jest": "^22.4.3",
+    "react": "^15.6.2 || ^16.0.0",
+    "react-redux": "^5.0.7",
+    "reselect": "^3.0.1",
     "rollup": "^0.57.1",
     "rollup-plugin-typescript2": "^0.5.0",
     "rollup-plugin-uglify": "^3.0.0",
@@ -54,9 +59,6 @@
     "tslint": "^4.5.1",
     "tslint-eslint-rules": "^2.2.1",
     "tslint-microsoft-contrib": "^2.0.14",
-    "tslint-react": "^2.2.0",
-    "react": "^16.0.0",
-    "react-redux": "^5.0.7",
-    "reselect": "^3.0.1"
+    "tslint-react": "^2.2.0"
   }
 }

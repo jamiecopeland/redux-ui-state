@@ -10,12 +10,11 @@ export {
   DispatchProps,
   Props,
   AbstractWrappedComponent,
-  WrappedComponentWithoutTransform,
-  WrappedComponentWithTransform,
+  WrappedComponentWithDefaultProps,
+  WrappedComponentWithMappedProps,
   UIStateBranchSelector,
   UIStateIdProps,
-  SetUIStateFunction,
-  TransformPropsFunction,
+  SetUIState,
   DEFAULT_BRANCH_NAME,
   stateSelector,
   propsSelector,
@@ -36,4 +35,5 @@ export {
 } from './actions';
 
 export { createReducer } from './reducer';
-export { createConnectUIState, defaultConnectUIState } from './connectUIState';
+export { setupConnectUIState, defaultConnectUIState, MapConnectUIStateProps } from './connectUIState';
+export { setupCreateUIState, MapCreateUIStateProps } from './createUIState';
